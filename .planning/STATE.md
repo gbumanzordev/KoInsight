@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 1 of 6 (Schema Foundations + Provenance)
-Plan: 0 of 7 in current phase
-Status: Ready to execute
-Last activity: 2026-04-23 — Phase 1 planned (7 plans across 4 waves; verification passed)
+Plan: 1 of 7 in current phase
+Status: In progress
+Last activity: 2026-04-23 — Plan 01-01 complete (parseAuthors pure function + 17 vitest cases, TDD)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 14%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: 2 min
+- Total execution time: 0.03 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 1. Schema Foundations + Provenance | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: -
-- Trend: -
+- Last 5 plans: 01-01 (2 min)
+- Trend: n/a (first completed plan)
 
 *Updated after each plan completion*
 
@@ -47,6 +47,7 @@ Recent decisions affecting current work:
 - "Book read in year Y" requires ≥95% pages reached by end of Y; page-time totals always include all reading.
 - Per-field `*_source` provenance must land before any enrichment runs (Phase 1 blocks Phase 4).
 - Manual edits are sticky: enrichment never overwrites a field whose `*_source = 'manual'`.
+- Author parser: suffix merge (D-05) runs before LN-FN flip (D-04); flip only when original has commas only and merged segment count is exactly 2; segments with no letters are dropped.
 
 ### Pending Todos
 
@@ -66,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-23
-Stopped at: Roadmap drafted, 6 phases defined, 37 requirements traced. Ready for `/gsd-plan-phase 1`.
+Stopped at: Completed Plan 01-01 (parseAuthors helper). Next: Plan 01-02 (shared @koinsight/common types for author/enrichment/extended book).
 Resume file: None

@@ -30,7 +30,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   4. `packages/common/types` exports `Author`, `BookAuthor`, `EnrichmentJob`, `EnrichmentStatus`, `FieldSource`, and the extended `Book` shape; both `apps/server` and `apps/web` build against the new types without errors.
   5. All migrations are structure-only: grepping the migration files for `fetch(`, `axios`, `https://`, or row-iteration loops over `book` (other than the deterministic author string-split backfill in SCHEMA-08) returns nothing.
 **Plans**: 7 plans
-  - [ ] 01-01-PLAN.md — Author parser helper + unit tests (pure function, TDD)
+  - [x] 01-01-PLAN.md — Author parser helper + unit tests (pure function, TDD)
   - [ ] 01-02-PLAN.md — Shared types in @koinsight/common (author.ts, enrichment.ts, extend book.ts, barrel)
   - [ ] 01-03-PLAN.md — Migration 1: create author + book_author tables (with partial unique on openlibrary_key)
   - [ ] 01-04-PLAN.md — Migration 2: create enrichment_job table (with partial unique on open jobs per book)
@@ -116,7 +116,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (with 2+3 and 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Schema Foundations + Provenance | 0/TBD | Not started | - |
+| 1. Schema Foundations + Provenance | 1/7 | In progress | - |
 | 2. Canonical Genre Vocabulary | 0/TBD | Not started | - |
 | 3. OpenLibrary + Wikidata Client | 0/TBD | Not started | - |
 | 4. Enrichment Service + Backfill | 0/TBD | Not started | - |
