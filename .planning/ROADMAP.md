@@ -10,7 +10,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Schema Foundations + Provenance** - Author entity, junction, enrichment job table, per-field `*_source` columns, and shared types — every downstream phase consumes these
+- [x] **Phase 1: Schema Foundations + Provenance** - Author entity, junction, enrichment job table, per-field `*_source` columns, and shared types — every downstream phase consumes these
 - [ ] **Phase 2: Canonical Genre Vocabulary** - Curated whitelist constant, idempotent seed/migration, and a pure subject-to-genre mapping function with unit-test coverage
 - [ ] **Phase 3: OpenLibrary + Wikidata Client** - Extend the OL HTTP client with work/edition/author/search methods, a shared Bottleneck rate limiter, User-Agent, circuit breaker, and Wikidata P27 nationality lookup
 - [ ] **Phase 4: Enrichment Service + Backfill** - In-process queue, worker, post-sync enqueue hook, boot-time backfill of pre-existing books, idempotency, and provenance-respecting writes
@@ -36,7 +36,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   - [x] 01-04-PLAN.md — Migration 2: create enrichment_job table (with partial unique on open jobs per book)
   - [x] 01-05-PLAN.md — Migration 3: extend book with 8 enrichment columns + provenance
   - [x] 01-06-PLAN.md — Migration 4: backfill book_author from existing book.authors strings (uses parser)
-  - [ ] 01-07-PLAN.md — End-to-end Phase 1 schema verification (SCHEMA-07 grep test + dynamic invariants)
+  - [x] 01-07-PLAN.md — End-to-end Phase 1 schema verification (SCHEMA-07 grep test + dynamic invariants)
 
 ### Phase 2: Canonical Genre Vocabulary
 **Goal**: A canonical genre whitelist exists in the database and a pure function maps OpenLibrary subjects to canonical genres with documented denylist behavior, ready for the enrichment service to consume.

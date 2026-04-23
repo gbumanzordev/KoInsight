@@ -14,7 +14,7 @@
 - [x] **SCHEMA-04**: The `book` table gains `enrichment_status` (`pending` | `running` | `enriched` | `failed` | `skipped`), `openlibrary_work_key` (nullable), `publication_year` (nullable smallint), `original_language` (nullable ISO 639-1), and a `*_source` column (`openlibrary` | `manual`) for each enrichable field (`authors_source`, `genres_source`, `publication_year_source`, `original_language_source`)
 - [ ] **SCHEMA-05**: A new `enrichment_job` table tracks queue state with `id`, `book_md5`, `status` (`pending` | `running` | `succeeded` | `failed`), `attempts`, `last_error`, `created_at`, `updated_at`, plus a partial unique index ensuring at most one open job per book
 - [ ] **SCHEMA-06**: The existing `genre` table is seeded with the canonical genre whitelist via an idempotent migration (insert-or-ignore)
-- [ ] **SCHEMA-07**: All schema migrations are structure-only (no network calls, no data enrichment); data backfill happens through the runtime enrichment queue, not in migrations
+- [x] **SCHEMA-07**: All schema migrations are structure-only (no network calls, no data enrichment); data backfill happens through the runtime enrichment queue, not in migrations
 - [ ] **SCHEMA-08**: A migration backfills `book_author` and `author` rows from existing `book.authors` strings using a deterministic parser (split on `&`, `,`, `;` and `and`; trim; preserve order for `position`)
 
 ### Canonical genres (GENRE)

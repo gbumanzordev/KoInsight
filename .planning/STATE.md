@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 1 of 6 (Schema Foundations + Provenance)
-Plan: 6 of 7 in current phase
-Status: In progress
-Last activity: 2026-04-23 — Plan 01-06 complete (Migration 4: data-only backfill of book_author from book.authors strings via parseAuthors, dedup via normalized key, single transaction)
+Plan: 7 of 7 in current phase
+Status: Phase complete
+Last activity: 2026-04-23 — Plan 01-07 complete (End-to-end Phase 1 schema verification: vitest-encoded SCHEMA-07 static invariant + dynamic runtime checks on partial uniques, CHECK constraints, and column defaults against a fresh SQLite DB)
 
-Progress: [████████░░] 86%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: ~1.8 min
-- Total execution time: 0.18 hours
+- Total plans completed: 7
+- Average duration: ~2.0 min
+- Total execution time: 0.23 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Schema Foundations + Provenance | 6 | 11 min | ~1.8 min |
+| 1. Schema Foundations + Provenance | 7 | 14 min | ~2.0 min |
 
 **Recent Trend:**
-- Last 6 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (1 min), 01-04 (2 min), 01-05 (3 min), 01-06 (2 min)
+- Last 7 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (1 min), 01-04 (2 min), 01-05 (3 min), 01-06 (2 min), 01-07 (3 min)
 - Trend: holding pace
 
 *Updated after each plan completion*
@@ -50,6 +50,7 @@ Recent decisions affecting current work:
 - Author parser: suffix merge (D-05) runs before LN-FN flip (D-04); flip only when original has commas only and merged segment count is exactly 2; segments with no letters are dropped.
 - Migration 4 dedup uses SQLite `LOWER(TRIM(REPLACE(REPLACE(name, '  ', ' '), '  ', ' ')))` as the whereRaw predicate to approximate D-09's regex-based normalization; acceptable because SQLite lacks native regex and realistic display names have at most 4 consecutive spaces.
 - Data-only migration down() truncates the tables it populated (author + book_author); safe because Phase 1 is the bottom of the data stack.
+- SCHEMA-07 structure-only invariant is encoded as a vitest assertion (readFileSync + regex.not.toMatch) so CI catches any future migration that reintroduces network calls or book-row iteration into migrations 1-3.
 
 ### Pending Todos
 
@@ -69,5 +70,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-23
-Stopped at: Completed Plan 01-06 (Migration 4: data-only backfill of author + book_author from book.authors strings, single transaction, dedup via normalized key). Next: Plan 01-07 (End-to-end Phase 1 schema verification: SCHEMA-07 grep test + dynamic invariants).
+Stopped at: Completed Plan 01-07 (End-to-end Phase 1 schema verification: vitest SCHEMA-07 static invariant + dynamic partial-unique / CHECK / default checks on a fresh SQLite DB). Phase 1 complete (7 of 7 plans). Next: Phase 2 (Canonical Genre Vocabulary).
 Resume file: None
