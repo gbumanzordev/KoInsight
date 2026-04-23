@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 1 of 6 (Schema Foundations + Provenance)
-Plan: 4 of 7 in current phase
+Plan: 5 of 7 in current phase
 Status: In progress
-Last activity: 2026-04-23 — Plan 01-04 complete (Migration 2: enrichment_job table with status CHECK + partial unique index on open jobs per book_md5)
+Last activity: 2026-04-23 — Plan 01-05 complete (Migration 3: extend book with 8 enrichment+provenance columns, CHECK constraints, authors preserved)
 
-Progress: [█████░░░░░] 57%
+Progress: [███████░░░] 71%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: ~1.5 min
-- Total execution time: 0.1 hours
+- Total plans completed: 5
+- Average duration: ~1.8 min
+- Total execution time: 0.15 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Schema Foundations + Provenance | 4 | 6 min | ~1.5 min |
+| 1. Schema Foundations + Provenance | 5 | 9 min | ~1.8 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (1 min), 01-04 (2 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (1 min), 01-03 (1 min), 01-04 (2 min), 01-05 (3 min)
 - Trend: holding pace
 
 *Updated after each plan completion*
@@ -67,5 +67,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-23
-Stopped at: Completed Plan 01-04 (Migration 2: enrichment_job table + partial unique index). Next: Plan 01-05 (Migration 3: extend book with 8 enrichment columns + provenance).
+Stopped at: Completed Plan 01-05 (Migration 3: book extended with 8 enrichment+provenance columns; authors preserved). Next: Plan 01-06 (Migration 4: backfill book_author from existing book.authors strings using parser).
 Resume file: None
