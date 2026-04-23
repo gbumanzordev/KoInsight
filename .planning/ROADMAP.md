@@ -47,7 +47,12 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   2. `mapOpenLibrarySubjects(['Protected DAISY', 'Accessible book', 'Science fiction', 'In library'])` returns exactly the canonical Science Fiction entry; format/marketing tags from the documented denylist are dropped before mapping.
   3. The mapping function has at least 20 unit tests against real OpenLibrary subject lists covering all-noise inputs, no-canonical-match inputs, and multi-genre inputs; all tests pass under `npm --workspace=server test`.
   4. A book whose subject list yields zero canonical matches can be persisted with `genres_source = 'openlibrary'` and an empty `book_genre` set without throwing or being marked as enrichment failure.
-**Plans**: TBD
+**Plans**: 5 plans
+  - [ ] 02-01-PLAN.md - packages/common/genres scaffold: CANONICAL_GENRES + CanonicalGenre type + barrel + vitest config (GENRE-01)
+  - [ ] 02-02-PLAN.md - aliases, denylist, mapOpenLibrarySubjects + 25-case TDD map.test.ts with 10 real OL fixtures (GENRE-02, GENRE-03, GENRE-04)
+  - [ ] 02-03-PLAN.md - idempotent seed migration via .onConflict(name).ignore() (SCHEMA-06)
+  - [ ] 02-04-PLAN.md - refactor dev seed 06_genres.ts to consume CANONICAL_GENRES + tighten BOOK_GENRE_MAPPING typing
+  - [ ] 02-05-PLAN.md - phase-02-schema.test.ts: idempotency integration test + SCHEMA-07 extension grep guards
 
 ### Phase 3: OpenLibrary + Wikidata Client
 **Goal**: The HTTP layer can fetch every OpenLibrary endpoint the enrichment service needs and resolve author nationality via Wikidata P27, all behind a single shared rate limiter and circuit breaker, with no DB writes.
@@ -117,7 +122,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (with 2+3 and 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Schema Foundations + Provenance | 6/7 | In progress | - |
-| 2. Canonical Genre Vocabulary | 0/TBD | Not started | - |
+| 2. Canonical Genre Vocabulary | 0/5 | Not started | - |
 | 3. OpenLibrary + Wikidata Client | 0/TBD | Not started | - |
 | 4. Enrichment Service + Backfill | 0/TBD | Not started | - |
 | 5. Manual Edit + Unmatched Inbox | 0/TBD | Not started | - |
