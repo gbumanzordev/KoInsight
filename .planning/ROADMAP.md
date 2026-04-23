@@ -32,7 +32,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
 **Plans**: 7 plans
   - [x] 01-01-PLAN.md — Author parser helper + unit tests (pure function, TDD)
   - [x] 01-02-PLAN.md — Shared types in @koinsight/common (author.ts, enrichment.ts, extend book.ts, barrel)
-  - [ ] 01-03-PLAN.md — Migration 1: create author + book_author tables (with partial unique on openlibrary_key)
+  - [x] 01-03-PLAN.md — Migration 1: create author + book_author tables (with partial unique on openlibrary_key)
   - [ ] 01-04-PLAN.md — Migration 2: create enrichment_job table (with partial unique on open jobs per book)
   - [ ] 01-05-PLAN.md — Migration 3: extend book with 8 enrichment columns + provenance
   - [ ] 01-06-PLAN.md — Migration 4: backfill book_author from existing book.authors strings (uses parser)
@@ -116,7 +116,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (with 2+3 and 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Schema Foundations + Provenance | 1/7 | In progress | - |
+| 1. Schema Foundations + Provenance | 3/7 | In progress | - |
 | 2. Canonical Genre Vocabulary | 0/TBD | Not started | - |
 | 3. OpenLibrary + Wikidata Client | 0/TBD | Not started | - |
 | 4. Enrichment Service + Backfill | 0/TBD | Not started | - |
