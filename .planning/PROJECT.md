@@ -40,11 +40,13 @@ Every book in a user's library has trustworthy, query-friendly metadata so the d
 
 - LLM-based enrichment (e.g., using the existing `/api/ai` route to infer metadata) — user explicitly chose OpenLibrary as the single source to keep enrichment deterministic and free of per-book token cost
 - Google Books / additional metadata providers — avoid second integration and API key management in this milestone; revisit only if OpenLibrary coverage proves inadequate
+- Wikidata for any field other than author nationality — Wikidata is added narrowly as a downstream of OpenLibrary (followed only when an OL author has a `remote_ids.wikidata` link, exclusively to populate `nationality`). We deliberately do NOT use Wikidata for genres, pub year, or anything else even though it has those fields; OpenLibrary remains the sole source for everything except author nationality
 - Spotify-Wrapped-style shareable image/slideshow report — deferred; minimum-viable report lives inside the existing stats dashboard to reuse chart/UI patterns
 - Shareable public report links — not requested; all reports remain behind the authenticated dashboard
 - Author-level biographical pages or browsable author index — nationality column is enough for reporting; a full author-centric UI is a future milestone
 - BISAC or other commercial taxonomy licensing — canonical genre list is hand-curated from OpenLibrary subjects
-- Multi-author nationality weighting in reports — for co-authored books, report by primary author or by each contributor (decision deferred to planning); we are not inventing a fractional-credit scheme
+- Multi-author nationality weighting in reports — for co-authored books, the nationality breakdown counts the primary author only (the first entry in `book_author`, position=0). No fractional-credit scheme, no per-contributor inflation, no UI toggle this milestone.
+- "Currently reading" / partial-read books in the yearly report — a book counts as "read in year Y" only when ≥95% of its pages were read by the end of Y. Sampled-and-abandoned books are excluded from book-count metrics (page-time totals are unaffected).
 
 ## Context
 
@@ -64,7 +66,7 @@ Every book in a user's library has trustworthy, query-friendly metadata so the d
 
 - **Tech stack**: Must stay on Express 5 / Knex / SQLite / React 18 / Mantine. No new database engine. Any new service must follow the existing router/service/repository pattern.
 - **Node / tooling**: Node >=22, npm 10.2.4 (root `engines` / `packageManager`). Turbo orchestrates builds; migrations must continue to build via the separate `tsconfig.migrations.json`.
-- **External dependencies**: OpenLibrary is the only permitted enrichment source for this milestone. No API key required but we must respect fair-use rate limits during backfill.
+- **External dependencies**: OpenLibrary is the primary enrichment source. Wikidata is used narrowly as a downstream of OpenLibrary, called only to populate author nationality (P27) when an OL author exposes a `remote_ids.wikidata` link. No API keys required, but both endpoints must respect fair-use rate limits and identify themselves with a `User-Agent` during sync and backfill.
 - **Validation**: Zod is the server-side validation library; use it at route boundaries for the new metadata edit and report endpoints.
 - **Formatting**: Prettier-only. Format before commit.
 - **Compatibility**: The KOReader plugin contract (`/api/plugin/*`) and kosync endpoints must not regress. Schema changes to `book` must remain compatible with the plugin's bulk sync payload.
@@ -74,7 +76,9 @@ Every book in a user's library has trustworthy, query-friendly metadata so the d
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Enriched data ships before rich reports | User chose "enriched data first" in discovery; reports are a natural downstream consumer and first report is in-scope but scoped as a stats section, not a standalone product | — Pending |
-| Single enrichment source: OpenLibrary only | Free, already partially integrated, deterministic; avoids LLM cost/non-determinism and second-provider complexity | — Pending |
+| Primary enrichment source: OpenLibrary; Wikidata for nationality only | Free, deterministic, no API keys; OL author records lack any `nationality` field, and Wikidata P27 followed via OL `remote_ids.wikidata` is the only structured path. LLM and parsing-from-bio paths rejected (cost / noise) | — Pending |
+| Co-author nationality counted as primary author only | Position=0 in `book_author`. Avoids inflated denominators in nationality charts; UI toggle deferred to a future milestone | — Pending |
+| 95% pages read = "book read" for yearly counts | Hardcoded threshold; standard tracker default. Page-time totals always include all reading regardless of completion | — Pending |
 | Full `author` entity + `book_author` junction | Nationality requires treating authors as entities; co-author support falls out for free; denormalized shortcut rejected to avoid duplicating nationality per title | — Pending |
 | Curated genre whitelist on ingest (not raw storage) | OpenLibrary subjects are noisy (50+ tags per book including marketing labels); a hand-curated canonical list keeps reports clean | — Pending |
 | Auto-enrich on sync + one-time backfill on deploy | User wants zero manual effort for new books and existing library; backfill runs opportunistically after migration | — Pending |
@@ -99,4 +103,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-23 after initialization*
+*Last updated: 2026-04-23 after research synthesis (Wikidata-for-nationality, primary-author rule, 95% read threshold locked in)*
