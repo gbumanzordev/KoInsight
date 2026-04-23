@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 1 of 6 (Schema Foundations + Provenance)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-04-23 — Phase 1 context gathered (migration granularity, author parser, dedup key, defaults + types layout)
+Plan: 0 of 7 in current phase
+Status: Ready to execute
+Last activity: 2026-04-23 — Phase 1 planned (7 plans across 4 waves; verification passed)
 
 Progress: [░░░░░░░░░░] 0%
 
