@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** Phase 1 — Schema Foundations + Provenance
+**Current focus:** Phase 2, Canonical Genre Vocabulary
 
 ## Current Position
 
-Phase: 1 of 6 (Schema Foundations + Provenance)
-Plan: 7 of 7 in current phase
-Status: Phase complete
-Last activity: 2026-04-23 — Plan 01-07 complete (End-to-end Phase 1 schema verification: vitest-encoded SCHEMA-07 static invariant + dynamic runtime checks on partial uniques, CHECK constraints, and column defaults against a fresh SQLite DB)
+Phase: 2 of 6 (Canonical Genre Vocabulary)
+Plan: 0 of 5 in current phase
+Status: Ready to execute
+Last activity: 2026-04-23, Phase 2 planned (5 plans across 3 waves; plan-check passed first iteration)
 
-Progress: [██████████] 100%
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
