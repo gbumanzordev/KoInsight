@@ -31,7 +31,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   5. All migrations are structure-only: grepping the migration files for `fetch(`, `axios`, `https://`, or row-iteration loops over `book` (other than the deterministic author string-split backfill in SCHEMA-08) returns nothing.
 **Plans**: 7 plans
   - [x] 01-01-PLAN.md — Author parser helper + unit tests (pure function, TDD)
-  - [ ] 01-02-PLAN.md — Shared types in @koinsight/common (author.ts, enrichment.ts, extend book.ts, barrel)
+  - [x] 01-02-PLAN.md — Shared types in @koinsight/common (author.ts, enrichment.ts, extend book.ts, barrel)
   - [ ] 01-03-PLAN.md — Migration 1: create author + book_author tables (with partial unique on openlibrary_key)
   - [ ] 01-04-PLAN.md — Migration 2: create enrichment_job table (with partial unique on open jobs per book)
   - [ ] 01-05-PLAN.md — Migration 3: extend book with 8 enrichment columns + provenance
