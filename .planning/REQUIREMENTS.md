@@ -111,8 +111,56 @@
 
 ## Traceability
 
-<!-- Filled in by the roadmapper agent: maps each REQ-ID to the phase that delivers it. -->
+<!-- Maps each REQ-ID to the phase that delivers it. Coverage: 37/37 v1 requirements mapped. -->
 
 | REQ-ID | Phase |
 |--------|-------|
-| _to be filled by roadmap_ | _ |
+| SCHEMA-01 | Phase 1: Schema Foundations + Provenance |
+| SCHEMA-02 | Phase 1: Schema Foundations + Provenance |
+| SCHEMA-03 | Phase 1: Schema Foundations + Provenance |
+| SCHEMA-04 | Phase 1: Schema Foundations + Provenance |
+| SCHEMA-05 | Phase 1: Schema Foundations + Provenance |
+| SCHEMA-06 | Phase 2: Canonical Genre Vocabulary |
+| SCHEMA-07 | Phase 1: Schema Foundations + Provenance |
+| SCHEMA-08 | Phase 1: Schema Foundations + Provenance |
+| GENRE-01 | Phase 2: Canonical Genre Vocabulary |
+| GENRE-02 | Phase 2: Canonical Genre Vocabulary |
+| GENRE-03 | Phase 2: Canonical Genre Vocabulary |
+| GENRE-04 | Phase 2: Canonical Genre Vocabulary |
+| OL-01 | Phase 3: OpenLibrary + Wikidata Client |
+| OL-02 | Phase 3: OpenLibrary + Wikidata Client |
+| OL-03 | Phase 3: OpenLibrary + Wikidata Client |
+| OL-04 | Phase 3: OpenLibrary + Wikidata Client |
+| OL-05 | Phase 3: OpenLibrary + Wikidata Client |
+| WD-01 | Phase 3: OpenLibrary + Wikidata Client |
+| WD-02 | Phase 3: OpenLibrary + Wikidata Client |
+| WD-03 | Phase 3: OpenLibrary + Wikidata Client |
+| WD-04 | Phase 3: OpenLibrary + Wikidata Client |
+| WD-05 | Phase 3: OpenLibrary + Wikidata Client |
+| ENRICH-01 | Phase 4: Enrichment Service + Backfill |
+| ENRICH-02 | Phase 4: Enrichment Service + Backfill |
+| ENRICH-03 | Phase 4: Enrichment Service + Backfill |
+| ENRICH-04 | Phase 4: Enrichment Service + Backfill |
+| ENRICH-05 | Phase 4: Enrichment Service + Backfill |
+| ENRICH-06 | Phase 4: Enrichment Service + Backfill |
+| ENRICH-07 | Phase 4: Enrichment Service + Backfill |
+| EDIT-01 | Phase 5: Manual Edit + Unmatched Inbox |
+| EDIT-02 | Phase 5: Manual Edit + Unmatched Inbox |
+| EDIT-03 | Phase 5: Manual Edit + Unmatched Inbox |
+| EDIT-04 | Phase 5: Manual Edit + Unmatched Inbox |
+| EDIT-05 | Phase 5: Manual Edit + Unmatched Inbox |
+| UI-01 | Phase 5: Manual Edit + Unmatched Inbox |
+| UI-02 | Phase 5: Manual Edit + Unmatched Inbox |
+| UI-03 | Phase 5: Manual Edit + Unmatched Inbox |
+| UI-04 | Phase 5: Manual Edit + Unmatched Inbox |
+| UI-05 | Phase 5: Manual Edit + Unmatched Inbox |
+| REPORT-01 | Phase 6: Yearly Report |
+| REPORT-02 | Phase 6: Yearly Report |
+| REPORT-03 | Phase 6: Yearly Report |
+| REPORT-04 | Phase 6: Yearly Report |
+| REPORT-05 | Phase 6: Yearly Report |
+| REPORT-UI-01 | Phase 6: Yearly Report |
+| REPORT-UI-02 | Phase 6: Yearly Report |
+| REPORT-UI-03 | Phase 6: Yearly Report |
+| REPORT-UI-04 | Phase 6: Yearly Report |
+| REPORT-UI-05 | Phase 6: Yearly Report |
