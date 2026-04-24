@@ -87,10 +87,18 @@ async function main() {
   // endpoints are up only once the worker is already polling.
   const worker = startEnrichmentWorker(db);
 
-  setupServer().then((server) => {
-    process.on('SIGINT', (signal) => stopServer(signal, server, worker));
-    process.on('SIGTERM', (signal) => stopServer(signal, server, worker));
-  });
+  setupServer()
+    .then((server) => {
+      process.on('SIGINT', (signal) => stopServer(signal, server, worker));
+      process.on('SIGTERM', (signal) => stopServer(signal, server, worker));
+    })
+    .catch((err) => {
+      console.error('setupServer failed:', err);
+      process.exit(1);
+    });
 }
 
-main();
+main().catch((err) => {
+  console.error('Fatal startup failure:', err);
+  process.exit(1);
+});
