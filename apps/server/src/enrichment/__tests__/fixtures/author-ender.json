@@ -1,0 +1,15 @@
+{
+  "key": "/authors/OL27695A",
+  "name": "Orson Scott Card",
+  "personal_name": "Orson Scott Card",
+  "birth_date": "24 August 1951",
+  "bio": {
+    "type": "/type/text",
+    "value": "Orson Scott Card is an American novelist, critic, public speaker, essayist, and columnist. He writes in several genres but is known best for science fiction."
+  },
+  "remote_ids": {
+    "wikidata": "Q185546",
+    "viaf": "108646397",
+    "isni": "0000000121360584"
+  }
+}
