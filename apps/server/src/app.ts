@@ -8,6 +8,7 @@ import { booksRouter } from './books/books-router';
 import { appConfig } from './config';
 import { devicesRouter } from './devices/devices-router';
 import { runBackfill } from './enrichment/backfill';
+import { enrichmentRouter } from './enrichment/router';
 import { startEnrichmentWorker, type EnrichmentWorker } from './enrichment/worker';
 import { db } from './knex';
 import { kopluginRouter } from './koplugin/koplugin-router';
@@ -36,6 +37,7 @@ async function setupServer() {
   app.use('/api/upload', uploadRouter);
   app.use('/api/open-library', openLibraryRouter);
   app.use('/api/ai', openAiRouter);
+  app.use('/api/enrichment', enrichmentRouter);
 
   // Serve react app
   app.use(express.static(appConfig.webBuildPath));
