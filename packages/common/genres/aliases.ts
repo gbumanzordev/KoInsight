@@ -1,4 +1,4 @@
-import type { CanonicalGenre } from './canonical';
+import type { CanonicalGenre } from './canonical.js';
 
 // Alias keys are raw OL subject fragments. At lookup time they are normalized
 // via trim + lowercase + whitespace-collapse (D-08); keys here are stored

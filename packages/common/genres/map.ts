@@ -1,6 +1,6 @@
-import { GENRE_ALIASES } from './aliases';
-import { CANONICAL_GENRES, type CanonicalGenre } from './canonical';
-import { SUBJECT_DENYLIST } from './denylist';
+import { GENRE_ALIASES } from './aliases.js';
+import { CANONICAL_GENRES, type CanonicalGenre } from './canonical.js';
+import { SUBJECT_DENYLIST } from './denylist.js';
 
 const normalize = (s: string): string => s.trim().toLowerCase().replace(/\s+/g, ' ');
 
