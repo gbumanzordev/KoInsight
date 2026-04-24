@@ -1,0 +1,14 @@
+{
+  "numFound": 1,
+  "docs": [
+    {
+      "key": "/works/OL27448W",
+      "title": "Ender's Game",
+      "author_name": ["Orson Scott Card"],
+      "author_key": ["OL27695A"],
+      "first_publish_year": 1985,
+      "isbn": ["9780812550702", "0812550706"],
+      "cover_i": 8474200
+    }
+  ]
+}

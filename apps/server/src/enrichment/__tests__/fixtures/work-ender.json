@@ -1,0 +1,15 @@
+{
+  "key": "/works/OL27448W",
+  "title": "Ender's Game",
+  "subjects": [
+    "Science fiction",
+    "War",
+    "Children's stories",
+    "Space warfare",
+    "Protected DAISY"
+  ],
+  "authors": [
+    { "author": { "key": "/authors/OL27695A" } }
+  ],
+  "first_publish_date": "1985"
+}

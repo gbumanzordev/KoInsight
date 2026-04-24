@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready
-stopped_at: "Completed Phase 3 (OpenLibrary + Wikidata Client): shared Bottleneck limiter + opossum breaker + typedFetch, OpenLibraryClient (4 Zod methods, 7 fixtures), country-codes (hand-curated QID->ISO map, 15 TDD tests), WikidataClient + P27 resolver (TDD, 7 resolver cases), end-to-end invariants (shared-limiter reference equality, no-DB-writes grep, Work-not-Edition integration). Full suite: 279 server + 29 common. Deferred: phase-02-schema.test.ts CJS/ESM import failure and stats-service mostPagesInADay flaky test (both pre-existing, logged in deferred-items.md). Next: Phase 4 (Enrichment Service + Backfill)."
-last_updated: "2026-04-24T09:17:00.000Z"
-last_activity: 2026-04-24 -- Phase 03 complete (5/5 plans, verification passed)
+status: executing
+stopped_at: "Completed Plan 01-07 (End-to-end Phase 1 schema verification: vitest SCHEMA-07 static invariant + dynamic partial-unique / CHECK / default checks on a fresh SQLite DB). Phase 1 complete (7 of 7 plans). Next: Phase 2 (Canonical Genre Vocabulary)."
+last_updated: "2026-04-24T17:20:09.718Z"
+last_activity: 2026-04-24 -- Phase 04 execution started
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 17
+  total_plans: 23
   completed_plans: 17
-  percent: 50
+  percent: 74
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** Phase 4 — Enrichment Service + Backfill (ready to plan)
+**Current focus:** Phase 04 — enrichment-service-backfill
 
 ## Current Position
 
-Phase: 03 (openlibrary-wikidata-client) — COMPLETE
-Plan: 5 of 5
-Status: Phase 3 complete, verification passed. Ready for Phase 4.
-Last activity: 2026-04-24 -- Phase 03 complete (5/5 plans, verification passed)
+Phase: 04 (enrichment-service-backfill) — EXECUTING
+Plan: 1 of 6
+Status: Executing Phase 04
+Last activity: 2026-04-24 -- Phase 04 execution started
 
 Progress: [█████░░░░░] 50%
 
