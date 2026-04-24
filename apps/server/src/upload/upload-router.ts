@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { unlinkSync } from 'fs';
 import multer from 'multer';
 import { appConfig } from '../config';
+import { enrichmentService } from '../enrichment/service';
 import { UploadService } from './upload-service';
 
 const storage = multer.diskStorage({
@@ -47,7 +48,13 @@ router.post('/', upload.single('file'), async (req, res, next) => {
 
   try {
     const { newBooks, newPageStats } = UploadService.extractDataFromStatisticsDb(db);
-    await UploadService.uploadStatisticData(newBooks, newPageStats);
+    const { affectedMd5s } = await UploadService.uploadStatisticData(newBooks, newPageStats);
+
+    // D-06: enqueue AFTER the sync transaction commits. D-09: enqueue swallows
+    // its own errors; this loop cannot reject.
+    for (const md5 of affectedMd5s) {
+      await enrichmentService.enqueue(md5);
+    }
 
     res.status(200).json({ message: 'Database imported successfully' });
   } catch (err) {

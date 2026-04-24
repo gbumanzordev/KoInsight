@@ -175,7 +175,7 @@ async function processJob(knex: Knex, job: EnrichmentJobRow): Promise<void> {
 
   const bundle: EnrichedBundle = {
     workKey,
-    publicationYear: extractPublicationYear(work, candidate),
+    publicationYear: extractPublicationYear(work, candidate as { first_publish_year?: number }),
     originalLanguage: null, // OL WorkSchema does not expose original_languages; leave null until Phase 6 widens the schema.
     authors: enrichedAuthors,
     subjects: work.subjects ?? [],
