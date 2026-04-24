@@ -12,3 +12,4 @@ export * from './page-stat';
 export * from './progress';
 export * from './user';
 export * from './stats-api';
+export * from './books-edit-api';
