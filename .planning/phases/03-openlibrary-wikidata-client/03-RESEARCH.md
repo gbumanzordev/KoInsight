@@ -643,27 +643,25 @@ async resolveP27Nationality(wikidataQid: string): Promise<string | null> {
 | A7 | Book ISBN is NOT currently stored on `book` table | Gray Area #5 | [VERIFIED: grepped `packages/common/types/book.ts`] — Book type has no isbn field; confirmed |
 | A8 | Server runs as CJS (per `tsconfig.json#module = "commonjs"`) in both dev (`tsx`) and prod (`node dist`) | Summary | [VERIFIED: read tsconfig and package.json scripts] — low risk |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Canonical homepage URL for User-Agent.**
-   - What we know: No homepage in root `package.json`, no `homepage` field in `apps/server/package.json`. PROJECT.md has no URL.
-   - What's unclear: Should we use the GitHub URL? A user's self-hosted instance URL? A fixed string like `self-hosted-koinsight`?
-   - Recommendation: Planner asks user. Default to `https://github.com/<owner>/koinsight` if no answer.
+All four questions are locked via the planner's adoption of the research recommendations. Tracked as D-01..D-04 in the plan frontmatter and task actions.
 
-2. **Literal "N consecutive" semantic vs opossum percentage model (OL-04).**
-   - What we know: opossum uses rolling-window percentage; this is the Node-community default.
-   - What's unclear: Does the user want a literal consecutive-counter?
-   - Recommendation: Go with percentage + volumeThreshold; surface the deviation in the plan's "decisions" section.
+1. **D-01: Canonical homepage URL for User-Agent — RESOLVED.**
+   - Decision: `https://github.com/gbumanzordev/koinsight`.
+   - Rationale: The repo owner's GitHub account is the authoritative attribution target and qualifies for the OL 3 req/s tier. Reversible via one-line edit in `user-agent.ts` if upstream repo moves.
 
-3. **Historical-country citizenship (USSR, GDR, Czechoslovakia).**
-   - What we know: These QIDs have no P297.
-   - What's unclear: NULL (align with "Unknown" bucket) vs map to successor state.
-   - Recommendation: NULL. Easy to revisit if the user reports many "Unknown"s are historical-Soviet authors.
+2. **D-02: Literal "N consecutive" vs opossum percentage model (OL-04) — RESOLVED.**
+   - Decision: Accept opossum's `errorThresholdPercentage: 50, volumeThreshold: 5, resetTimeout: 30_000` defaults as the practical equivalent of "consecutive 5xx/timeouts".
+   - Rationale: 100% error rate over volumeThreshold==5 calls = 5 consecutive failures. Matches OL-04 intent in practice. Documented as a deviation in 03-01-PLAN.md frontmatter.
 
-4. **Do we add an `exports` map to `@koinsight/common` in this phase?**
-   - What we know: Phase 2 hit the ESM/CJS boundary and worked around it with `dist/*.js` imports.
-   - What's unclear: Whether the cleanup belongs in Phase 3's scope.
-   - Recommendation: **No**, do NOT couple this to Phase 3. Phase 3's types live in the server slice (no runtime import of `@koinsight/common`). Add the `exports` map as a standalone cleanup before any phase actually needs it.
+3. **D-03: Historical-country citizenship (USSR, GDR, Czechoslovakia) — RESOLVED.**
+   - Decision: Resolve to `nationality = NULL`; do NOT map to successor states.
+   - Rationale: Aligns with Phase 6's "Unknown" bucket as a first-class reporting category. Avoids arbitrary historical-mapping tables that users cannot audit.
+
+4. **D-04: `@koinsight/common` `exports` map — RESOLVED (NO).**
+   - Decision: Phase 3 does NOT touch the common package boundary.
+   - Rationale: All Phase 3 types live in the server slice (Zod schemas + `z.infer`). No runtime import from common. The exports-map cleanup remains a standalone follow-up tracked against Phase 2's deviations.
 
 ## Environment Availability
 
