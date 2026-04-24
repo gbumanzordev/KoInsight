@@ -13,7 +13,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
 - [x] **Phase 1: Schema Foundations + Provenance** - Author entity, junction, enrichment job table, per-field `*_source` columns, and shared types — every downstream phase consumes these
 - [x] **Phase 2: Canonical Genre Vocabulary** - Curated whitelist constant, idempotent seed/migration, and a pure subject-to-genre mapping function with unit-test coverage
 - [x] **Phase 3: OpenLibrary + Wikidata Client** - Extend the OL HTTP client with work/edition/author/search methods, a shared Bottleneck rate limiter, User-Agent, circuit breaker, and Wikidata P27 nationality lookup
-- [ ] **Phase 4: Enrichment Service + Backfill** - In-process queue, worker, post-sync enqueue hook, boot-time backfill of pre-existing books, idempotency, and provenance-respecting writes
+- [x] **Phase 4: Enrichment Service + Backfill** - In-process queue, worker, post-sync enqueue hook, boot-time backfill of pre-existing books, idempotency, and provenance-respecting writes
 - [ ] **Phase 5: Manual Edit + Unmatched Inbox** - PATCH metadata API, re-enrich endpoint, status counters, Mantine edit form with provenance badges, and the unmatched-books inbox view
 - [ ] **Phase 6: Yearly Report** - Server-side aggregations under `/api/reports/*` plus the year-selector dashboard with genre/nationality/decade/language charts and coverage banners
 
@@ -87,7 +87,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   - [x] 04-03-PLAN.md — service.ts (enqueue with D-07/D-08/D-09) + backfill.ts (D-10 INSERT...SELECT)
   - [x] 04-04-PLAN.md — applier.ts (D-18 transactional apply, D-19 author dedup, D-20 provenance guards) + markTerminalFailure (D-15)
   - [x] 04-05-PLAN.md — worker.ts (polling loop, crash recovery, retry scheduling) + app.ts + upload/koplugin post-commit wiring
-  - [ ] 04-06-PLAN.md — End-to-end integration test covering Success Criteria 1, 3, 4, 5
+  - [x] 04-06-PLAN.md — End-to-end integration test covering Success Criteria 1, 3, 4, 5
 
 ### Phase 5: Manual Edit + Unmatched Inbox
 **Goal**: Users can correct any wrong or missing metadata from the web UI, find books OpenLibrary failed on, and re-trigger enrichment per book — and every manual change is sticky against future re-enrichment.
