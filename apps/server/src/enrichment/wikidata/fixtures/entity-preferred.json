@@ -1,0 +1,35 @@
+{
+  "entities": {
+    "QTESTPREF": {
+      "id": "QTESTPREF",
+      "claims": {
+        "P27": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P27",
+              "datavalue": { "value": { "id": "Q142" }, "type": "wikibase-entityid" }
+            },
+            "rank": "normal"
+          },
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P27",
+              "datavalue": { "value": { "id": "Q183" }, "type": "wikibase-entityid" }
+            },
+            "rank": "preferred"
+          },
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P27",
+              "datavalue": { "value": { "id": "Q145" }, "type": "wikibase-entityid" }
+            },
+            "rank": "normal"
+          }
+        ]
+      }
+    }
+  }
+}

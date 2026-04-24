@@ -1,0 +1,19 @@
+{
+  "entities": {
+    "QTESTUSSR": {
+      "id": "QTESTUSSR",
+      "claims": {
+        "P27": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P27",
+              "datavalue": { "value": { "id": "Q15180" }, "type": "wikibase-entityid" }
+            },
+            "rank": "normal"
+          }
+        ]
+      }
+    }
+  }
+}

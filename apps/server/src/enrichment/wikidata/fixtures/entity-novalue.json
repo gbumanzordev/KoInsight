@@ -1,0 +1,18 @@
+{
+  "entities": {
+    "QTESTNOVALUE": {
+      "id": "QTESTNOVALUE",
+      "claims": {
+        "P27": [
+          {
+            "mainsnak": {
+              "snaktype": "novalue",
+              "property": "P27"
+            },
+            "rank": "normal"
+          }
+        ]
+      }
+    }
+  }
+}
