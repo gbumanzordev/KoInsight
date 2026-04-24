@@ -13,8 +13,9 @@
     "skipLibCheck": true,
     "noImplicitAny": true,
     "incremental": false,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*.ts", "src/*.ts"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }
