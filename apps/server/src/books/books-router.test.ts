@@ -249,6 +249,80 @@ describe('books-router', () => {
     });
   });
 
+  describe('POST /books/:bookId/re-enrich', () => {
+    it('returns 202 with new pending job for a pending book', async () => {
+      const md5 = 'a'.repeat(32);
+      const book = await createBook(db, {
+        md5,
+        title: 'Pending Book',
+        enrichment_status: 'pending',
+      });
+
+      const pre = await db('enrichment_job').where({ book_md5: md5 }).select('id');
+      expect(pre).toHaveLength(0);
+
+      const response = await request(app).post(`/books/${book.id}/re-enrich`).send();
+
+      expect(response.status).toBe(202);
+      expect(response.body.job).toEqual(
+        expect.objectContaining({
+          book_md5: md5,
+          status: 'pending',
+          attempts: 0,
+          last_error: null,
+        })
+      );
+      expect(typeof response.body.job.id).toBe('number');
+
+      const post = await db('enrichment_job').where({ book_md5: md5 }).select('id');
+      expect(post).toHaveLength(1);
+    });
+
+    it('returns 202 with existing open job when one already exists', async () => {
+      const md5 = 'b'.repeat(32);
+      const book = await createBook(db, { md5, enrichment_status: 'pending' });
+      const [existing] = await db('enrichment_job')
+        .insert({ book_md5: md5, status: 'pending' })
+        .returning('id');
+      const existingId = (existing as { id: number }).id ?? (existing as unknown as number);
+
+      const preCount = (await db('enrichment_job').where({ book_md5: md5 }).select('id')).length;
+      expect(preCount).toBe(1);
+
+      const response = await request(app).post(`/books/${book.id}/re-enrich`).send();
+
+      expect(response.status).toBe(202);
+      expect(response.body.job.id).toBe(existingId);
+      expect(response.body.job.status).toBe('pending');
+
+      const postCount = (await db('enrichment_job').where({ book_md5: md5 }).select('id')).length;
+      expect(postCount).toBe(1);
+    });
+
+    it('returns 202 with latest terminal job for a failed book', async () => {
+      const md5 = 'c'.repeat(32);
+      const book = await createBook(db, { md5, enrichment_status: 'failed' });
+      const [inserted] = await db('enrichment_job')
+        .insert({ book_md5: md5, status: 'failed', last_error: 'prior-error', attempts: 1 })
+        .returning('id');
+      const insertedId = (inserted as { id: number }).id ?? (inserted as unknown as number);
+
+      const response = await request(app).post(`/books/${book.id}/re-enrich`).send();
+
+      expect(response.status).toBe(202);
+      expect(response.body.job.status).toBe('failed');
+      expect(response.body.job.id).toBe(insertedId);
+
+      const count = (await db('enrichment_job').where({ book_md5: md5 }).select('id')).length;
+      expect(count).toBe(1);
+    });
+
+    it('returns 404 when bookId does not exist', async () => {
+      const response = await request(app).post(`/books/999999/re-enrich`).send();
+      expect(response.status).toBe(404);
+    });
+  });
+
   describe('PUT /books/:bookId/reference_pages', () => {
     it('updates reference pages', async () => {
       const book = await createBook(db, { reference_pages: 100 });
