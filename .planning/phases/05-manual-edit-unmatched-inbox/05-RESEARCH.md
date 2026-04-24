@@ -789,24 +789,24 @@ diff <(echo "$API" | jq -S .) <(echo "$SQL" | jq -S .)
 
 **Risk if wrong:** all assumptions above are low-impact and decidable at planning time without research blockers.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Sync `book.authors` text cache on manual edit?**
    - What we know: Phase 4 applier does NOT sync `book.authors` (only writes `book_author` junction).
    - What's unclear: Whether existing reads of `book.authors` (e.g., `book-card.tsx`) should reflect manual edits immediately.
-   - Recommendation: Yes, sync. Set `updates.authors = patch.authors.map(a => a.name).join(', ')`. Document in PLAN as A2 resolved.
+   - RESOLVED: Yes, sync. Set `updates.authors = patch.authors.map(a => a.name).join(', ')`. Document in PLAN as A2 resolved.
 
 2. **Orphan author GC after row removal?**
    - What we know: Removing `book_author` rows does not delete the underlying `author`.
    - What's unclear: Whether to add a cleanup pass.
-   - Recommendation: Skip for Phase 5 (consistent with Phase 4 applier; defer to future cleanup pass).
+   - RESOLVED: Skip for Phase 5 (consistent with Phase 4 applier; defer to future cleanup pass).
 
 3. **`/settings` nested route vs query param?**
    - What we know: D-10 leaves it to planner.
-   - Recommendation: Nested route (`/settings/unmatched` defaulted from `/settings`) — more shareable, matches React Router 7 patterns, and the side-nav `NavLink` `to=` props compose naturally.
+   - RESOLVED: Nested route (`/settings/unmatched` defaulted from `/settings`) — more shareable, matches React Router 7 patterns, and the side-nav `NavLink` `to=` props compose naturally.
 
 4. **Section routing default — fall back to `/settings/unmatched` from `/settings`?**
-   - Recommendation: `<Route path="/settings" element={<SettingsLayout />}><Route index element={<Navigate to="unmatched" replace />} /><Route path="unmatched" element={<UnmatchedBooksSection />} /></Route>`.
+   - RESOLVED: `<Route path="/settings" element={<SettingsLayout />}><Route index element={<Navigate to="unmatched" replace />} /><Route path="unmatched" element={<UnmatchedBooksSection />} /></Route>`.
 
 ## State of the Art
 
@@ -883,12 +883,12 @@ diff <(echo "$API" | jq -S .) <(echo "$SQL" | jq -S .)
 | Pitfalls | HIGH | Derived from reading the actual Phase 4 code, not theory |
 | Validation | HIGH | Falsifiable curl + sqlite3 commands per success criterion |
 
-### Open Questions (low-risk, planner-decidable)
+### Open Questions (RESOLVED)
 
-- Sync `book.authors` text on manual edit? (Recommendation: yes.)
-- Orphan author GC? (Recommendation: skip in Phase 5.)
-- `/settings` routing: nested vs query param? (Recommendation: nested with default redirect.)
-- Whether Phase 1 added `idx_book_enrichment_status` (Recommendation: planner greps; add Phase 5 migration if missing.)
+- Sync `book.authors` text on manual edit? (RESOLVED: yes.)
+- Orphan author GC? (RESOLVED: skip in Phase 5.)
+- `/settings` routing: nested vs query param? (RESOLVED: nested with default redirect.)
+- Whether Phase 1 added `idx_book_enrichment_status` (RESOLVED: planner greps; add Phase 5 migration if missing.)
 
 ### Ready for Planning
 
