@@ -163,13 +163,18 @@ describe('enrichmentService.enqueue', () => {
     const md5 = '6'.repeat(32);
     await createBook(db, { md5, enrichment_status: 'pending' });
 
-    // Force a DB error by spying on db.raw or by making insert() reject via a mock.
-    // We monkey-patch the enrichment_job insert path by stubbing the `insert` builder
-    // for this one call. Simplest approach: replace the `db` function temporarily.
-    const original = db('enrichment_job').insert.bind(db('enrichment_job'));
-    // Easier: force the SELECT book to throw via a spy on `db.raw` is not viable
-    // since enqueue uses query builder. Instead, drop the table briefly to force error.
-    await db.raw('ALTER TABLE enrichment_job RENAME TO enrichment_job_backup');
+    // Force a DB-layer failure without mutating schema. Spying on the knex
+    // client's query runner rejects any attempted query, which exercises the
+    // same try/catch path as a real driver error. This avoids the earlier
+    // ALTER TABLE RENAME approach, which could leak a renamed table across
+    // test runs if the process was killed mid-test (corrupting the shared
+    // :memory: migration state in subsequent runs under the test-setup hook).
+    const client = db.client as unknown as {
+      query: (connection: unknown, obj: unknown) => Promise<unknown>;
+    };
+    const querySpy = vi
+      .spyOn(client, 'query')
+      .mockRejectedValue(new Error('simulated DB failure'));
     try {
       await expect(enrichmentService.enqueue(md5)).resolves.toBeUndefined();
       expect(warnSpy).toHaveBeenCalledWith(
@@ -177,9 +182,7 @@ describe('enrichmentService.enqueue', () => {
         expect.objectContaining({ bookMd5: md5, phase: 'enqueue' })
       );
     } finally {
-      await db.raw('ALTER TABLE enrichment_job_backup RENAME TO enrichment_job');
+      querySpy.mockRestore();
     }
-    // Silence unused warning.
-    void original;
   });
 });
