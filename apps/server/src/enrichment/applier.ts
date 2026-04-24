@@ -58,11 +58,16 @@ async function upsertAuthor(trx: Knex.Transaction, a: EnrichedAuthor): Promise<n
     .whereNull('openlibrary_key')
     .first();
   if (byName) {
-    await trx('author').where({ id: byName.id }).update({
+    // Mirror D-20 at the author level: only touch nationality when the
+    // source is NULL or 'openlibrary'. Manual overrides stick (SC-4).
+    const update: Record<string, unknown> = {
       openlibrary_key: a.openlibrary_key,
-      nationality: a.nationality,
-      nationality_source: 'openlibrary',
-    });
+    };
+    if (byName.nationality_source === null || byName.nationality_source === 'openlibrary') {
+      update.nationality = a.nationality;
+      update.nationality_source = 'openlibrary';
+    }
+    await trx('author').where({ id: byName.id }).update(update);
     return byName.id;
   }
 

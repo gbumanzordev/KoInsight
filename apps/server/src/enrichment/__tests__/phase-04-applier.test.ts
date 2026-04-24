@@ -233,6 +233,31 @@ describe('applyEnrichment', () => {
     expect(authors[0].nationality_source).toBe('openlibrary');
   });
 
+  it('author dedup by normalized name (D-19 step 2): manual nationality wins (SC-4)', async () => {
+    await createBook(db, { md5: MD5, enrichment_status: 'pending' });
+    const [existing] = await db('author')
+      .insert({
+        name: 'Orson Scott Card',
+        openlibrary_key: null,
+        nationality: 'FR',
+        nationality_source: 'manual',
+      })
+      .returning('id');
+    const existingId = typeof existing === 'object' ? existing.id : existing;
+    const jobId = await openJob(MD5);
+
+    await applyEnrichment(db, MD5, jobId, enderBundle());
+
+    const authors = await db('author').select('*');
+    expect(authors).toHaveLength(1);
+    expect(authors[0].id).toBe(existingId);
+    // OL key is always stamped (provenance-free identifier per WD-04).
+    expect(authors[0].openlibrary_key).toBe('/authors/OL23919A');
+    // Nationality stays manual.
+    expect(authors[0].nationality).toBe('FR');
+    expect(authors[0].nationality_source).toBe('manual');
+  });
+
   it('author dedup creates new row when both checks miss (D-19 step 3)', async () => {
     await createBook(db, { md5: MD5, enrichment_status: 'pending' });
     const jobId = await openJob(MD5);
