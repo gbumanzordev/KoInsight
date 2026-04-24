@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Phase 5 context gathered (05-CONTEXT.md). Next: /gsd-plan-phase 5."
-last_updated: "2026-04-24T18:00:00.000Z"
-last_activity: 2026-04-24 -- Phase 05 context gathered
+stopped_at: "Completed Plan 01-07 (End-to-end Phase 1 schema verification: vitest SCHEMA-07 static invariant + dynamic partial-unique / CHECK / default checks on a fresh SQLite DB). Phase 1 complete (7 of 7 plans). Next: Phase 2 (Canonical Genre Vocabulary)."
+last_updated: "2026-04-24T23:12:18.799Z"
+last_activity: 2026-04-24 -- Phase 5 execution started
 progress:
   total_phases: 6
-  completed_phases: 3
-  total_plans: 23
-  completed_plans: 17
-  percent: 74
+  completed_phases: 4
+  total_plans: 28
+  completed_plans: 23
+  percent: 82
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** Phase 04 — enrichment-service-backfill
+**Current focus:** Phase 5 — Manual Edit + Unmatched Inbox
 
 ## Current Position
 
-Phase: 04 (enrichment-service-backfill) — EXECUTING
-Plan: 1 of 6
-Status: Executing Phase 04
-Last activity: 2026-04-24 -- Phase 04 execution started
+Phase: 5 (Manual Edit + Unmatched Inbox) — EXECUTING
+Plan: 1 of 5
+Status: Executing Phase 5
+Last activity: 2026-04-24 -- Phase 5 execution started
 
 Progress: [█████░░░░░] 50%
 
