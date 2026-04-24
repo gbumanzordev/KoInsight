@@ -82,7 +82,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   4. A book whose `genres_source = 'manual'` retains its manual `book_genre` rows after a forced re-enrichment, even when OpenLibrary returns different subjects (manual-wins rule enforced).
   5. After a simulated crash mid-job, restarting the server resets `running` jobs to `pending` so they retry; jobs that exceed the max-attempts ceiling are left in `failed` with `last_error` populated, and books with no OL match land at `enrichment_status = 'failed'` ready for the unmatched inbox.
 **Plans**: 6 plans
-  - [ ] 04-01-PLAN.md — Wave 0: next_attempt_at migration + constants + truncate-list fix + fixtures + grep guard + TDD anchors
+  - [x] 04-01-PLAN.md — Wave 0: next_attempt_at migration + constants + truncate-list fix + fixtures + grep guard + TDD anchors
   - [ ] 04-02-PLAN.md — matcher.ts (D-17 token overlap) + retry.ts (D-14 classify, D-12 backoff), pure, TDD
   - [ ] 04-03-PLAN.md — service.ts (enqueue with D-07/D-08/D-09) + backfill.ts (D-10 INSERT...SELECT)
   - [ ] 04-04-PLAN.md — applier.ts (D-18 transactional apply, D-19 author dedup, D-20 provenance guards) + markTerminalFailure (D-15)
