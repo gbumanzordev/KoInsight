@@ -12,7 +12,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
 
 - [x] **Phase 1: Schema Foundations + Provenance** - Author entity, junction, enrichment job table, per-field `*_source` columns, and shared types — every downstream phase consumes these
 - [x] **Phase 2: Canonical Genre Vocabulary** - Curated whitelist constant, idempotent seed/migration, and a pure subject-to-genre mapping function with unit-test coverage
-- [ ] **Phase 3: OpenLibrary + Wikidata Client** - Extend the OL HTTP client with work/edition/author/search methods, a shared Bottleneck rate limiter, User-Agent, circuit breaker, and Wikidata P27 nationality lookup
+- [x] **Phase 3: OpenLibrary + Wikidata Client** - Extend the OL HTTP client with work/edition/author/search methods, a shared Bottleneck rate limiter, User-Agent, circuit breaker, and Wikidata P27 nationality lookup
 - [ ] **Phase 4: Enrichment Service + Backfill** - In-process queue, worker, post-sync enqueue hook, boot-time backfill of pre-existing books, idempotency, and provenance-respecting writes
 - [ ] **Phase 5: Manual Edit + Unmatched Inbox** - PATCH metadata API, re-enrich endpoint, status counters, Mantine edit form with provenance badges, and the unmatched-books inbox view
 - [ ] **Phase 6: Yearly Report** - Server-side aggregations under `/api/reports/*` plus the year-selector dashboard with genre/nationality/decade/language charts and coverage banners
@@ -65,11 +65,11 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   4. After N consecutive simulated 5xx/timeouts the circuit breaker opens and subsequent calls return the open-circuit error without hitting the network; after the cooldown a single probe is allowed through.
   5. Given an OpenLibrary author response with `remote_ids.wikidata`, the client fetches the Wikidata entity, picks the P27 claim with no `end time` and highest rank, and normalizes the result to an ISO 3166-1 alpha-2 country code; authors lacking a Wikidata link resolve to `nationality = NULL` with `nationality_source = 'openlibrary'`.
 **Plans**: 5 plans
-  - [ ] 03-01-PLAN.md — Shared HTTP infrastructure (Bottleneck limiter, opossum breaker, User-Agent, http-errors, typedFetch) (OL-02, OL-03, OL-04, WD-05)
-  - [ ] 03-02-PLAN.md — Country-codes module: hand-curated QID -> ISO 3166-1 alpha-2 map + runtime cache (TDD) (WD-02)
-  - [ ] 03-03-PLAN.md — OpenLibraryClient: Zod schemas + instance class + 7 fixtures + fixture-based tests (OL-01, OL-02, OL-05)
-  - [ ] 03-04-PLAN.md — WikidataClient: schemas + P27 resolver (TDD) + client + 10 fixtures (WD-01, WD-02, WD-03, WD-04, WD-05)
-  - [ ] 03-05-PLAN.md — Shared-limiter invariant + no-DB-writes grep guard + end-to-end integration test (OL-03, WD-05, roll-up)
+  - [x] 03-01-PLAN.md — Shared HTTP infrastructure (Bottleneck limiter, opossum breaker, User-Agent, http-errors, typedFetch) (OL-02, OL-03, OL-04, WD-05)
+  - [x] 03-02-PLAN.md — Country-codes module: hand-curated QID -> ISO 3166-1 alpha-2 map + runtime cache (TDD) (WD-02)
+  - [x] 03-03-PLAN.md — OpenLibraryClient: Zod schemas + instance class + 7 fixtures + fixture-based tests (OL-01, OL-02, OL-05)
+  - [x] 03-04-PLAN.md — WikidataClient: schemas + P27 resolver (TDD) + client + 10 fixtures (WD-01, WD-02, WD-03, WD-04, WD-05)
+  - [x] 03-05-PLAN.md — Shared-limiter invariant + no-DB-writes grep guard + end-to-end integration test (OL-03, WD-05, roll-up)
 
 ### Phase 4: Enrichment Service + Backfill
 **Goal**: Books synced from KOReader are enriched asynchronously without blocking the sync path, the entire pre-existing library is backfilled on first deploy, and re-enrichment never overwrites manual edits.
@@ -128,7 +128,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (with 2+3 and 5
 |-------|----------------|--------|-----------|
 | 1. Schema Foundations + Provenance | 7/7 | Complete | 2026-04-23 |
 | 2. Canonical Genre Vocabulary | 5/5 | Complete | 2026-04-23 |
-| 3. OpenLibrary + Wikidata Client | 0/5 | Not started | - |
+| 3. OpenLibrary + Wikidata Client | 5/5 | Complete | 2026-04-24 |
 | 4. Enrichment Service + Backfill | 0/TBD | Not started | - |
 | 5. Manual Edit + Unmatched Inbox | 0/TBD | Not started | - |
 | 6. Yearly Report | 0/TBD | Not started | - |

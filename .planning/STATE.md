@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready
-stopped_at: "Completed Phase 2 (Canonical Genre Vocabulary): 76-entry CANONICAL_GENRES tuple in @koinsight/common, pure mapOpenLibrarySubjects with 25 tests incl. 10 real OL fixtures, idempotent seed migration, dev-seed refactor, end-to-end schema verification (13 tests). Full suite: 213 server + 29 common. Package exports map is a known follow-up (two Rule 3 auto-fixes used dist/* imports). Next: Phase 3 (OpenLibrary + Wikidata Client)."
-last_updated: "2026-04-23T18:06:00.000Z"
-last_activity: 2026-04-23 -- Phase 02 complete (5/5 plans, verification passed)
+stopped_at: "Completed Phase 3 (OpenLibrary + Wikidata Client): shared Bottleneck limiter + opossum breaker + typedFetch, OpenLibraryClient (4 Zod methods, 7 fixtures), country-codes (hand-curated QID->ISO map, 15 TDD tests), WikidataClient + P27 resolver (TDD, 7 resolver cases), end-to-end invariants (shared-limiter reference equality, no-DB-writes grep, Work-not-Edition integration). Full suite: 279 server + 29 common. Deferred: phase-02-schema.test.ts CJS/ESM import failure and stats-service mostPagesInADay flaky test (both pre-existing, logged in deferred-items.md). Next: Phase 4 (Enrichment Service + Backfill)."
+last_updated: "2026-04-24T09:17:00.000Z"
+last_activity: 2026-04-24 -- Phase 03 complete (5/5 plans, verification passed)
 progress:
   total_phases: 6
-  completed_phases: 2
-  total_plans: 12
-  completed_plans: 12
-  percent: 33
+  completed_phases: 3
+  total_plans: 17
+  completed_plans: 17
+  percent: 50
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** Phase 3 — OpenLibrary + Wikidata Client (ready to plan)
+**Current focus:** Phase 4 — Enrichment Service + Backfill (ready to plan)
 
 ## Current Position
 
-Phase: 02 (canonical-genre-vocabulary) — COMPLETE
+Phase: 03 (openlibrary-wikidata-client) — COMPLETE
 Plan: 5 of 5
-Status: Phase 2 complete, verification passed. Ready for Phase 3.
-Last activity: 2026-04-23 -- Phase 02 complete (5/5 plans, verification passed)
+Status: Phase 3 complete, verification passed. Ready for Phase 4.
+Last activity: 2026-04-24 -- Phase 03 complete (5/5 plans, verification passed)
 
-Progress: [███░░░░░░░] 33%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
