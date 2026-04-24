@@ -102,8 +102,8 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
 **UI hint**: yes
 **Plans**: 5 plans
   - [x] 05-01-PLAN.md; Shared Zod metadataPatchSchema + PATCH /api/books/:bookId/metadata + manual-source stamping + stickiness test + enrichment_status index migration (EDIT-01, EDIT-02)
-  - [ ] 05-02-PLAN.md; POST /api/books/:bookId/re-enrich (202 wrapper over enrichmentService.enqueue) + idempotency integration test (EDIT-03)
-  - [ ] 05-03-PLAN.md; New /api/enrichment router: GET /unmatched (paginated) + GET /status (counters) + mount in app.ts (EDIT-04, EDIT-05)
+  - [x] 05-02-PLAN.md; POST /api/books/:bookId/re-enrich (202 wrapper over enrichmentService.enqueue) + idempotency integration test (EDIT-03)
+  - [x] 05-03-PLAN.md; New /api/enrichment router: GET /unmatched (paginated) + GET /status (counters) + mount in app.ts (EDIT-04, EDIT-05)
   - [ ] 05-04-PLAN.md; Web edit UI: Modal + @mantine/form form + AuthorRowEditor + ProvenanceBadge + ReEnrichButton + conditional SWR polling (UI-01, UI-02, UI-03, UI-05)
   - [ ] 05-05-PLAN.md; /settings shell + Unmatched inbox + 4 stat cards + Navbar Settings tab with Indicator badge (UI-04)
 
