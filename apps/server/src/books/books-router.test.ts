@@ -112,6 +112,143 @@ describe('books-router', () => {
     });
   });
 
+  describe('PATCH /books/:bookId/metadata', () => {
+    it('200: persists publication_year and stamps publication_year_source=manual', async () => {
+      const book = await createBook(db, { title: 'Test', md5: 'a'.repeat(32) });
+
+      const response = await request(app)
+        .patch(`/books/${book.id}/metadata`)
+        .send({ publication_year: 1953 });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(
+        expect.objectContaining({ id: book.id, publication_year: 1953 })
+      );
+
+      const row = await db('book').where({ id: book.id }).first();
+      expect(row.publication_year).toBe(1953);
+      expect(row.publication_year_source).toBe('manual');
+    });
+
+    it('200: rewrites book_author rows and syncs denormalized book.authors text', async () => {
+      const book = await createBook(db, { title: 'T', md5: 'b'.repeat(32), authors: 'Old Name' });
+
+      const response = await request(app)
+        .patch(`/books/${book.id}/metadata`)
+        .send({
+          authors: [{ name: 'Isaac Asimov' }, { name: 'Arthur C. Clarke' }],
+        });
+
+      expect(response.status).toBe(200);
+
+      const rows = await db('book_author').where({ book_md5: book.md5 }).orderBy('position');
+      expect(rows).toHaveLength(2);
+      expect(rows[0].position).toBe(0);
+      expect(rows[1].position).toBe(1);
+
+      const fresh = await db('book').where({ id: book.id }).first();
+      expect(fresh.authors_source).toBe('manual');
+      expect(fresh.authors).toBe('Isaac Asimov, Arthur C. Clarke');
+    });
+
+    it('200: rewrites book_genre rows and stamps genres_source=manual; silently drops non-canonical names', async () => {
+      const book = await createBook(db, { md5: 'c'.repeat(32) });
+      await db('genre').insert({ name: 'Phase5 Test Genre' }).onConflict('name').ignore();
+
+      const response = await request(app)
+        .patch(`/books/${book.id}/metadata`)
+        .send({ genres: ['Phase5 Test Genre', 'Not A Real Canonical Genre'] });
+
+      expect(response.status).toBe(200);
+
+      const rows = await db('book_genre as bg')
+        .join('genre as g', 'bg.genre_id', 'g.id')
+        .where({ book_md5: book.md5 })
+        .select('g.name');
+      expect(rows).toHaveLength(1);
+      expect(rows[0].name).toBe('Phase5 Test Genre');
+
+      const fresh = await db('book').where({ id: book.id }).first();
+      expect(fresh.genres_source).toBe('manual');
+    });
+
+    it('200: publication_year=null is an explicit clear (value=null, source=manual)', async () => {
+      const book = await createBook(db, {
+        md5: 'd'.repeat(32),
+        publication_year: 1999,
+        publication_year_source: 'openlibrary',
+      });
+
+      const response = await request(app)
+        .patch(`/books/${book.id}/metadata`)
+        .send({ publication_year: null });
+
+      expect(response.status).toBe(200);
+
+      const fresh = await db('book').where({ id: book.id }).first();
+      expect(fresh.publication_year).toBe(null);
+      expect(fresh.publication_year_source).toBe('manual');
+    });
+
+    it('200: fields absent from the body are not touched (preserves prior genres_source)', async () => {
+      const book = await createBook(db, {
+        md5: 'e'.repeat(32),
+        genres_source: 'openlibrary',
+      });
+
+      const response = await request(app)
+        .patch(`/books/${book.id}/metadata`)
+        .send({ publication_year: 1953 });
+
+      expect(response.status).toBe(200);
+
+      const fresh = await db('book').where({ id: book.id }).first();
+      expect(fresh.genres_source).toBe('openlibrary'); // untouched
+      expect(fresh.publication_year_source).toBe('manual');
+    });
+
+    it('400: invalid publication_year returns flattened Zod error', async () => {
+      const book = await createBook(db, { md5: 'f'.repeat(32) });
+
+      const response = await request(app)
+        .patch(`/books/${book.id}/metadata`)
+        .send({ publication_year: 999 });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error.fieldErrors.publication_year).toBeDefined();
+      expect(response.body.error.fieldErrors.publication_year.join(' ')).toContain(
+        'between 1000 and 2100'
+      );
+    });
+
+    it('400: empty body rejected via .refine', async () => {
+      const book = await createBook(db, { md5: '1'.repeat(32) });
+
+      const response = await request(app).patch(`/books/${book.id}/metadata`).send({});
+
+      expect(response.status).toBe(400);
+      expect(JSON.stringify(response.body.error)).toContain('No fields to update');
+    });
+
+    it('400: unknown field rejected by strict mode', async () => {
+      const book = await createBook(db, { md5: '2'.repeat(32) });
+
+      const response = await request(app)
+        .patch(`/books/${book.id}/metadata`)
+        .send({ foo: 'bar' });
+
+      expect(response.status).toBe(400);
+    });
+
+    it('404: unknown :bookId', async () => {
+      const response = await request(app)
+        .patch(`/books/999999/metadata`)
+        .send({ publication_year: 1953 });
+
+      expect(response.status).toBe(404);
+    });
+  });
+
   describe('PUT /books/:bookId/reference_pages', () => {
     it('updates reference pages', async () => {
       const book = await createBook(db, { reference_pages: 100 });

@@ -1,17 +1,19 @@
 import type { Knex } from 'knex';
 import { mapOpenLibrarySubjects } from '@koinsight/common/dist/genres/map.js';
+import { upsertAuthor, type EnrichedAuthor } from './author-upsert';
 import { truncateError } from './retry';
 
 // Phase 4 Plan 04: transactional writer.
 // D-18 all-or-nothing apply, D-19 author upsert three-step, D-20 per-field
 // provenance guards, SC-3 idempotency, SC-4 manual-wins, SC-5 terminal failure.
 // No HTTP in this file; see phase-04-no-direct-http.test.ts.
+//
+// Phase 5 Plan 01: upsertAuthor / EnrichedAuthor were moved to ./author-upsert
+// so the manual-edit path in books-service can reuse the same OL-key-then-name
+// reconciliation strategy with a 'manual' source argument. The re-export below
+// preserves the prior import path for any external consumers (tests).
 
-export interface EnrichedAuthor {
-  name: string;
-  openlibrary_key: string | null;
-  nationality: string | null; // ISO 3166-1 alpha-2 or null
-}
+export type { EnrichedAuthor };
 
 export interface EnrichedBundle {
   workKey: string;
@@ -28,60 +30,6 @@ interface BookSourceRow {
   genres_source: FieldSource;
   publication_year_source: FieldSource;
   original_language_source: FieldSource;
-}
-
-function normalizeAuthorName(name: string): string {
-  return name.trim().toLowerCase().replace(/\s+/g, ' ');
-}
-
-async function upsertAuthor(trx: Knex.Transaction, a: EnrichedAuthor): Promise<number> {
-  // D-19 step 1: match by OL key.
-  if (a.openlibrary_key) {
-    const existing = await trx('author').where({ openlibrary_key: a.openlibrary_key }).first();
-    if (existing) {
-      // Mirror D-20 at the author level: only touch nationality when the
-      // source is NULL or 'openlibrary'. Manual overrides stick.
-      if (existing.nationality_source === null || existing.nationality_source === 'openlibrary') {
-        await trx('author').where({ id: existing.id }).update({
-          nationality: a.nationality,
-          nationality_source: 'openlibrary',
-        });
-      }
-      return existing.id;
-    }
-  }
-
-  // D-19 step 2: match by normalized name with NULL OL key.
-  const normKey = normalizeAuthorName(a.name);
-  const byName = await trx('author')
-    .whereRaw('LOWER(TRIM(name)) = ?', [normKey])
-    .whereNull('openlibrary_key')
-    .first();
-  if (byName) {
-    // Mirror D-20 at the author level: only touch nationality when the
-    // source is NULL or 'openlibrary'. Manual overrides stick (SC-4).
-    const update: Record<string, unknown> = {
-      openlibrary_key: a.openlibrary_key,
-    };
-    if (byName.nationality_source === null || byName.nationality_source === 'openlibrary') {
-      update.nationality = a.nationality;
-      update.nationality_source = 'openlibrary';
-    }
-    await trx('author').where({ id: byName.id }).update(update);
-    return byName.id;
-  }
-
-  // D-19 step 3: insert new row. Per WD-04, even NULL nationality is stamped
-  // with source='openlibrary' because we attempted the lookup.
-  const [inserted] = await trx('author')
-    .insert({
-      name: a.name,
-      openlibrary_key: a.openlibrary_key,
-      nationality: a.nationality,
-      nationality_source: 'openlibrary',
-    })
-    .returning('id');
-  return typeof inserted === 'object' ? inserted.id : inserted;
 }
 
 export async function applyEnrichment(
