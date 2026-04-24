@@ -7,6 +7,8 @@ import { openAiRouter } from './ai/open-ai-router';
 import { booksRouter } from './books/books-router';
 import { appConfig } from './config';
 import { devicesRouter } from './devices/devices-router';
+import { runBackfill } from './enrichment/backfill';
+import { startEnrichmentWorker, type EnrichmentWorker } from './enrichment/worker';
 import { db } from './knex';
 import { kopluginRouter } from './koplugin/koplugin-router';
 import { kosyncRouter } from './kosync/kosync-router';
@@ -44,13 +46,22 @@ async function setupServer() {
   // Start :)
   const server = app.listen(appConfig.port, appConfig.hostname, () => {
     console.info(`KoInsight back-end is running on http://${appConfig.hostname}:${appConfig.port}`);
+    // D-11: kick off backfill AFTER app.listen without blocking the event loop.
+    setImmediate(() => {
+      runBackfill(db).catch((err) => console.warn('Backfill failed:', err));
+    });
   });
 
   return server;
 }
 
-function stopServer(signal: NodeJS.Signals, server: Server) {
+async function stopServer(
+  signal: NodeJS.Signals,
+  server: Server,
+  worker: EnrichmentWorker
+) {
   console.log(`Received ${signal.toString()}. Gracefully shutting down...`);
+  await worker.stop();
   server.close(() => {
     console.log('Server closed.');
     process.exit(0);
@@ -62,9 +73,14 @@ async function main() {
   await db.migrate.latest({ directory: path.join(__dirname, 'db', 'migrations') });
   console.log('Database migrated successfully');
 
+  // D-03 + D-05: start the worker (which runs the crash-recovery sweep) BEFORE
+  // binding the HTTP listener so no job can be claimed twice and the sync
+  // endpoints are up only once the worker is already polling.
+  const worker = startEnrichmentWorker(db);
+
   setupServer().then((server) => {
-    process.on('SIGINT', (signal) => stopServer(signal, server));
-    process.on('SIGTERM', (signal) => stopServer(signal, server));
+    process.on('SIGINT', (signal) => stopServer(signal, server, worker));
+    process.on('SIGTERM', (signal) => stopServer(signal, server, worker));
   });
 }
 

@@ -6,6 +6,7 @@ import archiver from 'archiver';
 import { NextFunction, Request, Response, Router } from 'express';
 import path from 'path';
 import { DeviceRepository } from '../devices/device-repository';
+import { enrichmentService } from '../enrichment/service';
 import { UploadService } from '../upload/upload-service';
 
 // Router for KoInsight koreader plugin
@@ -64,7 +65,19 @@ router.post('/import', rejectOldPluginVersion, async (req, res) => {
       'books with annotations'
     );
 
-    await UploadService.uploadStatisticData(koreaderBooks, newPageStats, annotations, deviceId);
+    const { affectedMd5s } = await UploadService.uploadStatisticData(
+      koreaderBooks,
+      newPageStats,
+      annotations,
+      deviceId
+    );
+
+    // D-06: enqueue AFTER the sync transaction commits. D-09: enqueue swallows
+    // its own errors; this loop cannot reject.
+    for (const md5 of affectedMd5s) {
+      await enrichmentService.enqueue(md5);
+    }
+
     res.status(200).json({ message: 'Upload successful' });
   } catch (err) {
     console.error(err);
