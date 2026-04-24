@@ -1,12 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { CANONICAL_GENRES } from '@koinsight/common/dist/genres/canonical.js';
 import { createBook } from '../../db/factories/book-factory';
 import { db } from '../../knex';
-import {
-  applyEnrichment,
-  markTerminalFailure,
-  type EnrichedBundle,
-} from '../applier';
+import { applyEnrichment, markTerminalFailure, type EnrichedBundle } from '../applier';
 
 // Phase 4 Plan 04 Task 1: transactional applier + terminal-failure flip.
 // Covers D-18 (single transaction), D-19 (author upsert three-step), D-20
@@ -107,8 +103,11 @@ describe('applyEnrichment', () => {
     };
 
     expect(snap2.book).toEqual(snap1.book);
-    expect(snap2.ba.map((r) => ({ author_id: r.author_id, position: r.position, role: r.role })))
-      .toEqual(snap1.ba.map((r) => ({ author_id: r.author_id, position: r.position, role: r.role })));
+    expect(
+      snap2.ba.map((r) => ({ author_id: r.author_id, position: r.position, role: r.role }))
+    ).toEqual(
+      snap1.ba.map((r) => ({ author_id: r.author_id, position: r.position, role: r.role }))
+    );
     expect(snap2.bg.map((r) => r.genre_id)).toEqual(snap1.bg.map((r) => r.genre_id));
   });
 
@@ -253,9 +252,7 @@ describe('applyEnrichment', () => {
     const jobId = await openJob(MD5);
 
     // Force failure: pass a bundle referencing a non-existent book md5.
-    await expect(
-      applyEnrichment(db, 'z'.repeat(32), jobId, enderBundle())
-    ).rejects.toThrow();
+    await expect(applyEnrichment(db, 'z'.repeat(32), jobId, enderBundle())).rejects.toThrow();
 
     const book = await db('book').where({ md5: MD5 }).first();
     expect(book.enrichment_status).toBe('pending');
