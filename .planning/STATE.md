@@ -4,8 +4,8 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: "Completed Plan 01-07 (End-to-end Phase 1 schema verification: vitest SCHEMA-07 static invariant + dynamic partial-unique / CHECK / default checks on a fresh SQLite DB). Phase 1 complete (7 of 7 plans). Next: Phase 2 (Canonical Genre Vocabulary)."
-last_updated: "2026-04-24T23:12:18.799Z"
-last_activity: 2026-04-24 -- Phase 5 execution started
+last_updated: "2026-04-24T23:16:03.310Z"
+last_activity: 2026-04-24 -- Phase 05 execution started
 progress:
   total_phases: 6
   completed_phases: 4
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** Phase 5 — Manual Edit + Unmatched Inbox
+**Current focus:** Phase 05 — manual-edit-unmatched-inbox
 
 ## Current Position
 
-Phase: 5 (Manual Edit + Unmatched Inbox) — EXECUTING
+Phase: 05 (manual-edit-unmatched-inbox) — EXECUTING
 Plan: 1 of 5
-Status: Executing Phase 5
-Last activity: 2026-04-24 -- Phase 5 execution started
+Status: Executing Phase 05
+Last activity: 2026-04-24 -- Phase 05 execution started
 
 Progress: [█████░░░░░] 50%
 
