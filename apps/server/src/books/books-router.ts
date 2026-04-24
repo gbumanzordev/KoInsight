@@ -1,6 +1,7 @@
+import { metadataPatchSchema } from '@koinsight/common/dist/types/books-edit-api.js';
 import { NextFunction, Request, Response, Router } from 'express';
 import { BooksRepository } from './books-repository';
-import { BooksService } from './books-service';
+import { applyManualEdit, BooksService } from './books-service';
 import { coversRouter } from './covers/covers-router';
 import { getBookById } from './get-book-by-id-middleware';
 
@@ -99,6 +100,29 @@ router.put('/:bookId/reference_pages', getBookById, async (req: Request, res: Re
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update reference pages' });
+  }
+});
+
+/**
+ * Phase 5 Plan 01 (EDIT-01, EDIT-02): manual metadata edit.
+ * Zod-validates the body at the boundary; applyManualEdit is transactional
+ * and stamps *_source='manual' for every touched field.
+ */
+router.patch('/:bookId/metadata', getBookById, async (req: Request, res: Response) => {
+  const book = req.book!;
+
+  const parsed = metadataPatchSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+
+  try {
+    const updated = await applyManualEdit(book, parsed.data);
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update book metadata' });
   }
 });
 
