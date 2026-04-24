@@ -61,8 +61,17 @@ async function stopServer(
   worker: EnrichmentWorker
 ) {
   console.log(`Received ${signal.toString()}. Gracefully shutting down...`);
+  // Guarantee the process exits even if server.close() never drains. Keep-alive
+  // connections or long-running uploads can otherwise hold the listener open
+  // past any container grace period.
+  const forceExit = setTimeout(() => {
+    console.warn('Forced exit after 10s grace period');
+    process.exit(1);
+  }, 10_000);
+  forceExit.unref();
   await worker.stop();
   server.close(() => {
+    clearTimeout(forceExit);
     console.log('Server closed.');
     process.exit(0);
   });
