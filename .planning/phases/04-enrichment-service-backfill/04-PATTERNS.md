@@ -20,14 +20,14 @@
 | `apps/server/src/upload/upload-service.ts` (modified) | service (sync commit site) | CRUD | existing file L47-164 | self-analog |
 | `apps/server/src/koplugin/koplugin-router.ts` (modified) | controller (route handler) | request-response | existing file L49-73 | self-analog |
 | `apps/server/test/setup/test-setup.ts` (modified) | test infra | truncate list | existing file L10 | self-analog (one-line append) |
-| `apps/server/src/enrichment/__tests__/phase-04-matcher.test.ts` | test (pure) | — | `packages/common/genres/*.test.ts` fixture-driven pattern | role-match |
-| `apps/server/src/enrichment/__tests__/phase-04-retry.test.ts` | test (pure) | — | same as matcher | role-match |
-| `apps/server/src/enrichment/__tests__/phase-04-enqueue.test.ts` | test (DB) | — | `apps/server/src/upload/upload-service-annotations.test.ts` | role-match (DB + txn test) |
-| `apps/server/src/enrichment/__tests__/phase-04-backfill.test.ts` | test (DB) | — | same as enqueue | role-match |
-| `apps/server/src/enrichment/__tests__/phase-04-applier.test.ts` | test (DB + fetch stubs) | — | `apps/server/src/enrichment/__tests__/phase-03-integration.test.ts` | exact (fixture + vi.stubGlobal) |
-| `apps/server/src/enrichment/__tests__/phase-04-worker.test.ts` | test (timer + DB) | — | `apps/server/src/enrichment/__tests__/phase-03-shared-limiter.test.ts` (timed) | partial (new: fake timers) |
-| `apps/server/src/enrichment/__tests__/phase-04-integration.test.ts` | test (end-to-end) | — | `apps/server/src/enrichment/__tests__/phase-03-integration.test.ts` | exact |
-| `apps/server/src/enrichment/__tests__/phase-04-no-direct-http.test.ts` | test (grep guard) | — | `apps/server/src/enrichment/__tests__/phase-03-no-db-writes.test.ts` | exact (invert the assertions) |
+| `apps/server/src/enrichment/__tests__/phase-04-matcher.test.ts` | test (pure) |, | `packages/common/genres/*.test.ts` fixture-driven pattern | role-match |
+| `apps/server/src/enrichment/__tests__/phase-04-retry.test.ts` | test (pure) |, | same as matcher | role-match |
+| `apps/server/src/enrichment/__tests__/phase-04-enqueue.test.ts` | test (DB) |, | `apps/server/src/upload/upload-service-annotations.test.ts` | role-match (DB + txn test) |
+| `apps/server/src/enrichment/__tests__/phase-04-backfill.test.ts` | test (DB) |, | same as enqueue | role-match |
+| `apps/server/src/enrichment/__tests__/phase-04-applier.test.ts` | test (DB + fetch stubs) |, | `apps/server/src/enrichment/__tests__/phase-03-integration.test.ts` | exact (fixture + vi.stubGlobal) |
+| `apps/server/src/enrichment/__tests__/phase-04-worker.test.ts` | test (timer + DB) |, | `apps/server/src/enrichment/__tests__/phase-03-shared-limiter.test.ts` (timed) | partial (new: fake timers) |
+| `apps/server/src/enrichment/__tests__/phase-04-integration.test.ts` | test (end-to-end) |, | `apps/server/src/enrichment/__tests__/phase-03-integration.test.ts` | exact |
+| `apps/server/src/enrichment/__tests__/phase-04-no-direct-http.test.ts` | test (grep guard) |, | `apps/server/src/enrichment/__tests__/phase-03-no-db-writes.test.ts` | exact (invert the assertions) |
 
 ## Pattern Assignments
 
@@ -115,7 +115,7 @@ const [claimed] = await knex('enrichment_job')
   .returning('*');
 ```
 
-**Crash-recovery sweep pattern** (D-05) — simple `.where(...).update(...)` idiom found throughout; closest: `books-repository.ts` L25-27:
+**Crash-recovery sweep pattern** (D-05), simple `.where(...).update(...)` idiom found throughout; closest: `books-repository.ts` L25-27:
 ```typescript
 static async update(id: number, book: Partial<Book>): Promise<number> {
   return db<Book>('book').where({ id }).update(book);
@@ -303,7 +303,7 @@ The enqueue calls happen OUTSIDE any `trx`; the response returns in the same tic
 
 ### `apps/server/src/koplugin/koplugin-router.ts` (modified, post-commit enqueue)
 
-**Self-analog.** Current L67: `await UploadService.uploadStatisticData(koreaderBooks, newPageStats, annotations, deviceId);` — same Option A edit as above. Enqueue loop happens after the `await` returns, inside the existing try block, before `res.status(200).json(...)`.
+**Self-analog.** Current L67: `await UploadService.uploadStatisticData(koreaderBooks, newPageStats, annotations, deviceId);`, same Option A edit as above. Enqueue loop happens after the `await` returns, inside the existing try block, before `res.status(200).json(...)`.
 
 ---
 
@@ -364,7 +364,7 @@ vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
 
 #### `phase-04-no-direct-http.test.ts` (grep guard)
 
-**Analog:** `apps/server/src/enrichment/__tests__/phase-03-no-db-writes.test.ts` (L1-47) — INVERT the assertion polarity.
+**Analog:** `apps/server/src/enrichment/__tests__/phase-03-no-db-writes.test.ts` (L1-47), INVERT the assertion polarity.
 
 **Phase 3 template** (verbatim L29-39):
 ```typescript
@@ -414,7 +414,7 @@ const environment = appConfig.env || 'development';
 export const db: Knex = knex(config[environment]);
 ```
 
-**Apply to:** service.ts, worker.ts, backfill.ts, applier.ts — all use `import { db } from '../knex'`. Do NOT construct a new Knex instance. Tests use the same `db` via test-setup.ts.
+**Apply to:** service.ts, worker.ts, backfill.ts, applier.ts, all use `import { db } from '../knex'`. Do NOT construct a new Knex instance. Tests use the same `db` via test-setup.ts.
 
 ### Partial-index + onConflict dedup
 

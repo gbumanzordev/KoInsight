@@ -70,10 +70,10 @@ Every numbered decision from `04-CONTEXT.md` is locked; research fills in the HO
 | Capability | Primary Tier | Secondary Tier | Rationale |
 |------------|-------------|----------------|-----------|
 | Job queue (enrichment_job rows) | Database (SQLite) | API | Partial-unique index enforces "one open job per book"; all state transitions are SQL UPDATE/INSERT. |
-| Polling worker tick | API / Backend | — | In-process `setTimeout` loop; no cron, no external scheduler. Lives inside the Express process. |
-| Post-sync enqueue | API / Backend | — | Fires inside the sync route handlers after their `db.transaction` commits. |
+| Polling worker tick | API / Backend |, | In-process `setTimeout` loop; no cron, no external scheduler. Lives inside the Express process. |
+| Post-sync enqueue | API / Backend |, | Fires inside the sync route handlers after their `db.transaction` commits. |
 | Boot-time backfill | API / Backend | Database | Runs once per boot via `setImmediate`; SQL-only work. |
-| Matcher (token overlap) | API / Backend (pure) | — | Pure function over normalized strings. No I/O. |
+| Matcher (token overlap) | API / Backend (pure) |, | Pure function over normalized strings. No I/O. |
 | Applier (enriched-bundle write) | Database (via knex.transaction) | API | All writes must be atomic; crash inside = rollback + crash-recovery sweep replays. |
 | HTTP calls to OL/WD | API / Backend (shared singletons) | External (openlibrary.org, wikidata.org) | Already owned by Phase 3; Phase 4 only calls these via imported singletons, never directly. |
 | Provenance guard | API / Backend (app layer) | Database | D-20 locks: application-layer, NOT DB triggers. |
@@ -392,7 +392,7 @@ The current `*_source` is SELECTed once at the top of the applier transaction (s
 
 Knex builder's `.onConflict(column).ignore()` expands to `ON CONFLICT(column) DO NOTHING`. For a PARTIAL unique index, SQLite requires the conflict target to include the index predicate, which Knex's builder does NOT directly express. Two acceptable shapes:
 
-**A. Rely on the partial index's implicit conflict target** — SQLite resolves `ON CONFLICT DO NOTHING` (no target) against ALL unique constraints/indexes, including partial ones, so this works:
+**A. Rely on the partial index's implicit conflict target**, SQLite resolves `ON CONFLICT DO NOTHING` (no target) against ALL unique constraints/indexes, including partial ones, so this works:
 
 ```typescript
 await knex('enrichment_job')
@@ -403,7 +403,7 @@ await knex('enrichment_job')
 
 [VERIFIED: Knex 3 + better-sqlite3 supports the no-arg `.onConflict().ignore()` form. See upload-service.ts:71 for the existing precedent: `.onConflict('md5').ignore()`.]
 
-**B. Use `knex.raw` for the backfill INSERT...SELECT** — the builder's `.insert(query)` + `.onConflict()` combination is finicky when the conflict target is a partial index and the insert is multi-row from SELECT. Use raw:
+**B. Use `knex.raw` for the backfill INSERT...SELECT**, the builder's `.insert(query)` + `.onConflict()` combination is finicky when the conflict target is a partial index and the insert is multi-row from SELECT. Use raw:
 
 ```typescript
 // Source: Phase 4 backfill.ts sketch (recommended per D-10 + CONTEXT Claude-discretion)
@@ -514,7 +514,7 @@ Phase 4 is NOT a rename/refactor/migration phase. No runtime state to inventory.
 **What goes wrong:** D-16 step 1 mandates "if `book.isbn` is non-empty: `openLibraryClient.getEdition({ isbn })`, then walk to work." But grepping the schema shows no `isbn` / `isbn_10` / `isbn_13` column in `book` (verified: `grep isbn packages/common/types/book.ts apps/server/src/db/migrations/*` returns no matches). The KOReader plugin doesn't sync ISBN.
 **Why it happens:** CONTEXT D-16 says "planner confirms the actual field name in Phase 1 schema"; the confirmation is now: there is no ISBN field.
 **How to avoid:** Matcher ALWAYS takes the search fallback path. The ISBN branch is coded defensively for future schema additions but unreachable in Phase 4. Add a clarifying comment + a single unit test asserting `matchWork({ isbn: undefined }) === matchWork({ isbn: null })` to lock behavior. The D-16 "ISBN 404 falls through to search" detail is moot because the ISBN path never runs.
-**Warning signs:** A reviewer asking "where does this book.isbn come from?" — the answer is "nowhere this milestone; the field does not exist."
+**Warning signs:** A reviewer asking "where does this book.isbn come from?", the answer is "nowhere this milestone; the field does not exist."
 
 ### Pitfall 2: Test setup does not truncate Phase 4 tables
 
@@ -748,7 +748,7 @@ function jsonResp(body: unknown) {
 | Hand-rolled exponential backoff | Pure function + `next_attempt_at` column | N/A | Testable without wall-clock; replayable on crash. |
 
 **Deprecated/outdated:**
-- `vi.runAllTimers()` / `vi.runAllTicks()` sync flush — use `vi.advanceTimersByTimeAsync(ms)` in vitest 4+. [CITED: vitest.dev/api/vi.html]
+- `vi.runAllTimers()` / `vi.runAllTicks()` sync flush, use `vi.advanceTimersByTimeAsync(ms)` in vitest 4+. [CITED: vitest.dev/api/vi.html]
 
 ## Grep Guards (NEW for Phase 4)
 
@@ -795,7 +795,7 @@ Nyquist validation is enabled (`workflow.nyquist_validation: true` in `.planning
 | Config file | `apps/server/vitest.config.ts` |
 | Quick run command | `npm --workspace=server exec vitest run apps/server/src/enrichment/__tests__/phase-04-*.test.ts` |
 | Full suite command | `npm --workspace=server test` (runs `build:migrations && vitest run`) |
-| Setup | `apps/server/test/setup/test-setup.ts` (migrates + truncates per-test) — Wave 0 update required (Pitfall 2) |
+| Setup | `apps/server/test/setup/test-setup.ts` (migrates + truncates per-test), Wave 0 update required (Pitfall 2) |
 
 ### Test Layer Map
 
@@ -840,12 +840,12 @@ Nyquist validation is enabled (`workflow.nyquist_validation: true` in `.planning
 
 Wave 0 is the infrastructure prep that MUST land before matcher/applier/worker implementation starts. All files are NEW; none exist yet.
 
-- [ ] `apps/server/src/enrichment/constants.ts` — shared constants
-- [ ] `apps/server/src/enrichment/__tests__/fixtures/` directory — at minimum: search, edition, work, author JSON fixtures for one clear-match scenario
-- [ ] `apps/server/src/enrichment/__tests__/phase-04-matcher.test.ts` — starts green with placeholder; drives TDD of matcher.ts
-- [ ] `apps/server/src/enrichment/__tests__/phase-04-retry.test.ts` — pure-function tests for backoff arithmetic + classification
-- [ ] `apps/server/src/enrichment/__tests__/phase-04-no-direct-http.test.ts` — grep guard (allow-list of Phase 4 new files)
-- [ ] `apps/server/test/setup/test-setup.ts` — append `'author'`, `'book_author'`, `'enrichment_job'` to the truncate list (Pitfall 2 fix). This is a one-line edit; MUST land before any Phase 4 DB test executes or previous tests will pollute state.
+- [ ] `apps/server/src/enrichment/constants.ts`, shared constants
+- [ ] `apps/server/src/enrichment/__tests__/fixtures/` directory, at minimum: search, edition, work, author JSON fixtures for one clear-match scenario
+- [ ] `apps/server/src/enrichment/__tests__/phase-04-matcher.test.ts`, starts green with placeholder; drives TDD of matcher.ts
+- [ ] `apps/server/src/enrichment/__tests__/phase-04-retry.test.ts`, pure-function tests for backoff arithmetic + classification
+- [ ] `apps/server/src/enrichment/__tests__/phase-04-no-direct-http.test.ts`, grep guard (allow-list of Phase 4 new files)
+- [ ] `apps/server/test/setup/test-setup.ts`, append `'author'`, `'book_author'`, `'enrichment_job'` to the truncate list (Pitfall 2 fix). This is a one-line edit; MUST land before any Phase 4 DB test executes or previous tests will pollute state.
 - [ ] Phase 4 migration: `YYYYMMDDHHMMSS_add_next_attempt_at_to_enrichment_job.ts` adding `next_attempt_at TIMESTAMP NULL` + composite index `(status, next_attempt_at)`
 - [ ] Framework install: NONE REQUIRED (vitest 4.0.16 already present)
 
@@ -859,7 +859,7 @@ Extracted directives the planner MUST honor:
 - **No em dashes:** Plain ASCII only. This research file adheres.
 - **Migrations:** Type-check and build under `tsconfig.migrations.json`; test builds migrations via `npm run build:migrations` first.
 - **Node >=22, npm 10.2.4:** Already required; no change.
-- **KOReader plugin coupling:** Phase 4 does NOT touch `plugins/koinsight.koplugin/call_api.lua` or `const.lua` — the sync-path hook lives server-side only, plugin contract is unchanged.
+- **KOReader plugin coupling:** Phase 4 does NOT touch `plugins/koinsight.koplugin/call_api.lua` or `const.lua`, the sync-path hook lives server-side only, plugin contract is unchanged.
 - **DB access:** Shared `db` from `apps/server/src/knex.ts`; no new connection pool.
 - **Single-port production:** Express serves built React assets in prod; Phase 4 does not change this.
 
@@ -880,8 +880,8 @@ None of these assumptions block planning; all are either verifiable in-repo or h
 
 1. **Should `next_attempt_at` default to `CURRENT_TIMESTAMP` or NULL?**
    - What we know: D-13 says "Default NULL (claimable immediately)". The polling query uses `next_attempt_at IS NULL OR next_attempt_at <= CURRENT_TIMESTAMP`, so NULL is semantically "claimable now."
-   - What's unclear: None — D-13 is explicit. Flagged only because the migration writer should use `.nullable()` WITHOUT a default.
-   - Recommendation: `table.timestamp('next_attempt_at').nullable()` — no `.defaultTo()`.
+   - What's unclear: None, D-13 is explicit. Flagged only because the migration writer should use `.nullable()` WITHOUT a default.
+   - Recommendation: `table.timestamp('next_attempt_at').nullable()`, no `.defaultTo()`.
 
 2. **What's the Opossum error code for "Breaker is open"?**
    - What we know: Opossum v9 throws when the breaker is open. Some versions surface `.code === 'EOPENBREAKER'`; older versions throw a generic Error with `.message === 'Breaker is open'`.
@@ -890,33 +890,33 @@ None of these assumptions block planning; all are either verifiable in-repo or h
 
 3. **Will structured per-job logging collide with the existing `morgan('tiny')` request logger?**
    - What we know: `app.ts:22` wires `morgan('tiny')` for request logs. Worker logs go to `console.log/warn`.
-   - What's unclear: Nothing — they're orthogonal channels. Flagged in case operators want single-stream observability later.
+   - What's unclear: Nothing, they're orthogonal channels. Flagged in case operators want single-stream observability later.
    - Recommendation: For Phase 4, stick with `console.log` structured JSON-ish output (`{phase, bookMd5, jobId, event}`). Cross-cutting logger refactor is explicitly deferred in CONTEXT.
 
 ## Sources
 
 ### Primary (HIGH confidence)
 
-- `apps/server/src/app.ts` (file:1-71) — current boot sequence, SIGINT handler pattern, `db.migrate.latest` call
-- `apps/server/src/upload/upload-service.ts` (file:47-165) — transaction pattern, `booksToImport.md5` availability
-- `apps/server/src/upload/upload-router.ts` (file:30-60) — call-site for UploadService
-- `apps/server/src/koplugin/koplugin-router.ts` (file:49-73) — same pattern as upload path
-- `apps/server/src/knex.ts` (file:1-7) — shared knex instance
-- `apps/server/src/knexfile.ts` (file:1-30) — better-sqlite3 test config uses `:memory:`
-- `apps/server/src/enrichment/http/rate-limiter.ts` — `sharedHttpLimiter` singleton
-- `apps/server/src/enrichment/http/typed-fetch.ts` — breaker-around-limiter composition
-- `apps/server/src/open-library/open-library-client.ts` — `openLibraryClient` singleton surface (searchWork/getWork/getEdition/getAuthor)
-- `apps/server/src/enrichment/wikidata/wikidata-client.ts` — `wikidataClient.resolveP27Nationality`
-- `apps/server/src/enrichment/__tests__/phase-03-integration.test.ts` — vi.stubGlobal + fixture pattern Phase 4 extends
-- `apps/server/src/enrichment/__tests__/phase-03-no-db-writes.test.ts` — grep-guard template Phase 4 inverts
-- `apps/server/src/db/migrations/20260423221500_create_enrichment_job.ts` — partial-unique SQL via `knex.raw`
-- `apps/server/src/db/migrations/20260423221600_extend_book_columns.ts` — `*_source` CHECK constraints
-- `apps/server/test/setup/test-setup.ts` — truncate list (Pitfall 2 origin)
-- `packages/common/types/book.ts`, `author.ts`, `enrichment.ts` — authoritative DbBook/Author/EnrichmentJob shapes
-- `packages/common/genres/map.ts` — `mapOpenLibrarySubjects` export
-- `.planning/phases/01-schema-foundations-provenance/01-VERIFICATION.md` — confirms Phase 1 landed as planned
-- `.planning/phases/03-openlibrary-wikidata-client/03-VERIFICATION.md` — confirms Phase 3 client singletons + invariant tests
-- `.planning/phases/04-enrichment-service-backfill/04-CONTEXT.md` — all D-01..D-20 locked decisions
+- `apps/server/src/app.ts` (file:1-71), current boot sequence, SIGINT handler pattern, `db.migrate.latest` call
+- `apps/server/src/upload/upload-service.ts` (file:47-165), transaction pattern, `booksToImport.md5` availability
+- `apps/server/src/upload/upload-router.ts` (file:30-60), call-site for UploadService
+- `apps/server/src/koplugin/koplugin-router.ts` (file:49-73), same pattern as upload path
+- `apps/server/src/knex.ts` (file:1-7), shared knex instance
+- `apps/server/src/knexfile.ts` (file:1-30), better-sqlite3 test config uses `:memory:`
+- `apps/server/src/enrichment/http/rate-limiter.ts`, `sharedHttpLimiter` singleton
+- `apps/server/src/enrichment/http/typed-fetch.ts`, breaker-around-limiter composition
+- `apps/server/src/open-library/open-library-client.ts`, `openLibraryClient` singleton surface (searchWork/getWork/getEdition/getAuthor)
+- `apps/server/src/enrichment/wikidata/wikidata-client.ts`, `wikidataClient.resolveP27Nationality`
+- `apps/server/src/enrichment/__tests__/phase-03-integration.test.ts`, vi.stubGlobal + fixture pattern Phase 4 extends
+- `apps/server/src/enrichment/__tests__/phase-03-no-db-writes.test.ts`, grep-guard template Phase 4 inverts
+- `apps/server/src/db/migrations/20260423221500_create_enrichment_job.ts`, partial-unique SQL via `knex.raw`
+- `apps/server/src/db/migrations/20260423221600_extend_book_columns.ts`, `*_source` CHECK constraints
+- `apps/server/test/setup/test-setup.ts`, truncate list (Pitfall 2 origin)
+- `packages/common/types/book.ts`, `author.ts`, `enrichment.ts`, authoritative DbBook/Author/EnrichmentJob shapes
+- `packages/common/genres/map.ts`, `mapOpenLibrarySubjects` export
+- `.planning/phases/01-schema-foundations-provenance/01-VERIFICATION.md`, confirms Phase 1 landed as planned
+- `.planning/phases/03-openlibrary-wikidata-client/03-VERIFICATION.md`, confirms Phase 3 client singletons + invariant tests
+- `.planning/phases/04-enrichment-service-backfill/04-CONTEXT.md`, all D-01..D-20 locked decisions
 
 ### Secondary (MEDIUM confidence)
 
@@ -931,10 +931,10 @@ None of these assumptions block planning; all are either verifiable in-repo or h
 ## Metadata
 
 **Confidence breakdown:**
-- Standard stack: HIGH — all libraries already installed and used elsewhere in codebase
-- Architecture: HIGH — all integration points directly verified by file reads
+- Standard stack: HIGH, all libraries already installed and used elsewhere in codebase
+- Architecture: HIGH, all integration points directly verified by file reads
 - Pitfalls: HIGH for 1, 2, 3, 5, 6; MEDIUM for 4, 7 (depend on exact library behavior flagged in assumptions)
-- Validation architecture: HIGH — mirror of Phase 3's test-layer shape, no novel framework
+- Validation architecture: HIGH, mirror of Phase 3's test-layer shape, no novel framework
 
 **Research date:** 2026-04-24
 **Valid until:** 2026-05-24 (30 days; stable stack, low library churn)

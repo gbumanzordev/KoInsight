@@ -7,7 +7,7 @@ wave_0_complete: false  # flipped true after Plan 01 lands
 created: 2026-04-24
 ---
 
-# Phase 4 — Validation Strategy
+# Phase 4, Validation Strategy
 
 > Per-phase validation contract for feedback sampling during execution.
 > Derived from `04-RESEARCH.md` "Validation Architecture" section.
@@ -50,9 +50,9 @@ Populated by the planner per plan. Each task in every PLAN.md MUST name a Wave/R
 | 04-T1 | 04-04 | 3 | ENRICH-02,ENRICH-03,ENRICH-07 | T-04-13..T-04-18 | applyEnrichment transactional D-18/D-19/D-20 + markTerminalFailure D-15 | unit (DB+fetch) | `vitest run phase-04-applier` | ❌ W0 | ⬜ pending |
 | 05-T1 | 04-05 | 4 | ENRICH-01,ENRICH-02,ENRICH-06,ENRICH-07 | T-04-19,T-04-20,T-04-23,T-04-24 | worker tick loop + crash recovery + retry schedule + shutdown | unit (timer+DB) | `vitest run phase-04-worker` | ❌ W0 | ⬜ pending |
 | 05-T2 | 04-05 | 4 | ENRICH-04,ENRICH-05 | T-04-21,T-04-22 | app.ts + upload/koplugin post-commit enqueue wiring | integration (build+full suite) | `npm --workspace=server run build && npm --workspace=server test` | ❌ W0 | ⬜ pending |
-| 05-T3 | 04-05 | 4 | ENRICH-04..06 | — | Manual boot + SIGINT smoke | checkpoint:human-verify | manual (checkpoint) | ❌ W0 | ⬜ pending |
+| 05-T3 | 04-05 | 4 | ENRICH-04..06 |, | Manual boot + SIGINT smoke | checkpoint:human-verify | manual (checkpoint) | ❌ W0 | ⬜ pending |
 | 06-T1 | 04-06 | 5 | ENRICH-01..07 | T-04-26,T-04-27 | End-to-end SC-1/3/4/5 coverage | integration (end-to-end) | `vitest run phase-04-integration` | ❌ W0 | ⬜ pending |
-| 06-T2 | 04-06 | 5 | ENRICH-01..07 | — | Phase 4 closure gate | checkpoint:human-verify | manual (checkpoint) | ❌ W0 | ⬜ pending |
+| 06-T2 | 04-06 | 5 | ENRICH-01..07 |, | Phase 4 closure gate | checkpoint:human-verify | manual (checkpoint) | ❌ W0 | ⬜ pending |
 
 *Status: pending / green / red / flaky*
 
@@ -62,12 +62,12 @@ Populated by the planner per plan. Each task in every PLAN.md MUST name a Wave/R
 
 Wave 0 MUST land before matcher/applier/worker implementation starts. All files are NEW; none exist yet. See `04-RESEARCH.md` section "Wave 0 Gaps" for detailed rationale.
 
-- [ ] `apps/server/src/enrichment/constants.ts` — shared module constants (poll interval, max attempts, backoff formula)
+- [ ] `apps/server/src/enrichment/constants.ts`, shared module constants (poll interval, max attempts, backoff formula)
 - [ ] `apps/server/src/enrichment/__tests__/fixtures/` directory with at minimum one clear-match OL scenario (search, edition, work, author JSON)
-- [ ] `apps/server/src/enrichment/__tests__/phase-04-matcher.test.ts` — green placeholder, drives TDD of matcher.ts
-- [ ] `apps/server/src/enrichment/__tests__/phase-04-retry.test.ts` — pure-function tests for backoff arithmetic + classification
-- [ ] `apps/server/src/enrichment/__tests__/phase-04-no-direct-http.test.ts` — grep guard (allow-list of Phase 4 new files; inverts Phase 3 no-DB-writes guard)
-- [ ] `apps/server/test/setup/test-setup.ts` — append `author`, `book_author`, `enrichment_job` to the truncate list (RESEARCH Pitfall 2 fix)
+- [ ] `apps/server/src/enrichment/__tests__/phase-04-matcher.test.ts`, green placeholder, drives TDD of matcher.ts
+- [ ] `apps/server/src/enrichment/__tests__/phase-04-retry.test.ts`, pure-function tests for backoff arithmetic + classification
+- [ ] `apps/server/src/enrichment/__tests__/phase-04-no-direct-http.test.ts`, grep guard (allow-list of Phase 4 new files; inverts Phase 3 no-DB-writes guard)
+- [ ] `apps/server/test/setup/test-setup.ts`, append `author`, `book_author`, `enrichment_job` to the truncate list (RESEARCH Pitfall 2 fix)
 - [ ] Phase 4 migration: `YYYYMMDDHHMMSS_add_next_attempt_at_to_enrichment_job.ts` adds `next_attempt_at TIMESTAMP NULL` + composite index `(status, next_attempt_at)`
 
 Framework install: NONE REQUIRED (vitest 4.0.16 already present).

@@ -81,7 +81,7 @@ Phase 4 assumes and does not re-introduce:
   WHERE status = 'pending' AND (next_attempt_at IS NULL OR next_attempt_at <= CURRENT_TIMESTAMP)
   ```
   Planner should add a composite index `(status, next_attempt_at)` to keep the scan cheap.
-- **D-14:** Failure classification — **retryable** failures consume an attempt and schedule a backoff:
+- **D-14:** Failure classification, **retryable** failures consume an attempt and schedule a backoff:
   - HTTP 5xx from OL or Wikidata
   - Fetch timeout / network error (ECONNRESET, ETIMEDOUT, etc.)
   - Opossum circuit-breaker-open (`EOPENBREAKER`)
