@@ -96,7 +96,7 @@ SCHEMA-07-style grep guard + reference-equality proof of WD-05 + timed one-pipe 
 
 ## Requirements Verified
 
-- **OL-03**: Timed integration test proves a SINGLE limiter serializes 10 alternating OL+WD calls (elapsed >= 9 \* minTime). Demonstrates one-pipe rate limiting across both upstreams — the load-bearing property that prevents hammering OpenLibrary + Wikidata in parallel.
+- **OL-03**: Timed integration test proves a SINGLE limiter serializes 10 alternating OL+WD calls (elapsed >= 9 \* minTime). Demonstrates one-pipe rate limiting across both upstreams, the load-bearing property that prevents hammering OpenLibrary + Wikidata in parallel.
 - **OL-05**: Integration test explicitly asserts `edition.subjects === []` AND `work.subjects.length > 0 && work.subjects.contains('Science fiction')`. Locks in the Edition->Work subjects walk as a CI-enforced contract.
 - **WD-05**: Reference-equality test asserts `openLibraryClient.deps.limiter === sharedHttpLimiter === wikidataClient.deps.limiter`. Any future refactor that constructs a fresh limiter per client fails this test.
 
@@ -113,7 +113,7 @@ No other deviations. Plan executed exactly as written.
 
 ## Authentication Gates Encountered
 
-None. All tests use `vi.stubGlobal('fetch', ...)` with JSON fixtures — no live network calls.
+None. All tests use `vi.stubGlobal('fetch', ...)` with JSON fixtures, no live network calls.
 
 ## Issues Encountered
 
@@ -141,21 +141,21 @@ Phase 4 can now rely on these CI-enforced guarantees:
 
 1. **`openLibraryClient` and `wikidataClient` share a single limiter.** Any Phase 4 code that awaits work through either singleton participates in the same one-pipe rate-limiting pool automatically.
 2. **No Phase-3-introduced file writes to the DB.** If Phase 4 needs persistence, it adds a new worker file (not in the allow-list) rather than mutating an existing client.
-3. **Work subjects, not Edition subjects.** Any Phase 4 enrichment code that assembles a genre-bundle must call `ol.getWork(edition.works[0].key)` to read subjects — asserted by the integration test.
+3. **Work subjects, not Edition subjects.** Any Phase 4 enrichment code that assembles a genre-bundle must call `ol.getWork(edition.works[0].key)` to read subjects, asserted by the integration test.
 
 ## Self-Check
 
 Files created verified present:
 
-- apps/server/src/enrichment/**tests**/phase-03-shared-limiter.test.ts — FOUND
-- apps/server/src/enrichment/**tests**/phase-03-no-db-writes.test.ts — FOUND
-- apps/server/src/enrichment/**tests**/phase-03-integration.test.ts — FOUND
+- apps/server/src/enrichment/**tests**/phase-03-shared-limiter.test.ts, FOUND
+- apps/server/src/enrichment/**tests**/phase-03-no-db-writes.test.ts, FOUND
+- apps/server/src/enrichment/**tests**/phase-03-integration.test.ts, FOUND
 
 Commits verified in `git log --oneline`:
 
-- 86334bf (Task 1) — FOUND
-- 0591a4f (Task 2) — FOUND
-- a86753f (Task 3) — FOUND
+- 86334bf (Task 1), FOUND
+- 0591a4f (Task 2), FOUND
+- a86753f (Task 3), FOUND
 
 Verification commands:
 
