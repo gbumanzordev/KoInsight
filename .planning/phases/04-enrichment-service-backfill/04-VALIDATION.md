@@ -2,8 +2,8 @@
 phase: 4
 slug: enrichment-service-backfill
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: false  # flipped true after Plan 01 lands
 created: 2026-04-24
 ---
 
@@ -41,7 +41,18 @@ Populated by the planner per plan. Each task in every PLAN.md MUST name a Wave/R
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| TBD (planner fills per plan) | — | — | ENRICH-01..07 | — | — | unit/int/invariant | `vitest run ...` | ❌ W0 | ⬜ pending |
+| 01-T1 | 04-01 | 1 | ENRICH-06 | T-04-01,T-04-02 | migration adds next_attempt_at + index; truncate list fixed | infra | `npm --workspace=server run build:migrations && npm --workspace=server test` | ❌ W0 | ⬜ pending |
+| 01-T2 | 04-01 | 1 | ENRICH-06..07 | T-04-03 | grep guard + fixtures + TDD anchors green | invariant | `vitest run phase-04-no-direct-http phase-04-matcher phase-04-retry` | ❌ W0 | ⬜ pending |
+| 02-T1 | 04-02 | 2 | ENRICH-06 | T-04-04,T-04-05 | retry.classifyFailure + computeNextAttemptAt + truncateError | unit (pure) | `vitest run phase-04-retry` | ❌ W0 | ⬜ pending |
+| 02-T2 | 04-02 | 2 | ENRICH-07 | T-04-06,T-04-07 | matcher.matchWork token-overlap D-17 | unit (pure) | `vitest run phase-04-matcher` | ❌ W0 | ⬜ pending |
+| 03-T1 | 04-03 | 2 | ENRICH-01,ENRICH-04 | T-04-08,T-04-09,T-04-11 | enqueue D-07 predicate + D-08 dedup + D-09 log-and-swallow | unit (DB) | `vitest run phase-04-enqueue` | ❌ W0 | ⬜ pending |
+| 03-T2 | 04-03 | 2 | ENRICH-05 | T-04-10 | runBackfill INSERT...SELECT + idempotency | unit (DB) | `vitest run phase-04-backfill` | ❌ W0 | ⬜ pending |
+| 04-T1 | 04-04 | 3 | ENRICH-02,ENRICH-03,ENRICH-07 | T-04-13..T-04-18 | applyEnrichment transactional D-18/D-19/D-20 + markTerminalFailure D-15 | unit (DB+fetch) | `vitest run phase-04-applier` | ❌ W0 | ⬜ pending |
+| 05-T1 | 04-05 | 4 | ENRICH-01,ENRICH-02,ENRICH-06,ENRICH-07 | T-04-19,T-04-20,T-04-23,T-04-24 | worker tick loop + crash recovery + retry schedule + shutdown | unit (timer+DB) | `vitest run phase-04-worker` | ❌ W0 | ⬜ pending |
+| 05-T2 | 04-05 | 4 | ENRICH-04,ENRICH-05 | T-04-21,T-04-22 | app.ts + upload/koplugin post-commit enqueue wiring | integration (build+full suite) | `npm --workspace=server run build && npm --workspace=server test` | ❌ W0 | ⬜ pending |
+| 05-T3 | 04-05 | 4 | ENRICH-04..06 | — | Manual boot + SIGINT smoke | checkpoint:human-verify | manual (checkpoint) | ❌ W0 | ⬜ pending |
+| 06-T1 | 04-06 | 5 | ENRICH-01..07 | T-04-26,T-04-27 | End-to-end SC-1/3/4/5 coverage | integration (end-to-end) | `vitest run phase-04-integration` | ❌ W0 | ⬜ pending |
+| 06-T2 | 04-06 | 5 | ENRICH-01..07 | — | Phase 4 closure gate | checkpoint:human-verify | manual (checkpoint) | ❌ W0 | ⬜ pending |
 
 *Status: pending / green / red / flaky*
 

@@ -81,7 +81,13 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   3. Running enrichment twice on the same book produces identical `book` / `book_author` / `book_genre` state (idempotency verifiable by snapshot diff after two runs).
   4. A book whose `genres_source = 'manual'` retains its manual `book_genre` rows after a forced re-enrichment, even when OpenLibrary returns different subjects (manual-wins rule enforced).
   5. After a simulated crash mid-job, restarting the server resets `running` jobs to `pending` so they retry; jobs that exceed the max-attempts ceiling are left in `failed` with `last_error` populated, and books with no OL match land at `enrichment_status = 'failed'` ready for the unmatched inbox.
-**Plans**: TBD
+**Plans**: 6 plans
+  - [ ] 04-01-PLAN.md — Wave 0: next_attempt_at migration + constants + truncate-list fix + fixtures + grep guard + TDD anchors
+  - [ ] 04-02-PLAN.md — matcher.ts (D-17 token overlap) + retry.ts (D-14 classify, D-12 backoff), pure, TDD
+  - [ ] 04-03-PLAN.md — service.ts (enqueue with D-07/D-08/D-09) + backfill.ts (D-10 INSERT...SELECT)
+  - [ ] 04-04-PLAN.md — applier.ts (D-18 transactional apply, D-19 author dedup, D-20 provenance guards) + markTerminalFailure (D-15)
+  - [ ] 04-05-PLAN.md — worker.ts (polling loop, crash recovery, retry scheduling) + app.ts + upload/koplugin post-commit wiring
+  - [ ] 04-06-PLAN.md — End-to-end integration test covering Success Criteria 1, 3, 4, 5
 
 ### Phase 5: Manual Edit + Unmatched Inbox
 **Goal**: Users can correct any wrong or missing metadata from the web UI, find books OpenLibrary failed on, and re-trigger enrichment per book — and every manual change is sticky against future re-enrichment.
@@ -129,6 +135,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (with 2+3 and 5
 | 1. Schema Foundations + Provenance | 7/7 | Complete | 2026-04-23 |
 | 2. Canonical Genre Vocabulary | 5/5 | Complete | 2026-04-23 |
 | 3. OpenLibrary + Wikidata Client | 5/5 | Complete | 2026-04-24 |
-| 4. Enrichment Service + Backfill | 0/TBD | Not started | - |
+| 4. Enrichment Service + Backfill | 0/6 | Not started | - |
 | 5. Manual Edit + Unmatched Inbox | 0/TBD | Not started | - |
 | 6. Yearly Report | 0/TBD | Not started | - |
