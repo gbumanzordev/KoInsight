@@ -1,4 +1,4 @@
-# Roadmap: KoInsight — Book Metadata Enrichment + Yearly Reports
+# Roadmap: KoInsight, Book Metadata Enrichment + Yearly Reports
 
 ## Overview
 
@@ -10,7 +10,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [x] **Phase 1: Schema Foundations + Provenance** - Author entity, junction, enrichment job table, per-field `*_source` columns, and shared types — every downstream phase consumes these
+- [x] **Phase 1: Schema Foundations + Provenance** - Author entity, junction, enrichment job table, per-field `*_source` columns, and shared types, every downstream phase consumes these
 - [x] **Phase 2: Canonical Genre Vocabulary** - Curated whitelist constant, idempotent seed/migration, and a pure subject-to-genre mapping function with unit-test coverage
 - [x] **Phase 3: OpenLibrary + Wikidata Client** - Extend the OL HTTP client with work/edition/author/search methods, a shared Bottleneck rate limiter, User-Agent, circuit breaker, and Wikidata P27 nationality lookup
 - [x] **Phase 4: Enrichment Service + Backfill** - In-process queue, worker, post-sync enqueue hook, boot-time backfill of pre-existing books, idempotency, and provenance-respecting writes
@@ -30,13 +30,13 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   4. `packages/common/types` exports `Author`, `BookAuthor`, `EnrichmentJob`, `EnrichmentStatus`, `FieldSource`, and the extended `Book` shape; both `apps/server` and `apps/web` build against the new types without errors.
   5. All migrations are structure-only: grepping the migration files for `fetch(`, `axios`, `https://`, or row-iteration loops over `book` (other than the deterministic author string-split backfill in SCHEMA-08) returns nothing.
 **Plans**: 7 plans
-  - [x] 01-01-PLAN.md — Author parser helper + unit tests (pure function, TDD)
-  - [x] 01-02-PLAN.md — Shared types in @koinsight/common (author.ts, enrichment.ts, extend book.ts, barrel)
-  - [x] 01-03-PLAN.md — Migration 1: create author + book_author tables (with partial unique on openlibrary_key)
-  - [x] 01-04-PLAN.md — Migration 2: create enrichment_job table (with partial unique on open jobs per book)
-  - [x] 01-05-PLAN.md — Migration 3: extend book with 8 enrichment columns + provenance
-  - [x] 01-06-PLAN.md — Migration 4: backfill book_author from existing book.authors strings (uses parser)
-  - [x] 01-07-PLAN.md — End-to-end Phase 1 schema verification (SCHEMA-07 grep test + dynamic invariants)
+  - [x] 01-01-PLAN.md, Author parser helper + unit tests (pure function, TDD)
+  - [x] 01-02-PLAN.md, Shared types in @koinsight/common (author.ts, enrichment.ts, extend book.ts, barrel)
+  - [x] 01-03-PLAN.md, Migration 1: create author + book_author tables (with partial unique on openlibrary_key)
+  - [x] 01-04-PLAN.md, Migration 2: create enrichment_job table (with partial unique on open jobs per book)
+  - [x] 01-05-PLAN.md, Migration 3: extend book with 8 enrichment columns + provenance
+  - [x] 01-06-PLAN.md, Migration 4: backfill book_author from existing book.authors strings (uses parser)
+  - [x] 01-07-PLAN.md, End-to-end Phase 1 schema verification (SCHEMA-07 grep test + dynamic invariants)
 
 ### Phase 2: Canonical Genre Vocabulary
 **Goal**: A canonical genre whitelist exists in the database and a pure function maps OpenLibrary subjects to canonical genres with documented denylist behavior, ready for the enrichment service to consume.
@@ -65,11 +65,11 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   4. After N consecutive simulated 5xx/timeouts the circuit breaker opens and subsequent calls return the open-circuit error without hitting the network; after the cooldown a single probe is allowed through.
   5. Given an OpenLibrary author response with `remote_ids.wikidata`, the client fetches the Wikidata entity, picks the P27 claim with no `end time` and highest rank, and normalizes the result to an ISO 3166-1 alpha-2 country code; authors lacking a Wikidata link resolve to `nationality = NULL` with `nationality_source = 'openlibrary'`.
 **Plans**: 5 plans
-  - [x] 03-01-PLAN.md — Shared HTTP infrastructure (Bottleneck limiter, opossum breaker, User-Agent, http-errors, typedFetch) (OL-02, OL-03, OL-04, WD-05)
-  - [x] 03-02-PLAN.md — Country-codes module: hand-curated QID -> ISO 3166-1 alpha-2 map + runtime cache (TDD) (WD-02)
-  - [x] 03-03-PLAN.md — OpenLibraryClient: Zod schemas + instance class + 7 fixtures + fixture-based tests (OL-01, OL-02, OL-05)
-  - [x] 03-04-PLAN.md — WikidataClient: schemas + P27 resolver (TDD) + client + 10 fixtures (WD-01, WD-02, WD-03, WD-04, WD-05)
-  - [x] 03-05-PLAN.md — Shared-limiter invariant + no-DB-writes grep guard + end-to-end integration test (OL-03, WD-05, roll-up)
+  - [x] 03-01-PLAN.md, Shared HTTP infrastructure (Bottleneck limiter, opossum breaker, User-Agent, http-errors, typedFetch) (OL-02, OL-03, OL-04, WD-05)
+  - [x] 03-02-PLAN.md, Country-codes module: hand-curated QID -> ISO 3166-1 alpha-2 map + runtime cache (TDD) (WD-02)
+  - [x] 03-03-PLAN.md, OpenLibraryClient: Zod schemas + instance class + 7 fixtures + fixture-based tests (OL-01, OL-02, OL-05)
+  - [x] 03-04-PLAN.md, WikidataClient: schemas + P27 resolver (TDD) + client + 10 fixtures (WD-01, WD-02, WD-03, WD-04, WD-05)
+  - [x] 03-05-PLAN.md, Shared-limiter invariant + no-DB-writes grep guard + end-to-end integration test (OL-03, WD-05, roll-up)
 
 ### Phase 4: Enrichment Service + Backfill
 **Goal**: Books synced from KOReader are enriched asynchronously without blocking the sync path, the entire pre-existing library is backfilled on first deploy, and re-enrichment never overwrites manual edits.
@@ -82,15 +82,15 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   4. A book whose `genres_source = 'manual'` retains its manual `book_genre` rows after a forced re-enrichment, even when OpenLibrary returns different subjects (manual-wins rule enforced).
   5. After a simulated crash mid-job, restarting the server resets `running` jobs to `pending` so they retry; jobs that exceed the max-attempts ceiling are left in `failed` with `last_error` populated, and books with no OL match land at `enrichment_status = 'failed'` ready for the unmatched inbox.
 **Plans**: 6 plans
-  - [x] 04-01-PLAN.md — Wave 0: next_attempt_at migration + constants + truncate-list fix + fixtures + grep guard + TDD anchors
-  - [x] 04-02-PLAN.md — matcher.ts (D-17 token overlap) + retry.ts (D-14 classify, D-12 backoff), pure, TDD
-  - [x] 04-03-PLAN.md — service.ts (enqueue with D-07/D-08/D-09) + backfill.ts (D-10 INSERT...SELECT)
-  - [x] 04-04-PLAN.md — applier.ts (D-18 transactional apply, D-19 author dedup, D-20 provenance guards) + markTerminalFailure (D-15)
-  - [x] 04-05-PLAN.md — worker.ts (polling loop, crash recovery, retry scheduling) + app.ts + upload/koplugin post-commit wiring
-  - [x] 04-06-PLAN.md — End-to-end integration test covering Success Criteria 1, 3, 4, 5
+  - [x] 04-01-PLAN.md, Wave 0: next_attempt_at migration + constants + truncate-list fix + fixtures + grep guard + TDD anchors
+  - [x] 04-02-PLAN.md, matcher.ts (D-17 token overlap) + retry.ts (D-14 classify, D-12 backoff), pure, TDD
+  - [x] 04-03-PLAN.md, service.ts (enqueue with D-07/D-08/D-09) + backfill.ts (D-10 INSERT...SELECT)
+  - [x] 04-04-PLAN.md, applier.ts (D-18 transactional apply, D-19 author dedup, D-20 provenance guards) + markTerminalFailure (D-15)
+  - [x] 04-05-PLAN.md, worker.ts (polling loop, crash recovery, retry scheduling) + app.ts + upload/koplugin post-commit wiring
+  - [x] 04-06-PLAN.md, End-to-end integration test covering Success Criteria 1, 3, 4, 5
 
 ### Phase 5: Manual Edit + Unmatched Inbox
-**Goal**: Users can correct any wrong or missing metadata from the web UI, find books OpenLibrary failed on, and re-trigger enrichment per book — and every manual change is sticky against future re-enrichment.
+**Goal**: Users can correct any wrong or missing metadata from the web UI, find books OpenLibrary failed on, and re-trigger enrichment per book, and every manual change is sticky against future re-enrichment.
 **Depends on**: Phase 4
 **Requirements**: EDIT-01, EDIT-02, EDIT-03, EDIT-04, EDIT-05, UI-01, UI-02, UI-03, UI-04, UI-05
 **Success Criteria** (what must be TRUE):
@@ -118,17 +118,24 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   4. Visiting `/reports/yearly` in the web app shows a year `Select` populated from the years endpoint, charts re-render when the year changes, and the selected year persists in the URL query string across reloads.
   5. Each chart on the page renders a coverage banner ("Genres known for N of M books read this year"), and a year with zero reading or zero enriched books renders an empty-state placeholder linking to the unmatched inbox rather than a broken chart.
 **UI hint**: yes
-**Plans**: TBD
+**Plans**: 7 plans
+  - [ ] 06-01-PLAN.md, Index migration + shared @koinsight/common report types (page_stat(start_time) index, REPORT-04)
+  - [ ] 06-02-PLAN.md, TZ helper (yearBoundsInZone) + REPORT_TZ env wiring + DST unit tests (REPORT-02)
+  - [ ] 06-03-PLAN.md, reports-repository: 95% predicate CTE, page-time totals, per-breakdown queries, fixture helper (REPORT-02, REPORT-03, REPORT-04, REPORT-05)
+  - [ ] 06-04-PLAN.md, reports-service: top-10+Other, decade fill, Unknown bucket, coverage shaping (REPORT-01, REPORT-02, REPORT-05)
+  - [ ] 06-05-PLAN.md, reports-router (Zod, supertest), mount on /api/reports (REPORT-01, REPORT-03)
+  - [ ] 06-06-PLAN.md, Web hooks + page shell + year navigator (nuqs) + nav entry + empty state (REPORT-UI-01, REPORT-UI-02, REPORT-UI-05)
+  - [ ] 06-07-PLAN.md, Charts (genre stacked bar, nationality bar, decade histogram, language pie) + headline cards + coverage banners (REPORT-UI-03, REPORT-UI-04)
 
 ## Parallelization
 
 `config.parallelization = true`. Phase dependencies allow the following execution waves:
 
-- **Wave 1 (sequential):** Phase 1 — blocks everything; nothing else can start until schema and provenance land.
-- **Wave 2 (parallel):** Phase 2 and Phase 3 — both depend only on Phase 1 and touch disjoint code paths (`apps/server/src/genres/` + `apps/server/src/enrichment/genre-mapping.ts` for Phase 2; `apps/server/src/open-library/` for Phase 3). They can be planned and executed concurrently.
-- **Wave 3 (sequential):** Phase 4 — joins the outputs of Phase 2 and Phase 3; cannot start until both are merged.
-- **Wave 4 (sequential):** Phase 5 — depends on Phase 4 so the manual-edit "respect locks" behavior has real meaning to test.
-- **Wave 5 (sequential, but can begin backend work in parallel with Phase 5):** Phase 6 — backend (`reports-router`, `reports-service`, `reports-repository`, year-index migration) is independent of Phase 5 and can be developed alongside it; the Phase 6 UI ships LAST so users encounter the unmatched inbox (Phase 5) before reports go live and dilute the experience with missing-data noise.
+- **Wave 1 (sequential):** Phase 1, blocks everything; nothing else can start until schema and provenance land.
+- **Wave 2 (parallel):** Phase 2 and Phase 3, both depend only on Phase 1 and touch disjoint code paths (`apps/server/src/genres/` + `apps/server/src/enrichment/genre-mapping.ts` for Phase 2; `apps/server/src/open-library/` for Phase 3). They can be planned and executed concurrently.
+- **Wave 3 (sequential):** Phase 4, joins the outputs of Phase 2 and Phase 3; cannot start until both are merged.
+- **Wave 4 (sequential):** Phase 5, depends on Phase 4 so the manual-edit "respect locks" behavior has real meaning to test.
+- **Wave 5 (sequential, but can begin backend work in parallel with Phase 5):** Phase 6, backend (`reports-router`, `reports-service`, `reports-repository`, year-index migration) is independent of Phase 5 and can be developed alongside it; the Phase 6 UI ships LAST so users encounter the unmatched inbox (Phase 5) before reports go live and dilute the experience with missing-data noise.
 
 ## Progress
 
@@ -142,4 +149,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (with 2+3 and 5
 | 3. OpenLibrary + Wikidata Client | 5/5 | Complete | 2026-04-24 |
 | 4. Enrichment Service + Backfill | 0/6 | Not started | - |
 | 5. Manual Edit + Unmatched Inbox | 0/TBD | Not started | - |
-| 6. Yearly Report | 0/TBD | Not started | - |
+| 6. Yearly Report | 0/7 | Not started | - |
