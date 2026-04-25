@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: "Completed Plan 01-07 (End-to-end Phase 1 schema verification: vitest SCHEMA-07 static invariant + dynamic partial-unique / CHECK / default checks on a fresh SQLite DB). Phase 1 complete (7 of 7 plans). Next: Phase 2 (Canonical Genre Vocabulary)."
-last_updated: "2026-04-24T23:16:03.310Z"
-last_activity: 2026-04-24 -- Phase 05 execution started
+status: phase-complete
+stopped_at: "Completed Phase 6 Yearly Report (7 of 7 plans). Server: types, tz helper, repository, service, router mounted at /api/reports. Web: /reports/yearly route, SWR hooks, year navigator, empty state, mantine charts. Web build green; server tests 487/489 (1 pre-existing flake)."
+last_updated: "2026-04-25T05:05:00.000Z"
+last_activity: 2026-04-25 -- Phase 06 execution complete
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 28
-  completed_plans: 23
-  percent: 82
+  completed_plans: 30
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** Phase 05 — manual-edit-unmatched-inbox
+**Current focus:** Phase 06 complete — milestone v1.0 ready for verification/ship
 
 ## Current Position
 
-Phase: 05 (manual-edit-unmatched-inbox) — EXECUTING
-Plan: 1 of 5
-Status: Executing Phase 05
-Last activity: 2026-04-24 -- Phase 05 execution started
+Phase: 06 (yearly-report) — COMPLETE
+Plan: 7 of 7
+Status: Phase 06 complete; all 7 plans landed; web build green; server tests 487/489
+Last activity: 2026-04-25 -- Phase 06 execution complete
 
-Progress: [█████░░░░░] 50%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 

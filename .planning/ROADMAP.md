@@ -15,7 +15,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
 - [x] **Phase 3: OpenLibrary + Wikidata Client** - Extend the OL HTTP client with work/edition/author/search methods, a shared Bottleneck rate limiter, User-Agent, circuit breaker, and Wikidata P27 nationality lookup
 - [x] **Phase 4: Enrichment Service + Backfill** - In-process queue, worker, post-sync enqueue hook, boot-time backfill of pre-existing books, idempotency, and provenance-respecting writes
 - [ ] **Phase 5: Manual Edit + Unmatched Inbox** - PATCH metadata API, re-enrich endpoint, status counters, Mantine edit form with provenance badges, and the unmatched-books inbox view
-- [ ] **Phase 6: Yearly Report** - Server-side aggregations under `/api/reports/*` plus the year-selector dashboard with genre/nationality/decade/language charts and coverage banners
+- [x] **Phase 6: Yearly Report** - Server-side aggregations under `/api/reports/*` plus the year-selector dashboard with genre/nationality/decade/language charts and coverage banners
 
 ## Phase Details
 
@@ -119,13 +119,13 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   5. Each chart on the page renders a coverage banner ("Genres known for N of M books read this year"), and a year with zero reading or zero enriched books renders an empty-state placeholder linking to the unmatched inbox rather than a broken chart.
 **UI hint**: yes
 **Plans**: 7 plans
-  - [ ] 06-01-PLAN.md, Index migration + shared @koinsight/common report types (page_stat(start_time) index, REPORT-04)
-  - [ ] 06-02-PLAN.md, TZ helper (yearBoundsInZone) + REPORT_TZ env wiring + DST unit tests (REPORT-02)
-  - [ ] 06-03-PLAN.md, reports-repository: 95% predicate CTE, page-time totals, per-breakdown queries, fixture helper (REPORT-02, REPORT-03, REPORT-04, REPORT-05)
-  - [ ] 06-04-PLAN.md, reports-service: top-10+Other, decade fill, Unknown bucket, coverage shaping (REPORT-01, REPORT-02, REPORT-05)
-  - [ ] 06-05-PLAN.md, reports-router (Zod, supertest), mount on /api/reports (REPORT-01, REPORT-03)
-  - [ ] 06-06-PLAN.md, Web hooks + page shell + year navigator (nuqs) + nav entry + empty state (REPORT-UI-01, REPORT-UI-02, REPORT-UI-05)
-  - [ ] 06-07-PLAN.md, Charts (genre stacked bar, nationality bar, decade histogram, language pie) + headline cards + coverage banners (REPORT-UI-03, REPORT-UI-04)
+  - [x] 06-01-PLAN.md, Index migration + shared @koinsight/common report types (page_stat(start_time) index, REPORT-04)
+  - [x] 06-02-PLAN.md, TZ helper (yearBoundsInZone) + REPORT_TZ env wiring + DST unit tests (REPORT-02)
+  - [x] 06-03-PLAN.md, reports-repository: 95% predicate CTE, page-time totals, per-breakdown queries, fixture helper (REPORT-02, REPORT-03, REPORT-04, REPORT-05)
+  - [x] 06-04-PLAN.md, reports-service: top-10+Other, decade fill, Unknown bucket, coverage shaping (REPORT-01, REPORT-02, REPORT-05)
+  - [x] 06-05-PLAN.md, reports-router (Zod, supertest), mount on /api/reports (REPORT-01, REPORT-03)
+  - [x] 06-06-PLAN.md, Web hooks + page shell + year navigator (nuqs) + nav entry + empty state (REPORT-UI-01, REPORT-UI-02, REPORT-UI-05)
+  - [x] 06-07-PLAN.md, Charts (genre stacked bar, nationality bar, decade histogram, language pie) + headline cards + coverage banners (REPORT-UI-03, REPORT-UI-04)
 
 ## Parallelization
 
