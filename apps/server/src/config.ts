@@ -8,6 +8,16 @@ const MAX_FILE_SIZE_MB = Number(process.env.MAX_FILE_SIZE_MB) || 100;
 
 const UPLOAD_DB_FILENAME = 'statistics.sqlite3';
 
+const REPORT_TZ_RAW = process.env.REPORT_TZ ?? 'UTC';
+let REPORT_TZ = REPORT_TZ_RAW;
+try {
+  // Validate the IANA zone once at module load. Throws RangeError on invalid.
+  new Intl.DateTimeFormat('en-US', { timeZone: REPORT_TZ_RAW });
+} catch {
+  console.error(`Invalid REPORT_TZ='${REPORT_TZ_RAW}', falling back to UTC`);
+  REPORT_TZ = 'UTC';
+}
+
 export const appConfig = {
   hostname: process.env.HOSTNAME || '127.0.0.1',
   port: Number(process.env.PORT ?? 3000),
@@ -28,5 +38,9 @@ export const appConfig = {
   db: {
     dev: path.resolve(DATA_PATH, 'dev.sqlite3'),
     prod: path.resolve(DATA_PATH, 'prod.sqlite3'),
+  },
+
+  reports: {
+    timeZone: REPORT_TZ,
   },
 };
