@@ -74,6 +74,17 @@ export class BooksService {
     const stats = await StatsRepository.getByBookMD5(book.md5);
     const bookDevices = await BooksRepository.getBookDevices(book.md5);
     const genres = await GenreRepository.getByBookMd5(book.md5);
+    const authors_full = await db('book_author')
+      .join('author', 'book_author.author_id', 'author.id')
+      .where('book_author.book_md5', book.md5)
+      .orderBy('book_author.position', 'asc')
+      .select(
+        'author.name',
+        'author.nationality',
+        'author.openlibrary_key',
+        'book_author.position',
+        'book_author.role'
+      );
 
     // Get annotations data
     const annotations = await AnnotationsRepository.getByBookMd5(book.md5);
@@ -100,6 +111,7 @@ export class BooksService {
       total_pages,
       last_open,
       genres,
+      authors_full,
       notes: bookDevices.reduce((acc, device) => acc + device.notes, 0),
       highlights: bookDevices.reduce((acc, device) => acc + device.highlights, 0),
       // Annotation data

@@ -27,9 +27,14 @@ export async function upsertAuthor(
   if (a.openlibrary_key) {
     const existing = await trx('author').where({ openlibrary_key: a.openlibrary_key }).first();
     if (existing) {
-      // D-20 at the author level: only touch nationality when the existing
-      // source is NULL or 'openlibrary'. Manual overrides stick.
-      if (existing.nationality_source === null || existing.nationality_source === 'openlibrary') {
+      // D-20 manual-wins gate: re-enrichment ('openlibrary' source) must not
+      // overwrite manual nationality. A manual edit always wins, including
+      // overwriting prior manual values.
+      const canWrite =
+        source === 'manual' ||
+        existing.nationality_source === null ||
+        existing.nationality_source === 'openlibrary';
+      if (canWrite) {
         await trx('author').where({ id: existing.id }).update({
           nationality: a.nationality,
           nationality_source: source,
@@ -39,21 +44,28 @@ export async function upsertAuthor(
     }
   }
 
-  // D-19 step 2: match by normalized name with NULL OL key.
+  // D-19 step 2: match by normalized name. author.name is schema-UNIQUE, so a
+  // name match is authoritative regardless of existing OL key. Preserve the
+  // existing OL key when the caller has none (manual-edit path); only overwrite
+  // when the caller supplies a key.
   const normKey = normalizeAuthorName(a.name);
-  const byName = await trx('author')
-    .whereRaw('LOWER(TRIM(name)) = ?', [normKey])
-    .whereNull('openlibrary_key')
-    .first();
+  const byName = await trx('author').whereRaw('LOWER(TRIM(name)) = ?', [normKey]).first();
   if (byName) {
-    const update: Record<string, unknown> = {
-      openlibrary_key: a.openlibrary_key,
-    };
-    if (byName.nationality_source === null || byName.nationality_source === 'openlibrary') {
+    const update: Record<string, unknown> = {};
+    if (a.openlibrary_key) {
+      update.openlibrary_key = a.openlibrary_key;
+    }
+    const canWrite =
+      source === 'manual' ||
+      byName.nationality_source === null ||
+      byName.nationality_source === 'openlibrary';
+    if (canWrite) {
       update.nationality = a.nationality;
       update.nationality_source = source;
     }
-    await trx('author').where({ id: byName.id }).update(update);
+    if (Object.keys(update).length > 0) {
+      await trx('author').where({ id: byName.id }).update(update);
+    }
     return byName.id;
   }
 

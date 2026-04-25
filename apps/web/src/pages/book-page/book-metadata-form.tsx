@@ -41,9 +41,13 @@ type FormValues = {
 };
 
 function deriveInitialAuthors(book: BookWithData): AuthorEdit[] {
-  // BookWithData does not include a normalized authors join in this codebase
-  // (interfaces note in PLAN.md). Fall back to splitting the denormalized
-  // `book.authors` text the way the applier emits it (", " separator).
+  if (book.authors_full && book.authors_full.length > 0) {
+    return book.authors_full.map((a) => ({
+      name: a.name,
+      nationality: a.nationality,
+      openlibrary_key: a.openlibrary_key,
+    }));
+  }
   const raw = book.authors?.trim();
   if (!raw) {
     return [{ name: '', nationality: null, openlibrary_key: null }];

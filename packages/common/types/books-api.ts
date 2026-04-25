@@ -1,8 +1,17 @@
 import { Annotation } from './annotation';
+import { AuthorRole } from './author';
 import { Book } from './book';
 import { BookDevice } from './book-device';
 import { Genre } from './genre';
 import { PageStat } from './page-stat';
+
+export type BookAuthorJoined = {
+  name: string;
+  nationality: string | null;
+  openlibrary_key: string | null;
+  position: number;
+  role: AuthorRole;
+};
 
 type Stats = {
   last_open: number;
@@ -25,6 +34,7 @@ type RelatedEntities = {
   device_data: BookDevice[];
   genres: Genre[];
   annotations: Annotation[];
+  authors_full: BookAuthorJoined[];
 };
 
 export type BookWithData = Book & Stats & RelatedEntities;
