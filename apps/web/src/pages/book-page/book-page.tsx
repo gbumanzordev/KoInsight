@@ -2,6 +2,7 @@ import { BookWithData } from '@koinsight/common/types';
 import {
   Badge,
   Box,
+  Button,
   Flex,
   Group,
   Loader,
@@ -13,11 +14,14 @@ import {
   Text,
   UnstyledButton,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconCalendar,
   IconChevronDown,
   IconClock,
   IconClockHour4,
+  IconEdit,
   IconFile,
   IconHighlight,
   IconRefresh,
@@ -25,11 +29,13 @@ import {
   IconTable,
 } from '@tabler/icons-react';
 import { sum } from 'ramda';
-import { JSX, useState } from 'react';
+import { JSX, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { useBookWithData } from '../../api/use-book-with-data';
+import { ReEnrichButton } from '../../components/re-enrich-button/re-enrich-button';
 import { formatSecondsToHumanReadable } from '../../utils/dates';
 import { BookCard } from './book-card';
+import { BookMetadataEditModal } from './book-metadata-edit-modal';
 import { BookPageAnnotations } from './book-page-annotations';
 import { BookPageCalendar } from './book-page-calendar';
 import { BookPageManage } from './book-page-manage/book-page-manage';
@@ -40,6 +46,34 @@ export function BookPage(): JSX.Element {
   const { data: book, isLoading, mutate } = useBookWithData(Number(id));
 
   const [tabValue, setTabValue] = useState<string | null>('calendar');
+  const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
+
+  // Phase 5 Plan 04 (UI-05): emit terminal toasts when the book transitions out
+  // of an open enrichment status (pending/running). The kickoff toast comes
+  // from ReEnrichButton; this effect closes the loop on the polling cycle.
+  const prevStatusRef = useRef(book?.enrichment_status);
+  useEffect(() => {
+    const prev = prevStatusRef.current;
+    const next = book?.enrichment_status;
+    if (prev && next && prev !== next && (prev === 'pending' || prev === 'running')) {
+      if (next === 'enriched') {
+        notifications.show({
+          title: 'Enrichment complete',
+          message: 'Metadata refreshed from OpenLibrary.',
+          color: 'green',
+          position: 'top-center',
+        });
+      } else if (next === 'failed') {
+        notifications.show({
+          title: 'Enrichment failed',
+          message: 'OpenLibrary could not match this book. Edit metadata manually to fix it.',
+          color: 'red',
+          position: 'top-center',
+        });
+      }
+    }
+    prevStatusRef.current = next;
+  }, [book?.enrichment_status]);
 
   if (isLoading || !book) {
     return (
@@ -54,6 +88,17 @@ export function BookPage(): JSX.Element {
       <Group justify="space-between" gap="md">
         <BookCard book={book} />
         <StatsCard book={book} />
+      </Group>
+
+      <Group gap="sm">
+        <Button leftSection={<IconEdit size={16} />} onClick={openEdit}>
+          Edit metadata
+        </Button>
+        <ReEnrichButton
+          bookId={book.id}
+          enrichmentStatus={book.enrichment_status}
+          variant="primary"
+        />
       </Group>
 
       <Group gap="xs">
@@ -147,6 +192,8 @@ export function BookPage(): JSX.Element {
           </Box>
         </Tabs.Panel>
       </Tabs>
+
+      <BookMetadataEditModal book={book} opened={editOpened} onClose={closeEdit} />
     </Stack>
   );
 }
