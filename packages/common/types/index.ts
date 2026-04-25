@@ -13,3 +13,4 @@ export * from './progress';
 export * from './user';
 export * from './stats-api';
 export * from './books-edit-api';
+export * from './reports-api';
