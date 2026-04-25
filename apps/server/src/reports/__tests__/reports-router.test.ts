@@ -61,9 +61,7 @@ describe('GET /reports/years', () => {
   });
 
   it('returns 500 with generic body when service throws', async () => {
-    vi.spyOn(reportsService.ReportsService, 'getYears').mockRejectedValueOnce(
-      new Error('boom')
-    );
+    vi.spyOn(reportsService.ReportsService, 'getYears').mockRejectedValueOnce(new Error('boom'));
     const consoleErr = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const response = await request(makeApp()).get('/reports/years');
@@ -276,9 +274,7 @@ describe('GET /reports/yearly', () => {
   });
 
   it('returns 500 with generic body when service throws', async () => {
-    vi.spyOn(reportsService.ReportsService, 'getYearly').mockRejectedValueOnce(
-      new Error('kaboom')
-    );
+    vi.spyOn(reportsService.ReportsService, 'getYearly').mockRejectedValueOnce(new Error('kaboom'));
     const consoleErr = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const response = await request(makeApp()).get('/reports/yearly?year=2024');

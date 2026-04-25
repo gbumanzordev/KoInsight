@@ -14,6 +14,7 @@ import { db } from './knex';
 import { kopluginRouter } from './koplugin/koplugin-router';
 import { kosyncRouter } from './kosync/kosync-router';
 import { openLibraryRouter } from './open-library/open-library-router';
+import { reportsRouter } from './reports/reports-router';
 import { statsRouter } from './stats/stats-router';
 import { uploadRouter } from './upload/upload-router';
 
@@ -38,6 +39,7 @@ async function setupServer() {
   app.use('/api/open-library', openLibraryRouter);
   app.use('/api/ai', openAiRouter);
   app.use('/api/enrichment', enrichmentRouter);
+  app.use('/api/reports', reportsRouter);
 
   // Serve react app
   app.use(express.static(appConfig.webBuildPath));
@@ -57,11 +59,7 @@ async function setupServer() {
   return server;
 }
 
-async function stopServer(
-  signal: NodeJS.Signals,
-  server: Server,
-  worker: EnrichmentWorker
-) {
+async function stopServer(signal: NodeJS.Signals, server: Server, worker: EnrichmentWorker) {
   console.log(`Received ${signal.toString()}. Gracefully shutting down...`);
   // Guarantee the process exits even if server.close() never drains. Keep-alive
   // connections or long-running uploads can otherwise hold the listener open
