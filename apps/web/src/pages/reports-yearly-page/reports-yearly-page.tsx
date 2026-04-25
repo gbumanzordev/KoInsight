@@ -79,57 +79,64 @@ export function ReportsYearlyPage(): JSX.Element {
         </Flex>
       )}
 
-      {!reportError && report && report.coverage.total_books === 0 && (
-        <EmptyYearState year={report.year} />
-      )}
+      {!reportError &&
+        report &&
+        report.coverage.total_books === 0 &&
+        report.totals.totalPageTurns === 0 && <EmptyYearState year={report.year} />}
 
-      {!reportError && report && report.coverage.total_books > 0 && (
-        <Stack gap="lg">
-          <Title order={3}>{report.year}</Title>
+      {!reportError &&
+        report &&
+        (report.coverage.total_books > 0 || report.totals.totalPageTurns > 0) && (
+          <Stack gap="lg">
+            <Title order={3}>{report.year}</Title>
 
-          <HeadlineCards totals={report.totals} />
+            <HeadlineCards totals={report.totals} />
 
-          <Stack gap="xs">
-            <Title order={3}>Genres</Title>
-            <GenreBar data={report.genre} />
-            <CoverageBanner
-              known={report.coverage.genre_known}
-              total={report.coverage.total_books}
-              label="Genres"
-            />
+            {report.coverage.total_books > 0 && (
+              <>
+                <Stack gap="xs">
+                  <Title order={3}>Genres</Title>
+                  <GenreBar data={report.genre} />
+                  <CoverageBanner
+                    known={report.coverage.genre_known}
+                    total={report.coverage.total_books}
+                    label="Genres"
+                  />
+                </Stack>
+
+                <Stack gap="xs">
+                  <Title order={3}>Nationality</Title>
+                  <NationalityBar data={report.nationality} />
+                  <CoverageBanner
+                    known={report.coverage.nationality_known}
+                    total={report.coverage.total_books}
+                    label="Nationality"
+                  />
+                </Stack>
+
+                <Stack gap="xs">
+                  <Title order={3}>Publication decade</Title>
+                  <DecadeHistogram data={report.decade} />
+                  <CoverageBanner
+                    known={report.coverage.publication_year_known}
+                    total={report.coverage.total_books}
+                    label="Publication year"
+                  />
+                </Stack>
+
+                <Stack gap="xs">
+                  <Title order={3}>Original language</Title>
+                  <LanguagePie data={report.language} />
+                  <CoverageBanner
+                    known={report.coverage.original_language_known}
+                    total={report.coverage.total_books}
+                    label="Original language"
+                  />
+                </Stack>
+              </>
+            )}
           </Stack>
-
-          <Stack gap="xs">
-            <Title order={3}>Nationality</Title>
-            <NationalityBar data={report.nationality} />
-            <CoverageBanner
-              known={report.coverage.nationality_known}
-              total={report.coverage.total_books}
-              label="Nationality"
-            />
-          </Stack>
-
-          <Stack gap="xs">
-            <Title order={3}>Publication decade</Title>
-            <DecadeHistogram data={report.decade} />
-            <CoverageBanner
-              known={report.coverage.publication_year_known}
-              total={report.coverage.total_books}
-              label="Publication year"
-            />
-          </Stack>
-
-          <Stack gap="xs">
-            <Title order={3}>Original language</Title>
-            <LanguagePie data={report.language} />
-            <CoverageBanner
-              known={report.coverage.original_language_known}
-              total={report.coverage.total_books}
-              label="Original language"
-            />
-          </Stack>
-        </Stack>
-      )}
+        )}
     </div>
   );
 }
