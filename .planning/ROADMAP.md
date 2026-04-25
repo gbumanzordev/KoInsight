@@ -105,7 +105,7 @@ This milestone extends KoInsight from a raw-stats dashboard into a library that 
   - [x] 05-02-PLAN.md; POST /api/books/:bookId/re-enrich (202 wrapper over enrichmentService.enqueue) + idempotency integration test (EDIT-03)
   - [x] 05-03-PLAN.md; New /api/enrichment router: GET /unmatched (paginated) + GET /status (counters) + mount in app.ts (EDIT-04, EDIT-05)
   - [x] 05-04-PLAN.md; Web edit UI: Modal + @mantine/form form + AuthorRowEditor + ProvenanceBadge + ReEnrichButton + conditional SWR polling (UI-01, UI-02, UI-03, UI-05)
-  - [ ] 05-05-PLAN.md; /settings shell + Unmatched inbox + 4 stat cards + Navbar Settings tab with Indicator badge (UI-04)
+  - [x] 05-05-PLAN.md; /settings shell + Unmatched inbox + 4 stat cards + Navbar Settings tab with Indicator badge (UI-04)
 
 ### Phase 6: Yearly Report
 **Goal**: A user can pick any year with reading data and see a coherent dashboard of genre, nationality, publication-decade, and original-language breakdowns, with explicit coverage banners and an "Unknown" bucket on every chart.
