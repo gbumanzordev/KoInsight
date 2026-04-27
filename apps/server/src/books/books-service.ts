@@ -10,8 +10,11 @@ import { normalizeRanges, Range, totalRangeLength } from '../utils/ranges';
 import { BooksRepository } from './books-repository';
 
 export class BooksService {
-  static getTotalPages(book: Book, bookDevices: BookDevice[]): number {
-    return book.reference_pages || Math.max(...bookDevices.map((device) => device.pages || 0));
+  // Phase 7 plan 05 / D-15: device-pages fallback removed. Books without
+  // reference_pages report 0 total pages and surface as Unknown in the UI.
+  // Operator remediation is enrichment or PUT /books/:id/reference_pages.
+  static getTotalPages(book: Book): number {
+    return book.reference_pages ?? 0;
   }
 
   static getTotalReadTime(bookDevices: BookDevice[]): number {
@@ -91,7 +94,7 @@ export class BooksService {
     const annotationCounts = await AnnotationsRepository.getCountsByType(book.md5);
     const deletedCount = await AnnotationsRepository.getDeletedCount(book.md5);
 
-    const total_pages = this.getTotalPages(book, bookDevices);
+    const total_pages = this.getTotalPages(book);
     const total_read_time = this.getTotalReadTime(bookDevices);
     const started_reading = this.getStartedReading(stats);
     const last_open = this.getLastOpen(bookDevices);

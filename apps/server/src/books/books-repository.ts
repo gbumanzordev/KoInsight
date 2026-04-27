@@ -91,7 +91,7 @@ export class BooksRepository {
         const genres = JSON.parse(book.genres) as Genre[];
         const bookDevices = JSON.parse(book.book_devices) as BookDevice[];
 
-        const totalPages = BooksService.getTotalPages(book, bookDevices);
+        const totalPages = BooksService.getTotalPages(book);
         const lastOpen = BooksService.getLastOpen(bookDevices);
         const totalReadTime = BooksService.getTotalReadTime(bookDevices);
         const totalReadPages = BooksService.getTotalReadPages(book, stats);
