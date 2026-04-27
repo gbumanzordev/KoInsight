@@ -675,18 +675,19 @@ export async function invalidateUnmatchedList() {
 - [ ] `apps/web/src/pages/settings-page/retry-all-button.test.tsx` — covers RetryAllButton disabled state + click + toast
 - [ ] Web RTL setup may already exist; verify by checking for an existing `*.test.tsx` file under `apps/web`
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **D-10 (no modal) vs UI-SPEC (Mantine `modals.openConfirmModal`):** CONTEXT.md D-10 says "No confirmation modal. Action fires immediately." UI-SPEC §"Section-level Retry all failed" describes `modals.openConfirmModal` with title `Retry all failed books?`, body, confirm/cancel labels.
-   - What we know: D-10 is the more recent decision (CONTEXT.md is the discuss-phase output and authoritative per the agent's instructions).
-   - What's unclear: Whether UI-SPEC was updated post-D-10 or whether there is genuine drift.
-   - Recommendation: Treat CONTEXT.md as authoritative. The planner should call out the discrepancy and ship per D-10 (no modal). UI-SPEC sections about the modal become stale; flag in plan for spec sync.
+1. **D-10 (no modal) vs UI-SPEC (Mantine `modals.openConfirmModal`):** CONTEXT.md D-10 says "No confirmation modal. Action fires immediately." UI-SPEC §"Section-level Retry all failed" still describes `modals.openConfirmModal`.
+   - RESOLVED: Treat CONTEXT.md as authoritative. Ship per D-10 (no modal). UI-SPEC modal sections are SUPERSEDED-BY-D-10; Plan 04 Task 2 acceptance criteria assert zero `modals.openConfirmModal` references in the implementation, and the UI-SPEC will be annotated in the same change.
 
-2. **`AmbiguousMatchError` reason for `retryable-isbn-fallback`:** The ISBN fallback path doesn't end at `markTerminalFailure` (it triggers a retry through search), so the question is moot at runtime — but `classifyFailure` still has to produce a reason. Recommendation: `'no_match'` (semantically: this exact ISBN has no record).
+2. **`AmbiguousMatchError` reason for `retryable-isbn-fallback`:** The ISBN fallback path doesn't end at `markTerminalFailure` (it triggers a retry through search), so the question is moot at runtime, but `classifyFailure` still has to produce a reason.
+   - RESOLVED: Map to `'no_match'` (semantically: this exact ISBN has no record). Codified in Plan 02 Task 2 mapping table.
 
-3. **`enqueued` count semantics in `enqueueMany`:** Better-sqlite3's `INSERT...ON CONFLICT DO NOTHING` returns `changes` = rows actually inserted. Semantically the user-facing toast should report "rows that became eligible to be picked up by the worker," which is approximately `inputCount - alreadyOpenCount` (i.e., books that didn't already have an open job). Recommendation: pre-count open jobs for the input md5s, derive `enqueued = inputCount - openCount`, `skipped = openCount`. Document the semantic in JSDoc.
+3. **`enqueued` count semantics in `enqueueMany`:** Better-sqlite3's `INSERT...ON CONFLICT DO NOTHING` returns `changes` = rows actually inserted. The user-facing toast should report "rows that became eligible to be picked up by the worker."
+   - RESOLVED: Pre-count open jobs for the input md5s, derive `enqueued = inputCount - openCount`, `skipped = openCount`. Documented in Plan 02 Task 4 JSDoc.
 
-4. **`force: true` on retry-all:** Failed books need `enrichment_status` flipped to `pending` before re-enqueueing. This means retry-all must call `enqueueMany(md5s, { force: true })`. Confirm this is the planner's intent (it should be: failed -> pending -> running flow per D-15).
+4. **`force: true` on retry-all:** Failed books need `enrichment_status` flipped to `pending` before re-enqueueing.
+   - RESOLVED: retry-all calls `enqueueMany(md5s, { force: true })`. The failed -> pending -> running flow per D-15 is wired in Plan 03 Task 2.
 
 ## Environment Availability
 

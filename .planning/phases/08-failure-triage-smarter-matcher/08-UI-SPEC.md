@@ -66,7 +66,7 @@ No new sizes or weights. New elements use Phase 5 tokens:
 |------|------|--------|-------------|---------------|
 | Failure-reason badge label | 12px | 600 | 1 | `Badge size="sm"` |
 | Retry-all button label | 14px | 600 | 1.55 | `Button size="sm"` default |
-| Confirmation modal body | 14px | 400 | 1.55 | Mantine default |
+| ~~Confirmation modal body~~ (SUPERSEDED-BY-D-10) | — | — | — | — |
 
 ---
 
@@ -153,13 +153,11 @@ Phase 5's `ReEnrichButton variant="row"` already drives this. Phase 8 contract:
 
 - **Placement**: top-right of the `Unmatched books` section header, on the same row as the `<Title order={2}>` (`Group justify="space-between"`).
 - **Disabled when**: `failed === 0` (Mantine `disabled` prop; tooltip label `No failed books to retry`), or when a retry-all kickoff is in flight (`loading` prop while POST is open).
-- **Confirmation modal**: Mantine `modals.openConfirmModal` with:
-  - Title: `Retry all failed books?`
-  - Body: `This will re-enqueue all {n} failed books for enrichment. This is safe; nothing is deleted.`
-  - Confirm label: `Retry all`
-  - Cancel label: `Cancel`
-  - Confirm color: Mantine default (NOT `red`; retry is non-destructive)
-- **On confirm**: POST `/api/enrichment/retry-all` (or planner's chosen endpoint; expect 202 with `{ enqueued: number }`). Emit a single kickoff toast: title `Retrying {n} books...`, body `We're re-enqueueing them through OpenLibrary. Status updates as each one resolves.`, color `blue`, position `top-center`.
+- **Confirmation modal**: ~~SUPERSEDED-BY-D-10~~ — CONTEXT.md D-10 overrides this. No confirmation modal. The button click fires the action immediately (retry is non-destructive). The strikethrough block below is retained for historical context only and MUST NOT be implemented:
+  - ~~Title: `Retry all failed books?`~~
+  - ~~Body: `This will re-enqueue all {n} failed books for enrichment. This is safe; nothing is deleted.`~~
+  - ~~Confirm label: `Retry all` / Cancel label: `Cancel` / Confirm color: Mantine default~~
+- **On click** (per D-10/D-13): POST `/api/enrichment/retry-all`; expect `200` with `{ enqueued: number, skipped: number }`. Emit a single Mantine `notifications.show` toast with body `Re-enqueued {n} books` (or `No failed books to retry` if `enqueued === 0`). Force-revalidate the unmatched-books SWR list immediately via `mutate` predicate.
 - **No per-book toasts**. Individual book outcomes are reflected in the inbox list as the 5s poll progresses; flooding the user with N toasts is forbidden.
 - **Filter scope**: this milestone retries every book in `enrichment_status='failed'`. There is no per-`failure_reason` filter UI in Phase 8; "optional filter" in REQUIREMENTS.md RETRY-01 is satisfied by the implicit "where status = failed" filter, no additional UI needed. A future per-reason filter chip is explicitly out of scope (already deferred in Phase 5's Out of Scope section).
 
@@ -196,10 +194,12 @@ All Phase 8 strings, locked verbatim. ASCII only. No em dashes.
 | Element | Copy |
 |---------|------|
 | Section header bulk action | `Retry all failed ({n})` (where `{n}` is the failed-count integer; when `n === 0` the button is disabled and label remains the same) |
-| Retry-all confirm modal title | `Retry all failed books?` |
-| Retry-all confirm body | `This will re-enqueue all {n} failed books for enrichment. This is safe; nothing is deleted.` |
-| Retry-all confirm button | `Retry all` |
-| Retry-all cancel button | `Cancel` |
+| ~~Retry-all confirm modal title~~ (SUPERSEDED-BY-D-10, no modal) | — |
+| ~~Retry-all confirm body~~ (SUPERSEDED-BY-D-10) | — |
+| ~~Retry-all confirm button~~ (SUPERSEDED-BY-D-10) | — |
+| ~~Retry-all cancel button~~ (SUPERSEDED-BY-D-10) | — |
+| Retry-all toast (success) | `Re-enqueued {n} books` (per D-13) |
+| Retry-all toast (no-op) | `No failed books to retry` (per D-13) |
 | Per-row retry button | `Re-enrich` (Phase 5; unchanged) |
 
 ### Failure reason badge labels
@@ -234,7 +234,7 @@ Verified all Phase 8 copy above is em-dash free. Uses commas, periods, semicolon
 
 - `FailureReasonBadge` wraps Mantine `Badge` in `Tooltip` (Phase 5 pattern). Badge gets `role="status"` and `aria-label` of the form `Failure reason: {label}` (e.g., `Failure reason: Ambiguous`).
 - `RetryAllButton` is keyboard-focusable per Mantine default. The disabled state (when `failed === 0`) renders a Mantine `Tooltip` with label `No failed books to retry` so the rationale is keyboard-discoverable.
-- Confirmation modal traps focus by default (Mantine `modals.openConfirmModal`).
+- ~~Confirmation modal traps focus by default (Mantine `modals.openConfirmModal`).~~ (SUPERSEDED-BY-D-10 — no modal; the button click fires immediately and the toast acts as the action confirmation.)
 - The relative-time text next to the badge is purely decorative; no `aria-live` (would be noisy on every 5s poll). Screen-reader users get the badge label, which is the load-bearing signal.
 
 ---
@@ -255,7 +255,7 @@ To prevent scope creep from Phase 8 into Phase 9/10:
 
 | Registry | Blocks Used | Safety Gate |
 |----------|-------------|-------------|
-| Mantine v8 | `Badge`, `Button`, `Tooltip`, `Group`, `Modal` (via `modals.openConfirmModal`), `notifications` | not required (first-party, already installed in Phase 5) |
+| Mantine v8 | `Badge`, `Button`, `Tooltip`, `Group`, `notifications` (no `Modal` / `modals.openConfirmModal` per D-10) | not required (first-party, already installed in Phase 5) |
 | `@tabler/icons-react` | `IconRefresh` (already used in `ReEnrichButton`) | not required (first-party, already installed) |
 | shadcn / third-party block registries | none | N/A — shadcn not used in this project |
 
