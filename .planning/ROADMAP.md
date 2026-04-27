@@ -49,7 +49,7 @@
   4. Every enrichment failure persists a structured `failure_reason` (`no_match`, `ambiguous_match`, `network`, `parse_error`, etc.) on the book row, and the inbox UI displays the reason next to each failed book so users can distinguish "needs manual edit" from "transient network error worth retrying".
 **UI hint**: yes
 **Plans:** 4 plans
-- [ ] 08-01-wave0-tests-types-PLAN.md — Wave 0 RED tests + FailureReason type in @koinsight/common + stuck-books fixtures
+- [x] 08-01-wave0-tests-types-PLAN.md — Wave 0 RED tests + FailureReason type in @koinsight/common + stuck-books fixtures
 - [ ] 08-02-server-core-PLAN.md — Migration + classifyFailure refactor + matcher fuzzy/ambiguous + enqueueMany
 - [ ] 08-03-server-wiring-PLAN.md — markTerminalFailure failure_reason write + worker call sites + POST /retry-all + repo SELECT
 - [ ] 08-04-web-ui-PLAN.md — FailureReasonBadge + RetryAllButton + inbox row integration + ReEnrichButton list-key mutate

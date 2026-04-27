@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
-status: ready_to_execute
-stopped_at: "Phase 8 planned (4 plans, 4 waves). Next: /gsd-execute-phase 8."
-last_updated: "2026-04-27T19:30:00.000Z"
-last_activity: 2026-04-27 -- Phase 08 planned (4 plans across 4 waves; verification PASSED)
+status: executing
+stopped_at: "Phase 8 Plan 1 complete (Wave 0 RED tests + FailureReason types). Next: Plan 2 (server core)."
+last_updated: "2026-04-27T22:50:00.000Z"
+last_activity: 2026-04-27 -- Phase 08 Plan 01 complete
 progress:
   total_phases: 4
-  completed_phases: 0
-  total_plans: 6
-  completed_plans: 6
-  percent: 25
+  completed_phases: 1
+  total_plans: 10
+  completed_plans: 7
+  percent: 70
 ---
 
 # Project State
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-26)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** v1.1 — Enrichment Polish & Cleanup. Roadmap complete; next step is `/gsd-plan-phase 7`.
+**Current focus:** Phase 08 — failure-triage-smarter-matcher
 
 ## Current Position
 
 Milestone: v1.1 Enrichment Polish & Cleanup
-Phase: 7 — Reference Pages Enrichment (all plans complete; awaiting verification)
-Plan: 07-06 complete; Phase 7 feature-complete
-Status: Awaiting verification
-Last activity: 2026-04-27 -- Phase 07 plan 06 (NULL-aware book-page UI + CLAUDE.md D-17 note) shipped
+Phase: 08 (failure-triage-smarter-matcher) — EXECUTING
+Plan: 2 of 4
+Status: Executing Phase 08
+Last activity: 2026-04-27 -- Phase 08 Plan 01 (Wave 0) complete; FailureReason types + RED tests landed
 
 ## Accumulated Context
 
@@ -65,5 +65,5 @@ None recorded for v1.1 yet.
 ## Session Continuity
 
 Last session: 2026-04-27
-Stopped at: Phase 8 planned (4 plans, 4 waves; checker PASSED). Next: /gsd-execute-phase 8.
-Resume file: .planning/phases/08-failure-triage-smarter-matcher/08-01-wave0-tests-types-PLAN.md
+Stopped at: Phase 8 Plan 01 (Wave 0) complete. Next: Plan 02 server core (migration + classifyFailure refactor + matcher heuristics + enqueueMany).
+Resume file: .planning/phases/08-failure-triage-smarter-matcher/08-02-server-core-PLAN.md
