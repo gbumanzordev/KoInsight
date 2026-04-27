@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
 status: executing
-stopped_at: "Phase 8 Plan 02 complete (server core: migration + classifyFailure + matcher fuzzy/ambiguous + enqueueMany). Next: Plan 03 (server wiring)."
-last_updated: "2026-04-27T22:55:00.000Z"
-last_activity: 2026-04-27 -- Phase 08 Plan 02 complete
+stopped_at: "Phase 8 Plan 03 complete (server wiring: markTerminalFailure failure_reason write + worker call sites + POST /retry-all + repo SELECT). Next: Plan 04 (web UI)."
+last_updated: "2026-04-27T23:05:00.000Z"
+last_activity: 2026-04-27 -- Phase 08 Plan 03 complete
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 10
-  completed_plans: 8
-  percent: 80
+  completed_plans: 9
+  percent: 90
 ---
 
 # Project State
@@ -27,9 +27,9 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 
 Milestone: v1.1 Enrichment Polish & Cleanup
 Phase: 08 (failure-triage-smarter-matcher) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Executing Phase 08
-Last activity: 2026-04-27 -- Phase 08 Plan 02 (server core) complete; migration + classifyFailure refactor + matcher fuzzy/ambiguous + enqueueMany shipped, all 5 server-pure RED tests + Phase 4 regression GREEN
+Last activity: 2026-04-27 -- Phase 08 Plan 03 (server wiring) complete; markTerminalFailure 5-arg signature + worker { class, reason } threading + POST /retry-all + repo failure_reason SELECT shipped; all 6 server-side Wave 0 RED tests GREEN
 
 ## Accumulated Context
 
@@ -65,5 +65,5 @@ None recorded for v1.1 yet.
 ## Session Continuity
 
 Last session: 2026-04-27
-Stopped at: Phase 8 Plan 02 (server core) complete. Next: Plan 03 server wiring (markTerminalFailure failure_reason write + worker call sites + POST /retry-all + repo SELECT).
-Resume file: .planning/phases/08-failure-triage-smarter-matcher/08-03-server-wiring-PLAN.md
+Stopped at: Phase 8 Plan 03 (server wiring) complete. Next: Plan 04 web UI (FailureReasonBadge + RetryAllButton + inbox row integration + ReEnrichButton list-key mutate).
+Resume file: .planning/phases/08-failure-triage-smarter-matcher/08-04-web-ui-PLAN.md

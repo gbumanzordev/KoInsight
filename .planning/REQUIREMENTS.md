@@ -63,10 +63,10 @@ Coverage: 14/14 v1.1 requirements mapped.
 | REFPAGES-03 | Phase 7: Reference Pages Enrichment | Complete |
 | REFPAGES-04 | Phase 7: Reference Pages Enrichment | Pending |
 | POLISH-01 | Phase 8: Failure Triage & Smarter Matcher | Complete |
-| RETRY-01 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| RETRY-01 | Phase 8: Failure Triage & Smarter Matcher | Partial (POST /api/enrichment/retry-all live in Plan 03; UI button lands in Plan 04) |
 | RETRY-02 | Phase 8: Failure Triage & Smarter Matcher | Pending |
 | RETRY-03 | Phase 8: Failure Triage & Smarter Matcher | Complete |
-| RETRY-04 | Phase 8: Failure Triage & Smarter Matcher | Partial (column + classification ready in Plan 02; persist write lands in Plan 03) |
+| RETRY-04 | Phase 8: Failure Triage & Smarter Matcher | Partial (column + classification + transactional persist via markTerminalFailure live in Plan 03; inbox badge UI lands in Plan 04) |
 | AUTHGC-01 | Phase 9: Orphan Author GC | Pending |
 | AUTHGC-02 | Phase 9: Orphan Author GC | Pending |
 | AUTHGC-03 | Phase 9: Orphan Author GC | Pending |
