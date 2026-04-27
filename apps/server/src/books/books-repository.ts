@@ -131,7 +131,14 @@ export class BooksRepository {
     return db<BookGenre>('book_genre').insert({ book_md5: md5, genre_id: genre.id });
   }
 
-  static async setReferencePages(id: number, referencePages: number | null) {
-    return db<Book>('book').where({ id }).update({ reference_pages: referencePages });
+  static async setReferencePages(
+    id: number,
+    referencePages: number | null,
+    source: 'openlibrary' | 'manual' | null
+  ) {
+    return db<Book>('book').where({ id }).update({
+      reference_pages: referencePages,
+      reference_pages_source: source,
+    });
   }
 }

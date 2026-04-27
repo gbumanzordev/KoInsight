@@ -358,7 +358,7 @@ describe(BooksRepository, () => {
     it('updates the reference pages for a book', async () => {
       const book = await createBook(db, { title: 'Test Book' });
 
-      await BooksRepository.setReferencePages(book.id, 101);
+      await BooksRepository.setReferencePages(book.id, 101, 'manual');
 
       const updatedBook = await db<Book>('book').where({ id: book.id }).first();
 
@@ -366,7 +366,7 @@ describe(BooksRepository, () => {
     });
 
     it('returns 0 when a book is not found', async () => {
-      expect(await BooksRepository.setReferencePages(999, 101)).toEqual(0);
+      expect(await BooksRepository.setReferencePages(999, 101, 'manual')).toEqual(0);
     });
   });
 });

@@ -346,7 +346,8 @@ describe('books-router', () => {
 
       const response = await request(app).put(`/books/${book.id}/reference_pages`).send({});
       expect(response.status).toBe(400);
-      expect(response.body).toEqual({ error: 'Missing required fields' });
+      // Phase 7 Plan 04 (D-13): Zod-flattened error replaces the legacy plain message.
+      expect(response.body.error).toBeDefined();
     });
   });
 });
