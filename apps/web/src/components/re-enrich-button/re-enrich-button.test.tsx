@@ -1,6 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import * as swr from 'swr';
 
 import { renderWithProviders, screen, waitFor } from '../../test-utils';
 import { ReEnrichButton } from './re-enrich-button';
@@ -15,15 +14,23 @@ vi.mock('../../api/books', () => ({
   reEnrichBook: vi.fn(async () => ({ job: null })),
 }));
 
-describe('ReEnrichButton list-key mutate (Phase 8 D-14)', () => {
-  let mutateSpy: ReturnType<typeof vi.spyOn>;
+const mutateMock = vi.fn(async () => undefined);
 
+vi.mock('swr', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>('swr');
+  return {
+    ...actual,
+    mutate: (...args: unknown[]) => mutateMock(...args),
+    default: (actual as { default: unknown }).default,
+  };
+});
+
+describe('ReEnrichButton list-key mutate (Phase 8 D-14)', () => {
   beforeEach(() => {
-    mutateSpy = vi.spyOn(swr, 'mutate');
+    mutateMock.mockClear();
   });
 
   afterEach(() => {
-    mutateSpy.mockRestore();
     vi.clearAllMocks();
   });
 
@@ -35,7 +42,7 @@ describe('ReEnrichButton list-key mutate (Phase 8 D-14)', () => {
     await userEvent.click(screen.getByRole('button', { name: /Re-enrich/i }));
 
     await waitFor(() => {
-      const calls = mutateSpy.mock.calls.map((c) => c[0]);
+      const calls = mutateMock.mock.calls.map((c) => c[0]);
       expect(calls).toContain('books/42');
     });
   });
@@ -48,7 +55,7 @@ describe('ReEnrichButton list-key mutate (Phase 8 D-14)', () => {
     await userEvent.click(screen.getByRole('button', { name: /Re-enrich/i }));
 
     await waitFor(() => {
-      const predicateCalls = mutateSpy.mock.calls.filter(
+      const predicateCalls = mutateMock.mock.calls.filter(
         (c) => typeof c[0] === 'function'
       );
       expect(predicateCalls.length).toBeGreaterThan(0);
@@ -70,7 +77,7 @@ describe('ReEnrichButton list-key mutate (Phase 8 D-14)', () => {
     await userEvent.click(screen.getByRole('button', { name: /Re-enrich/i }));
 
     await waitFor(() => {
-      const calls = mutateSpy.mock.calls.map((c) => c[0]);
+      const calls = mutateMock.mock.calls.map((c) => c[0]);
       expect(calls).toContain('enrichment/status');
     });
   });
