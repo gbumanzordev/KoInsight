@@ -118,13 +118,19 @@ async function enqueueMany(
       return { enqueued, skipped };
     });
   } catch (err) {
-    // Mirror the legacy single-md5 log shape so the Phase 4 DB-throw regression
-    // test continues to pass. We emit one warn per input md5 because the legacy
-    // contract was per-md5; bulk callers tolerate the noise on a transactional
-    // failure since the entire batch rolled back.
-    for (const bookMd5 of valid) {
+    // A transactional failure is one event, not N. Preserve the legacy
+    // per-md5 log shape only for the single-md5 path (Phase 4 regression
+    // test). For bulk callers, emit a single summary warn so a DB outage
+    // during retry-all does not flood logs with N near-identical lines.
+    if (valid.length === 1) {
       console.warn('enrichment enqueue failed', {
-        bookMd5,
+        bookMd5: valid[0],
+        phase: 'enqueue',
+        err: String(err),
+      });
+    } else {
+      console.warn('enrichment enqueueMany failed', {
+        count: valid.length,
         phase: 'enqueue',
         err: String(err),
       });
