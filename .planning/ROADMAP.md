@@ -48,7 +48,11 @@
   3. A book that previously failed with a title/author normalization or "Last, First" alias mismatch (covered by a fixture suite) succeeds matching on retry once the improved heuristics ship; matcher unit tests document the new normalization, fuzzy-compare, and alias-handling rules.
   4. Every enrichment failure persists a structured `failure_reason` (`no_match`, `ambiguous_match`, `network`, `parse_error`, etc.) on the book row, and the inbox UI displays the reason next to each failed book so users can distinguish "needs manual edit" from "transient network error worth retrying".
 **UI hint**: yes
-**Plans**: TBD
+**Plans:** 4 plans
+- [ ] 08-01-wave0-tests-types-PLAN.md — Wave 0 RED tests + FailureReason type in @koinsight/common + stuck-books fixtures
+- [ ] 08-02-server-core-PLAN.md — Migration + classifyFailure refactor + matcher fuzzy/ambiguous + enqueueMany
+- [ ] 08-03-server-wiring-PLAN.md — markTerminalFailure failure_reason write + worker call sites + POST /retry-all + repo SELECT
+- [ ] 08-04-web-ui-PLAN.md — FailureReasonBadge + RetryAllButton + inbox row integration + ReEnrichButton list-key mutate
 
 #### Phase 9: Orphan Author GC
 **Goal**: Authors that no longer back any book can be removed on demand via either an HTTP endpoint or a CLI script, the operation is idempotent, and it is protected against accidental triggering.
@@ -85,6 +89,6 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 7. Reference Pages Enrichment | 6/6 | Complete | 2026-04-27 |
-| 8. Failure Triage & Smarter Matcher | 0/TBD | Not started | - |
+| 8. Failure Triage & Smarter Matcher | 0/4 | Not started | - |
 | 9. Orphan Author GC | 0/TBD | Not started | - |
 | 10. Repo Polish | 0/TBD | Not started | - |

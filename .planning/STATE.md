@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
-status: context_gathered
-stopped_at: "Phase 8 context gathered. Next: /gsd-plan-phase 8."
-last_updated: "2026-04-27T18:30:00.000Z"
-last_activity: 2026-04-27 -- Phase 08 CONTEXT.md written (3 areas discussed, 15 decisions)
+status: ready_to_execute
+stopped_at: "Phase 8 planned (4 plans, 4 waves). Next: /gsd-execute-phase 8."
+last_updated: "2026-04-27T19:30:00.000Z"
+last_activity: 2026-04-27 -- Phase 08 planned (4 plans across 4 waves; verification PASSED)
 progress:
   total_phases: 4
   completed_phases: 0
@@ -65,5 +65,5 @@ None recorded for v1.1 yet.
 ## Session Continuity
 
 Last session: 2026-04-27
-Stopped at: Phase 7 complete (6/6 plans). Next: /gsd-verify-work 7, then Phase 8.
-Resume file: .planning/phases/07-reference-pages-enrichment/07-06-SUMMARY.md
+Stopped at: Phase 8 planned (4 plans, 4 waves; checker PASSED). Next: /gsd-execute-phase 8.
+Resume file: .planning/phases/08-failure-triage-smarter-matcher/08-01-wave0-tests-types-PLAN.md
