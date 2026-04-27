@@ -35,7 +35,7 @@
 - [x] 07-02-PLAN.md — SearchDocSchema cover_edition_key fix + getWorkEditions OL client method
 - [x] 07-03-PLAN.md — Worker Edition fetch + applier D-06 provenance block
 - [x] 07-04-PLAN.md — PUT /reference_pages provenance rewrite + one-shot backfill script
-- [ ] 07-05-PLAN.md — Drop COALESCE in reports + drop device fallback in books-service
+- [x] 07-05-PLAN.md — Drop COALESCE in reports + drop device fallback in books-service
 - [ ] 07-06-PLAN.md — Web UI Page-count-missing affordance + CLAUDE.md doc note
 
 #### Phase 8: Failure Triage & Smarter Matcher
@@ -84,7 +84,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Reference Pages Enrichment | 0/TBD | Not started | - |
+| 7. Reference Pages Enrichment | 5/6 | In progress | - |
 | 8. Failure Triage & Smarter Matcher | 0/TBD | Not started | - |
 | 9. Orphan Author GC | 0/TBD | Not started | - |
 | 10. Repo Polish | 0/TBD | Not started | - |

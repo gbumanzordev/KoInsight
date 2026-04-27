@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
 status: executing
-stopped_at: "Phase 7 plan 04 complete (Wave 3 solo). Next: plans 05-06."
-last_updated: "2026-04-27T18:00:00.000Z"
-last_activity: 2026-04-27 -- Phase 07 plan 04 (PUT provenance + backfill) shipped
+stopped_at: "Phase 7 plan 05 complete (Wave 4 solo). Next: plan 06 (web UI affordance)."
+last_updated: "2026-04-27T19:00:00.000Z"
+last_activity: 2026-04-27 -- Phase 07 plan 05 (drop COALESCE + simplify getTotalPages) shipped
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 4
-  percent: 16
+  completed_plans: 5
+  percent: 21
 ---
 
 # Project State
@@ -27,9 +27,9 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 
 Milestone: v1.1 Enrichment Polish & Cleanup
 Phase: 7 — Reference Pages Enrichment (executing, Wave 3 solo complete)
-Plan: 07-04 complete; next 07-05 (COALESCE drop), 07-06 (UI affordance)
+Plan: 07-05 complete; next 07-06 (UI affordance + CLAUDE.md note)
 Status: Executing
-Last activity: 2026-04-27 -- Phase 07 plan 04 (PUT provenance + backfill) shipped
+Last activity: 2026-04-27 -- Phase 07 plan 05 (drop COALESCE + simplify getTotalPages) shipped
 
 ## Accumulated Context
 
@@ -65,5 +65,5 @@ None recorded for v1.1 yet.
 ## Session Continuity
 
 Last session: 2026-04-27
-Stopped at: Phase 7 plan 04 complete. Next: 07-05 (drop COALESCE) and 07-06 (UI affordance).
-Resume file: .planning/phases/07-reference-pages-enrichment/07-04-SUMMARY.md
+Stopped at: Phase 7 plan 05 complete. Next: 07-06 (UI affordance + CLAUDE.md note).
+Resume file: .planning/phases/07-reference-pages-enrichment/07-05-SUMMARY.md
