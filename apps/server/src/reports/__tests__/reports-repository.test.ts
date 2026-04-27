@@ -127,6 +127,46 @@ describe('reports-repository', () => {
     });
   });
 
+  describe('NULL reference_pages exclusion (Phase 7 plan 05: COALESCE workaround retired)', () => {
+    beforeEach(async () => {
+      await seedYearlyReportScenario(db, {
+        books: [
+          {
+            // Book with NULL reference_pages but device pages = 300.
+            // Pre-plan-05 behavior (COALESCE fallback): book WOULD have qualified
+            // because device_pages.dev_p = 300 supplied the denominator.
+            // Post-plan-05 (D-15/D-17): NULL reference_pages excludes the book
+            // from completion-based predicates. Operator remediation is enrichment
+            // or PUT /books/:id/reference_pages.
+            md5: 'md5-NULL',
+            pages: 300,
+            referencePages: null,
+            pageStats: [
+              { page: 50, startTimeSec: MID_2024, durationSec: 60 },
+              { page: 300, startTimeSec: MID_2024 + 60, durationSec: 60 },
+            ],
+          },
+          {
+            // Sibling book with reference_pages populated; should still qualify.
+            md5: 'md5-POP',
+            pages: 300,
+            referencePages: 300,
+            pageStats: [
+              { page: 50, startTimeSec: MID_2024, durationSec: 60 },
+              { page: 300, startTimeSec: MID_2024 + 60, durationSec: 60 },
+            ],
+          },
+        ],
+      });
+    });
+
+    it('excludes a book with NULL reference_pages even when device pages would clear the threshold', async () => {
+      const md5s = await getBooksReadInYear(Y_START, Y_END);
+      expect(md5s).not.toContain('md5-NULL');
+      expect(md5s).toContain('md5-POP');
+    });
+  });
+
   describe('soft-delete exclusion', () => {
     beforeEach(async () => {
       await seedYearlyReportScenario(db, {
