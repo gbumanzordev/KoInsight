@@ -70,10 +70,21 @@ export async function getUnmatchedBooks(
   offset: number,
   limit: number
 ): Promise<{ rows: UnmatchedBookRow[]; total: number }> {
+  // Pre-aggregate the latest failed enrichment_job per book_md5 so the LEFT JOIN
+  // produces at most one row per book, even when multiple historical failed
+  // jobs exist. Using MAX(id) as the recency proxy (id is monotonic and
+  // tracks insertion order, unlike updated_at which the worker may not bump
+  // on identical re-fails).
+  const latestFailedJob = db('enrichment_job')
+    .select('book_md5')
+    .max('id as id')
+    .where('status', 'failed')
+    .groupBy('book_md5')
+    .as('lj');
+
   const rows = (await db('book as b')
-    .leftJoin('enrichment_job as ej', function () {
-      this.on('ej.book_md5', '=', 'b.md5').andOn('ej.status', '=', db.raw('?', ['failed']));
-    })
+    .leftJoin(latestFailedJob, 'lj.book_md5', 'b.md5')
+    .leftJoin('enrichment_job as ej', 'ej.id', 'lj.id')
     .where('b.enrichment_status', 'failed')
     .select(
       'b.id',

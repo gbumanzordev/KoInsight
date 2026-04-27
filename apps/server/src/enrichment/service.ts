@@ -13,7 +13,7 @@ const Md5Schema = z.string().regex(/^[a-f0-9]{32}$/i);
 
 type OpenOrTerminalStatus = 'pending' | 'running' | 'enriched' | 'failed' | 'skipped' | null;
 
-async function enqueue(bookMd5: string): Promise<void> {
+async function enqueue(bookMd5: string, options: { force?: boolean } = {}): Promise<void> {
   const parsed = Md5Schema.safeParse(bookMd5);
   if (!parsed.success) {
     console.warn('enrichment enqueue: invalid md5', { bookMd5 });
@@ -29,7 +29,15 @@ async function enqueue(bookMd5: string): Promise<void> {
     if (!book) return;
 
     const status = book.enrichment_status;
-    if (status !== null && status !== 'pending') return;
+    // Auto-enqueue (post-sync hook, backfill) only fires for never-tried/pending books.
+    // Manual re-enrich (force) bypasses the status gate so users can retry terminal
+    // states (enriched/failed/skipped) — and resets enrichment_status to 'pending'
+    // so the UI's status-conditional polling restarts.
+    if (!options.force && status !== null && status !== 'pending') return;
+
+    if (options.force && status !== 'pending') {
+      await db('book').where({ md5: bookMd5 }).update({ enrichment_status: 'pending' });
+    }
 
     // SQLite 3.24+ supports ON CONFLICT DO NOTHING without a column target,
     // which resolves against any UNIQUE index including the partial one.

@@ -23,7 +23,29 @@ export const authorEditSchema = z.object({
 
 export const metadataPatchSchema = z
   .object({
-    authors: z.array(authorEditSchema).min(1).max(50).optional(),
+    authors: z
+      .array(authorEditSchema)
+      .min(1)
+      .max(50)
+      .refine(
+        (authors) => {
+          // Reject duplicates so applyManualEdit doesn't violate the
+          // book_author UNIQUE(book_md5, author_id) constraint at insert time
+          // (which would surface as a 500). Match by openlibrary_key when
+          // present, else by case-insensitive trimmed name.
+          const seen = new Set<string>();
+          for (const a of authors) {
+            const key = a.openlibrary_key
+              ? `ol:${a.openlibrary_key}`
+              : `name:${a.name.trim().toLowerCase()}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+          }
+          return true;
+        },
+        { message: 'Authors must be unique' }
+      )
+      .optional(),
     genres: z.array(z.string()).max(50).optional(),
     publication_year: z
       .number()

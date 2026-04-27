@@ -138,7 +138,7 @@ router.post('/:bookId/re-enrich', getBookById, async (req: Request, res: Respons
   const book = req.book!;
 
   try {
-    await enrichmentService.enqueue(book.md5);
+    await enrichmentService.enqueue(book.md5, { force: true });
 
     // Pitfall 5: prefer the open job (pending/running); fall back to the most
     // recent terminal row. If the book has never been enriched, return null.

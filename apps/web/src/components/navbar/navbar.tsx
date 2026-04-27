@@ -18,7 +18,7 @@ import {
   IconSettings,
   IconSun,
 } from '@tabler/icons-react';
-import { JSX, useState } from 'react';
+import { JSX } from 'react';
 import { NavLink, useLocation } from 'react-router';
 import { useEnrichmentStatus } from '../../api/enrichment';
 import { RoutePath } from '../../routes';
@@ -52,12 +52,16 @@ export function Navbar({ onNavigate }: { onNavigate?: () => void }): JSX.Element
     { onClick: openDownload, label: 'KOReader Plugin', icon: IconDownload },
   ];
 
-  const [active, setActive] = useState(
-    () => tabs.find((item) => item.link === pathname)?.link ?? RoutePath.HOME
-  );
+  // Derive active item from current pathname so nested routes (/settings/unmatched,
+  // /reports/yearly, etc.) and back/forward navigation keep the parent nav item
+  // highlighted. HOME is the only route that requires an exact match — every other
+  // tab uses startsWith so deep links resolve correctly.
+  const isActive = (link: RoutePath): boolean => {
+    if (link === RoutePath.HOME) return pathname === RoutePath.HOME;
+    return pathname === link || pathname.startsWith(link + '/');
+  };
 
-  const onClick = (link: RoutePath) => {
-    setActive(link);
+  const onClick = (_link: RoutePath) => {
     onNavigate?.();
   };
 
@@ -66,7 +70,7 @@ export function Navbar({ onNavigate }: { onNavigate?: () => void }): JSX.Element
       const navLink = (
         <NavLink
           className={style.Link}
-          data-active={item.link === active || undefined}
+          data-active={isActive(item.link) || undefined}
           to={item.link}
           onClick={() => onClick(item.link)}
         >
@@ -105,13 +109,7 @@ export function Navbar({ onNavigate }: { onNavigate?: () => void }): JSX.Element
 
   return (
     <Box className={style.Navbar} component="nav">
-      <Logo
-        onClick={() => {
-          setActive(RoutePath.HOME);
-          onNavigate?.();
-        }}
-        className={style.Logo}
-      />
+      <Logo onClick={() => onNavigate?.()} className={style.Logo} />
       <div>{links}</div>
       <div className={style.Footer}>
         <Flex gap="xs">

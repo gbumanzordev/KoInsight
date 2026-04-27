@@ -171,7 +171,9 @@ export class UploadService {
         );
       }
 
-      await trx.commit();
+      // Knex's callback-style transaction commits automatically when the callback
+      // resolves (and rolls back on throw); calling trx.commit() here would
+      // double-commit.
     });
 
     return { affectedMd5s };

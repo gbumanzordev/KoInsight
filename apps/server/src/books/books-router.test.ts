@@ -299,22 +299,29 @@ describe('books-router', () => {
       expect(postCount).toBe(1);
     });
 
-    it('returns 202 with latest terminal job for a failed book', async () => {
+    it('returns 202 with a new pending job for a previously-failed book', async () => {
+      // Manual re-enrich (force=true) bypasses the terminal-state gate, resets
+      // book.enrichment_status to 'pending', and enqueues a fresh pending job.
+      // The router prefers the open job over historical terminal rows.
       const md5 = 'c'.repeat(32);
       const book = await createBook(db, { md5, enrichment_status: 'failed' });
       const [inserted] = await db('enrichment_job')
         .insert({ book_md5: md5, status: 'failed', last_error: 'prior-error', attempts: 1 })
         .returning('id');
-      const insertedId = (inserted as { id: number }).id ?? (inserted as unknown as number);
+      const priorFailedId = (inserted as { id: number }).id ?? (inserted as unknown as number);
 
       const response = await request(app).post(`/books/${book.id}/re-enrich`).send();
 
       expect(response.status).toBe(202);
-      expect(response.body.job.status).toBe('failed');
-      expect(response.body.job.id).toBe(insertedId);
+      expect(response.body.job.status).toBe('pending');
+      expect(response.body.job.id).not.toBe(priorFailedId);
 
-      const count = (await db('enrichment_job').where({ book_md5: md5 }).select('id')).length;
-      expect(count).toBe(1);
+      const updatedBook = await db('book').where({ md5 }).first();
+      expect(updatedBook?.enrichment_status).toBe('pending');
+
+      const allJobs = await db('enrichment_job').where({ book_md5: md5 }).select('id', 'status');
+      expect(allJobs).toHaveLength(2);
+      expect(allJobs.map((j) => j.status).sort()).toEqual(['failed', 'pending']);
     });
 
     it('returns 404 when bookId does not exist', async () => {

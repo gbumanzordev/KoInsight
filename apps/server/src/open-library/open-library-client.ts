@@ -25,17 +25,23 @@ function normalizePath(
   expectedPrefix: '/works/' | '/books/' | '/authors/' | '/isbn/'
 ): string {
   const trimmed = raw.trim();
-  if (trimmed.startsWith(expectedPrefix)) {
-    const tail = trimmed.slice(expectedPrefix.length);
+  // Accept the no-leading-slash form documented above ('works/OL…') by promoting
+  // it to the canonical '/works/…' before the prefix-stripping check.
+  const normalized =
+    trimmed.startsWith(expectedPrefix.slice(1)) && !trimmed.startsWith(expectedPrefix)
+      ? `/${trimmed}`
+      : trimmed;
+  if (normalized.startsWith(expectedPrefix)) {
+    const tail = normalized.slice(expectedPrefix.length);
     if (tail.includes('/') || tail.includes('..')) {
       throw new Error(`Invalid path segment: ${raw}`);
     }
-    return trimmed;
+    return normalized;
   }
-  if (trimmed.includes('/') || trimmed.includes('..')) {
+  if (normalized.includes('/') || normalized.includes('..')) {
     throw new Error(`Invalid path segment: ${raw}`);
   }
-  return `${expectedPrefix}${trimmed}`;
+  return `${expectedPrefix}${normalized}`;
 }
 
 // Instance class (deviation from static-class convention per 03-PATTERNS.md §Cross-cutting Note 1)

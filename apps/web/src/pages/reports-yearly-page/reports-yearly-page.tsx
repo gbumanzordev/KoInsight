@@ -82,11 +82,11 @@ export function ReportsYearlyPage(): JSX.Element {
       {!reportError &&
         report &&
         report.coverage.total_books === 0 &&
-        report.totals.totalPageTurns === 0 && <EmptyYearState year={report.year} />}
+        report.totals.pages === 0 && <EmptyYearState year={report.year} />}
 
       {!reportError &&
         report &&
-        (report.coverage.total_books > 0 || report.totals.totalPageTurns > 0) && (
+        (report.coverage.total_books > 0 || report.totals.pages > 0) && (
           <Stack gap="lg">
             <Title order={3}>{report.year}</Title>
 
