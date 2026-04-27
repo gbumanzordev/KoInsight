@@ -21,6 +21,7 @@ export function fakeBook(overrides: Partial<FakeBook> = {}): FakeBook {
     genres_source: null,
     publication_year_source: null,
     original_language_source: null,
+    reference_pages_source: null,
     ...overrides,
   };
 
