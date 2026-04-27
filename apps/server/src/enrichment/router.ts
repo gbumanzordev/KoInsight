@@ -1,5 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { z } from 'zod';
+import { db } from '../knex';
+import { enqueueMany } from './service';
 import { getEnrichmentStatusCounts, getUnmatchedBooks } from './unmatched-repository';
 
 // Phase 5 Plan 03: enrichment router exposing the two read endpoints the
@@ -44,6 +46,37 @@ router.get('/status', async (_req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to load enrichment status' });
+  }
+});
+
+// Phase 8 RETRY-01 / CD-2: bulk re-enqueue every book with
+// enrichment_status='failed'. Body schema is z.object({...}).strict() per
+// T-08-03 mitigation: unknown keys and non-boolean `force` are rejected with
+// 400. enqueueMany is invoked with force=true so the failed -> pending status
+// flip is permitted (Open Q4); enqueueMany itself returns
+// { enqueued, skipped } verbatim.
+const retryAllBodySchema = z
+  .object({
+    force: z.boolean().optional(),
+  })
+  .strict();
+
+router.post('/retry-all', async (req: Request, res: Response) => {
+  const parsed = retryAllBodySchema.safeParse(req.body ?? {});
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const failedRows = await db('book')
+      .where({ enrichment_status: 'failed' })
+      .select<Array<{ md5: string }>>('md5');
+    const failedMd5s = failedRows.map((r) => r.md5);
+    const result = await enqueueMany(failedMd5s, { force: true });
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to enqueue retries' });
   }
 });
 

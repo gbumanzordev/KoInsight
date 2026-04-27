@@ -1,3 +1,4 @@
+import type { FailureReason } from '@koinsight/common/types/enrichment';
 import { db } from '../knex';
 
 // Phase 5 Plan 03: read repository for enrichment status counters and the
@@ -20,6 +21,10 @@ export type UnmatchedBookRow = {
   md5: string;
   title: string;
   authors: string;
+  // Phase 8 RETRY-04 / D-01: structured failure category persisted alongside
+  // enrichment_status='failed' by markTerminalFailure. Null for legacy rows
+  // (D-04: no backfill); the inbox UI renders 'unknown' for null.
+  failure_reason: FailureReason | null;
   last_error: string | null;
   job_updated_at: string | null;
 };
@@ -91,6 +96,7 @@ export async function getUnmatchedBooks(
       'b.md5',
       'b.title',
       'b.authors',
+      'b.failure_reason',
       'ej.last_error',
       'ej.updated_at as job_updated_at'
     )
