@@ -15,7 +15,7 @@
 **Phase Numbering:** Continuing from v1.0 (which ended at Phase 6). v1.1 starts at Phase 7.
 
 - [ ] **Phase 7: Reference Pages Enrichment** - Enrichment writes `book.reference_pages` from OL Edition data, manual stickiness via `reference_pages_source`, backfill, and drop the yearly-report COALESCE workaround.
-- [ ] **Phase 8: Failure Triage & Smarter Matcher** - Bulk-enqueue helper, smarter OL matcher, structured `failure_reason` on each failure, and per-book + bulk retry from the unmatched inbox UI.
+- [x] **Phase 8: Failure Triage & Smarter Matcher** (complete 2026-04-27) - Bulk-enqueue helper, smarter OL matcher, structured `failure_reason` on each failure, and per-book + bulk retry from the unmatched inbox UI.
 - [ ] **Phase 9: Orphan Author GC** - Admin HTTP endpoint + CLI script that delete authors with zero `book_author` references, idempotent and protected against accidental triggering.
 - [ ] **Phase 10: Repo Polish** - Documented version-pin convention across all workspaces and web bundle splitting so no initial chunk exceeds the agreed threshold.
 
@@ -52,7 +52,7 @@
 - [x] 08-01-wave0-tests-types-PLAN.md — Wave 0 RED tests + FailureReason type in @koinsight/common + stuck-books fixtures
 - [x] 08-02-server-core-PLAN.md — Migration + classifyFailure refactor + matcher fuzzy/ambiguous + enqueueMany
 - [x] 08-03-server-wiring-PLAN.md — markTerminalFailure failure_reason write + worker call sites + POST /retry-all + repo SELECT
-- [ ] 08-04-web-ui-PLAN.md — FailureReasonBadge + RetryAllButton + inbox row integration + ReEnrichButton list-key mutate
+- [x] 08-04-web-ui-PLAN.md — FailureReasonBadge + RetryAllButton + inbox row integration + ReEnrichButton list-key mutate
 
 #### Phase 9: Orphan Author GC
 **Goal**: Authors that no longer back any book can be removed on demand via either an HTTP endpoint or a CLI script, the operation is idempotent, and it is protected against accidental triggering.
@@ -89,6 +89,6 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 7. Reference Pages Enrichment | 6/6 | Complete | 2026-04-27 |
-| 8. Failure Triage & Smarter Matcher | 0/4 | Not started | - |
+| 8. Failure Triage & Smarter Matcher | 4/4 | Complete | 2026-04-27 |
 | 9. Orphan Author GC | 0/TBD | Not started | - |
 | 10. Repo Polish | 0/TBD | Not started | - |

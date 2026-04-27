@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
 status: executing
-stopped_at: "Phase 8 Plan 03 complete (server wiring: markTerminalFailure failure_reason write + worker call sites + POST /retry-all + repo SELECT). Next: Plan 04 (web UI)."
-last_updated: "2026-04-27T23:05:00.000Z"
-last_activity: 2026-04-27 -- Phase 08 Plan 03 complete
+stopped_at: "Phase 8 complete (4/4 plans). Next: Phase 9 (orphan author GC) or Phase 10 (repo polish) — eligible to run in parallel."
+last_updated: "2026-04-27T23:30:00.000Z"
+last_activity: 2026-04-27 -- Phase 08 Plan 04 complete (web UI shipped)
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 10
-  completed_plans: 9
-  percent: 90
+  completed_plans: 10
+  percent: 100
 ---
 
 # Project State
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Milestone: v1.1 Enrichment Polish & Cleanup
-Phase: 08 (failure-triage-smarter-matcher) — EXECUTING
-Plan: 4 of 4
-Status: Executing Phase 08
-Last activity: 2026-04-27 -- Phase 08 Plan 03 (server wiring) complete; markTerminalFailure 5-arg signature + worker { class, reason } threading + POST /retry-all + repo failure_reason SELECT shipped; all 6 server-side Wave 0 RED tests GREEN
+Phase: 08 (failure-triage-smarter-matcher) — COMPLETE
+Plan: 4 of 4 — COMPLETE
+Status: Phase 08 complete; Phase 09 (orphan author GC) or Phase 10 (repo polish) up next (parallel-eligible).
+Last activity: 2026-04-27 -- Phase 08 Plan 04 (web UI) complete; FailureReasonBadge + RetryAllButton shipped; ReEnrichButton invalidates unmatched list cache; all 9 Wave 0 RED tests GREEN (6 server + 3 web suites / 15 web assertions).
 
 ## Accumulated Context
 
@@ -65,5 +65,5 @@ None recorded for v1.1 yet.
 ## Session Continuity
 
 Last session: 2026-04-27
-Stopped at: Phase 8 Plan 03 (server wiring) complete. Next: Plan 04 web UI (FailureReasonBadge + RetryAllButton + inbox row integration + ReEnrichButton list-key mutate).
-Resume file: .planning/phases/08-failure-triage-smarter-matcher/08-04-web-ui-PLAN.md
+Stopped at: Phase 8 complete (all 4 plans). Next: Phase 9 (orphan author GC) or Phase 10 (repo polish) — both parallel-eligible after Phase 8.
+Resume file: .planning/ROADMAP.md (no in-flight phase)

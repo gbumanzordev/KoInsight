@@ -22,10 +22,10 @@
 
 ### Retry & Matcher (RETRY)
 
-- [ ] **RETRY-01**: User can bulk-retry all books in `enrichment_status = 'failed'` from the dashboard (single action, optional filter); each book is re-enqueued through the normal enrichment pipeline.
-- [ ] **RETRY-02**: User can retry a single book from the unmatched/failed inbox UI without leaving the page; the row reflects the new status after the retry resolves.
+- [x] **RETRY-01**: User can bulk-retry all books in `enrichment_status = 'failed'` from the dashboard (single action, optional filter); each book is re-enqueued through the normal enrichment pipeline.
+- [x] **RETRY-02**: User can retry a single book from the unmatched/failed inbox UI without leaving the page; the row reflects the new status after the retry resolves.
 - [x] **RETRY-03**: The OL matcher uses improved heuristics (title/author normalization, fuzzy title compare, author alias / "Last, First" handling) so that books which currently fail matching but are present in OL succeed on retry.
-- [ ] **RETRY-04**: Each enrichment failure persists a structured `failure_reason` on the book row (e.g., `no_match`, `ambiguous_match`, `network`, `parse_error`); the inbox UI shows the reason next to each failed book.
+- [x] **RETRY-04**: Each enrichment failure persists a structured `failure_reason` on the book row (e.g., `no_match`, `ambiguous_match`, `network`, `parse_error`); the inbox UI shows the reason next to each failed book.
 
 ### Orphan Author GC (AUTHGC)
 
@@ -63,10 +63,10 @@ Coverage: 14/14 v1.1 requirements mapped.
 | REFPAGES-03 | Phase 7: Reference Pages Enrichment | Complete |
 | REFPAGES-04 | Phase 7: Reference Pages Enrichment | Pending |
 | POLISH-01 | Phase 8: Failure Triage & Smarter Matcher | Complete |
-| RETRY-01 | Phase 8: Failure Triage & Smarter Matcher | Partial (POST /api/enrichment/retry-all live in Plan 03; UI button lands in Plan 04) |
-| RETRY-02 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| RETRY-01 | Phase 8: Failure Triage & Smarter Matcher | Complete |
+| RETRY-02 | Phase 8: Failure Triage & Smarter Matcher | Complete |
 | RETRY-03 | Phase 8: Failure Triage & Smarter Matcher | Complete |
-| RETRY-04 | Phase 8: Failure Triage & Smarter Matcher | Partial (column + classification + transactional persist via markTerminalFailure live in Plan 03; inbox badge UI lands in Plan 04) |
+| RETRY-04 | Phase 8: Failure Triage & Smarter Matcher | Complete |
 | AUTHGC-01 | Phase 9: Orphan Author GC | Pending |
 | AUTHGC-02 | Phase 9: Orphan Author GC | Pending |
 | AUTHGC-03 | Phase 9: Orphan Author GC | Pending |
@@ -74,4 +74,4 @@ Coverage: 14/14 v1.1 requirements mapped.
 | POLISH-03 | Phase 10: Repo Polish | Pending |
 
 ---
-*Last updated: 2026-04-26 — milestone v1.1 roadmap drafted (Phases 7-10)*
+*Last updated: 2026-04-27 — Phase 8 complete (RETRY-01/02/03/04 + POLISH-01); v1.1 progress 9/14 requirements complete.*
