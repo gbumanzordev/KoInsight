@@ -32,6 +32,7 @@ export type DbBook = {
   genres_source: FieldSource | null;
   publication_year_source: FieldSource | null;
   original_language_source: FieldSource | null;
+  reference_pages_source: FieldSource | null;
 };
 
 export type Book = DbBook & {
