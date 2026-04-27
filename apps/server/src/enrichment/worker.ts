@@ -2,7 +2,7 @@ import type { Knex } from 'knex';
 import { ENRICHMENT_MAX_ATTEMPTS, ENRICHMENT_POLL_INTERVAL_MS } from './constants';
 import { openLibraryClient } from '../open-library/open-library-client';
 import { wikidataClient } from './wikidata/wikidata-client';
-import { matchWork } from './matcher';
+import { matchWork, NoMatchError } from './matcher';
 import { classifyFailure, computeNextAttemptAt, truncateError } from './retry';
 import { applyEnrichment, markTerminalFailure, type EnrichedBundle } from './applier';
 
@@ -137,15 +137,18 @@ async function processJob(knex: Knex, job: EnrichmentJobRow): Promise<void> {
   const primaryAuthor = (book.authors ?? '').split(',')[0]?.trim() ?? '';
   const search = await openLibraryClient.searchWork(book.title, primaryAuthor || undefined);
 
+  // Phase 8 D-05/D-06: matchWork now ALWAYS returns a candidate or throws
+  // (NoMatchError / AmbiguousMatchError). The thrown errors are caught by
+  // claimAndProcess and routed through scheduleRetryOrFail -> classifyFailure,
+  // which maps them to permanent failures with the correct FailureReason.
+  // Defensive guard kept so a future refactor that re-introduces a null path
+  // surfaces an explicit NoMatchError instead of crashing on `.key` below.
   const candidate = matchWork(
     { title: book.title, authors: book.authors },
     search.docs ?? []
   );
   if (!candidate) {
-    const err = new Error('no-match after top-3 candidates');
-    err.name = 'NoMatchError';
-    await markTerminalFailure(knex, job.id, job.book_md5, err);
-    return;
+    throw new NoMatchError();
   }
 
   const workKey = candidate.key;
@@ -201,13 +204,19 @@ async function scheduleRetryOrFail(
   job: EnrichmentJobRow,
   err: unknown
 ): Promise<void> {
-  const klass = classifyFailure(err);
+  // Phase 8 D-02 / Pitfall 5: classifyFailure now returns { class, reason };
+  // thread `reason` to markTerminalFailure so book.failure_reason gets
+  // persisted on every terminal failure path (RETRY-04).
+  const { class: klass, reason } = classifyFailure(err);
   if (klass === 'permanent') {
-    await markTerminalFailure(knex, job.id, job.book_md5, err);
+    await markTerminalFailure(knex, job.id, job.book_md5, err, reason);
     return;
   }
   if (job.attempts >= ENRICHMENT_MAX_ATTEMPTS) {
-    await markTerminalFailure(knex, job.id, job.book_md5, err);
+    // Pitfall 6: attempts-exhausted retryable failures are persisted with the
+    // `reason` from the classifier verbatim (typically 'network' for the
+    // errors that reach this branch). No special re-classification.
+    await markTerminalFailure(knex, job.id, job.book_md5, err, reason);
     return;
   }
 

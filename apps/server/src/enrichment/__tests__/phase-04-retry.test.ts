@@ -12,19 +12,25 @@ function codedError(code: string, message = 'coded'): Error {
 }
 
 describe('classifyFailure (D-14)', () => {
+  // Phase 8 D-02 / D-03: classifyFailure now returns { class, reason }.
+  // Pre-Phase-8 assertions checked the bare string class; updated here to
+  // unwrap `.class` so the legacy disposition contract still gets exercised.
+  // Full { class, reason } table coverage lives in phase-08-classify-failure.test.ts.
   it('UpstreamServerError -> retryable', () => {
-    expect(classifyFailure(new UpstreamServerError('https://openlibrary.org/works/OL1.json', 503))).toBe(
-      'retryable'
-    );
+    expect(
+      classifyFailure(new UpstreamServerError('https://openlibrary.org/works/OL1.json', 503)).class
+    ).toBe('retryable');
   });
 
   it('NotFoundError with /works/ url -> permanent', () => {
-    expect(classifyFailure(new NotFoundError('https://openlibrary.org/works/OL1.json'))).toBe('permanent');
+    expect(classifyFailure(new NotFoundError('https://openlibrary.org/works/OL1.json')).class).toBe(
+      'permanent'
+    );
   });
 
   it('NotFoundError with /isbn/ url -> retryable-isbn-fallback', () => {
     expect(
-      classifyFailure(new NotFoundError('https://openlibrary.org/isbn/9780812550702.json'))
+      classifyFailure(new NotFoundError('https://openlibrary.org/isbn/9780812550702.json')).class
     ).toBe('retryable-isbn-fallback');
   });
 
@@ -33,15 +39,15 @@ describe('classifyFailure (D-14)', () => {
     ['ETIMEDOUT'],
     ['UND_ERR_CONNECT_TIMEOUT'],
   ])('plain Error with .code=%s -> retryable', (code) => {
-    expect(classifyFailure(codedError(code))).toBe('retryable');
+    expect(classifyFailure(codedError(code)).class).toBe('retryable');
   });
 
   it('Error with .code=EOPENBREAKER -> retryable', () => {
-    expect(classifyFailure(codedError('EOPENBREAKER'))).toBe('retryable');
+    expect(classifyFailure(codedError('EOPENBREAKER')).class).toBe('retryable');
   });
 
   it('Error with .code=SQLITE_BUSY -> retryable', () => {
-    expect(classifyFailure(codedError('SQLITE_BUSY'))).toBe('retryable');
+    expect(classifyFailure(codedError('SQLITE_BUSY')).class).toBe('retryable');
   });
 
   it('ZodError -> permanent', () => {
@@ -53,27 +59,27 @@ describe('classifyFailure (D-14)', () => {
       zodErr = e as ZodError;
     }
     expect(zodErr.name).toBe('ZodError');
-    expect(classifyFailure(zodErr)).toBe('permanent');
+    expect(classifyFailure(zodErr).class).toBe('permanent');
   });
 
   it('Error with message "no-match" -> permanent', () => {
-    expect(classifyFailure(new Error('no-match'))).toBe('permanent');
+    expect(classifyFailure(new Error('no-match')).class).toBe('permanent');
   });
 
   it('Error with name "NoMatchError" -> permanent', () => {
     const err = new Error('no candidate accepted');
     err.name = 'NoMatchError';
-    expect(classifyFailure(err)).toBe('permanent');
+    expect(classifyFailure(err).class).toBe('permanent');
   });
 
   it('unknown Error falls back to retryable (conservative default)', () => {
-    expect(classifyFailure(new Error('something weird'))).toBe('retryable');
+    expect(classifyFailure(new Error('something weird')).class).toBe('retryable');
   });
 
   it('non-Error value falls back to retryable', () => {
-    expect(classifyFailure('string failure')).toBe('retryable');
-    expect(classifyFailure(null)).toBe('retryable');
-    expect(classifyFailure(undefined)).toBe('retryable');
+    expect(classifyFailure('string failure').class).toBe('retryable');
+    expect(classifyFailure(null).class).toBe('retryable');
+    expect(classifyFailure(undefined).class).toBe('retryable');
   });
 });
 

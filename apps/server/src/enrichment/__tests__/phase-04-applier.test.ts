@@ -308,7 +308,7 @@ describe('markTerminalFailure', () => {
     await createBook(db, { md5: MD5, enrichment_status: 'pending' });
     const jobId = await openJob(MD5);
 
-    await markTerminalFailure(db, jobId, MD5, new Error('no-match after top-3'));
+    await markTerminalFailure(db, jobId, MD5, new Error('no-match after top-3'), 'no_match');
 
     const job = await db('enrichment_job').where({ id: jobId }).first();
     expect(job.status).toBe('failed');
@@ -316,6 +316,8 @@ describe('markTerminalFailure', () => {
 
     const book = await db('book').where({ md5: MD5 }).first();
     expect(book.enrichment_status).toBe('failed');
+    // Phase 8 D-01: failure_reason persisted alongside enrichment_status.
+    expect(book.failure_reason).toBe('no_match');
   });
 
   it('truncates last_error to 500 chars before writing', async () => {
@@ -323,7 +325,7 @@ describe('markTerminalFailure', () => {
     const jobId = await openJob(MD5);
 
     const long = 'x'.repeat(1000);
-    await markTerminalFailure(db, jobId, MD5, new Error(long));
+    await markTerminalFailure(db, jobId, MD5, new Error(long), 'no_match');
 
     const job = await db('enrichment_job').where({ id: jobId }).first();
     expect(job.last_error).toHaveLength(500);
@@ -334,7 +336,7 @@ describe('markTerminalFailure', () => {
     await createBook(db, { md5: MD5, enrichment_status: 'pending' });
     const jobId = await openJob(MD5);
 
-    await markTerminalFailure(db, jobId, MD5, 'raw string failure');
+    await markTerminalFailure(db, jobId, MD5, 'raw string failure', 'no_match');
 
     const job = await db('enrichment_job').where({ id: jobId }).first();
     expect(job.status).toBe('failed');

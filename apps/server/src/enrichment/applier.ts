@@ -1,5 +1,6 @@
 import type { Knex } from 'knex';
 import { mapOpenLibrarySubjects } from '@koinsight/common/dist/genres/map.js';
+import type { FailureReason } from '@koinsight/common/types/enrichment';
 import { upsertAuthor, type EnrichedAuthor } from './author-upsert';
 import { truncateError } from './retry';
 
@@ -132,11 +133,17 @@ export async function applyEnrichment(
   });
 }
 
+// Phase 8 D-01 / D-02: markTerminalFailure now persists `book.failure_reason`
+// transactionally alongside the existing `enrichment_status='failed'` flip and
+// the `enrichment_job` status update. Callers (worker.ts) thread the
+// FailureReason from `classifyFailure(err).reason` so the inbox UI can render
+// a structured badge per RETRY-04.
 export async function markTerminalFailure(
   knex: Knex,
   jobId: number,
   bookMd5: string,
-  error: unknown
+  error: unknown,
+  reason: FailureReason
 ): Promise<void> {
   const rawMessage =
     error instanceof Error ? error.message : typeof error === 'string' ? error : String(error);
@@ -148,6 +155,9 @@ export async function markTerminalFailure(
       last_error: lastError,
       updated_at: trx.fn.now(),
     });
-    await trx('book').where({ md5: bookMd5 }).update({ enrichment_status: 'failed' });
+    await trx('book').where({ md5: bookMd5 }).update({
+      enrichment_status: 'failed',
+      failure_reason: reason,
+    });
   });
 }
