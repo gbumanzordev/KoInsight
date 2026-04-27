@@ -38,6 +38,7 @@ function enderBundle(overrides: Partial<EnrichedBundle> = {}): EnrichedBundle {
       },
     ],
     subjects: ['Science Fiction', 'Space Opera', 'Juvenile fiction'],
+    referencePages: null,
     ...overrides,
   };
 }

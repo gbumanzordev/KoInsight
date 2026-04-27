@@ -21,6 +21,8 @@ export interface EnrichedBundle {
   originalLanguage: string | null; // ISO 639-1 or null
   authors: EnrichedAuthor[];
   subjects: string[];
+  // D-04: null when cover_edition_key absent or Edition has no positive number_of_pages.
+  referencePages: number | null;
 }
 
 type FieldSource = 'openlibrary' | 'manual' | null;
@@ -30,6 +32,7 @@ interface BookSourceRow {
   genres_source: FieldSource;
   publication_year_source: FieldSource;
   original_language_source: FieldSource;
+  reference_pages_source: FieldSource;
 }
 
 export async function applyEnrichment(
@@ -45,7 +48,8 @@ export async function applyEnrichment(
         'authors_source',
         'genres_source',
         'publication_year_source',
-        'original_language_source'
+        'original_language_source',
+        'reference_pages_source'
       )
       .first()) as BookSourceRow | undefined;
     if (!book) {
@@ -103,6 +107,15 @@ export async function applyEnrichment(
     if (book.original_language_source !== 'manual') {
       updates.original_language = bundle.originalLanguage;
       updates.original_language_source = 'openlibrary';
+    }
+    // D-06: reference_pages provenance guard.
+    // Manual edits are sticky; OL writes only when the run produced a positive page count.
+    // null bundle.referencePages is a no-op (do NOT clear an existing OL-sourced value).
+    if (book.reference_pages_source !== 'manual') {
+      if (bundle.referencePages !== null) {
+        updates.reference_pages = bundle.referencePages;
+        updates.reference_pages_source = 'openlibrary';
+      }
     }
     if (book.authors_source !== 'manual') {
       updates.authors_source = 'openlibrary';
