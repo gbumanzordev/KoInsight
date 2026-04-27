@@ -27,11 +27,14 @@ export type EnqueueManyResult = { enqueued: number; skipped: number };
  * the partial UNIQUE index `enrichment_job_book_md5_open_unique`.
  *
  * Return semantics (RESEARCH Open Q3):
- *   enqueued = inputCount - openJobsBefore (md5s that newly became eligible)
+ *   enqueued = md5s that produced a new pending row, i.e. book exists, status
+ *             was `pending`/`null` (or `force=true`), and there was no open
+ *             pending/running job already.
  *   skipped  = openJobsBefore (md5s that already had an open pending/running job)
  *
  * Reflects the user-facing "rows that newly became eligible to be picked up
- * by the worker." Invalid md5s are not counted in either bucket.
+ * by the worker." Invalid md5s, missing books, and md5s blocked by a terminal
+ * status (when `force` is false) are not counted in either bucket.
  */
 async function enqueueMany(
   bookMd5s: string[],
@@ -106,7 +109,12 @@ async function enqueueMany(
         await trx('enrichment_job').insert(insertRows).onConflict().ignore();
       }
 
-      const enqueued = valid.length - skipped;
+      // Compute enqueued from the actually-eligible set, excluding md5s that
+      // already had an open job. md5s dropped by the eligibility filter (book
+      // missing, or terminal status without `force`) are excluded from both
+      // buckets so the count matches the number of pending rows we just
+      // attempted to insert.
+      const enqueued = eligible.filter((m) => !openMd5s.has(m)).length;
       return { enqueued, skipped };
     });
   } catch (err) {
