@@ -40,6 +40,15 @@ export const WorkSchema = z.object({
 });
 export type OpenLibraryWork = z.infer<typeof WorkSchema>;
 
+// === Work Editions ===
+// Used by the Phase 7 backfill (D-09 option b) to resolve cover_edition_key
+// for already-enriched books from their work key.
+// Permissive: extra fields on entries are stripped, entries optional with default [].
+export const WorkEditionsSchema = z.object({
+  entries: z.array(z.object({ key: z.string() })).optional().default([]),
+});
+export type OpenLibraryWorkEditions = z.infer<typeof WorkEditionsSchema>;
+
 // === Edition ===
 // Per 03-RESEARCH: subjects on editions are typically empty/sparse; resolver must walk to Work.
 export const EditionSchema = z.object({

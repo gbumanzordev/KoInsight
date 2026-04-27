@@ -10,7 +10,9 @@ import {
   type OpenLibraryEdition,
   type OpenLibrarySearchResult,
   type OpenLibraryWork,
+  type OpenLibraryWorkEditions,
   SearchResultSchema,
+  WorkEditionsSchema,
   WorkSchema,
 } from './open-library-schemas';
 
@@ -63,6 +65,18 @@ export class OpenLibraryClient {
   async getWork(workKey: string): Promise<OpenLibraryWork> {
     const path = normalizePath(workKey, '/works/');
     return typedFetch(`${OPEN_LIBRARY_API}${path}.json`, WorkSchema, this.deps);
+  }
+
+  // REFPAGES-02 / D-09 option b: fetch the first edition for a work key.
+  // Used by the Phase 7 backfill to recover cover_edition_key for already-enriched books.
+  // Goes through typedFetch -> sharedHttpLimiter so rate limiting is preserved.
+  async getWorkEditions(workKey: string): Promise<OpenLibraryWorkEditions> {
+    const path = normalizePath(workKey, '/works/');
+    return typedFetch(
+      `${OPEN_LIBRARY_API}${path}/editions.json?limit=1`,
+      WorkEditionsSchema,
+      this.deps
+    );
   }
 
   async getEdition(editionKey: string): Promise<OpenLibraryEdition> {
