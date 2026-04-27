@@ -1,0 +1,86 @@
+{
+  "_doc": "Phase 8 D-09 regression suite. Eight synthetic entries cover the failure-cause matrix the planner expects from the dev DB's currently-stuck-failed books: (1) diacritic-only title difference, (2) subtitle-only difference, (3) Last,First author swap, (4) Dice fuzzy match, (5) ambiguous (2+ candidates equally valid), (6) genuine no_match (no candidate has overlapping author), (7) parse_error trigger (malformed candidate doc), (8) network proxy (placeholder; actual classification is upstream of the matcher). The executor MAY refresh this from the dev DB when accessible; the synthetic shape is sufficient until then. expected_outcome is one of 'match', 'ambiguous', 'no_match'.",
+  "books": [
+    {
+      "md5": "00000000000000000000000000000001",
+      "title": "Resolução",
+      "authors": "Some Author",
+      "candidates": [
+        { "title": "Resolucao", "key": "/works/F1", "author_name": ["Some Author"] },
+        { "title": "Different", "key": "/works/F1B", "author_name": ["Other"] }
+      ],
+      "failure_cause_observed": "Strict path rejects because candidate title has no combining marks; NFKD normalization fixes this in the fuzzy path.",
+      "expected_outcome": "match"
+    },
+    {
+      "md5": "00000000000000000000000000000002",
+      "title": "Sapiens: A Brief History of Humankind",
+      "authors": "Yuval Noah Harari",
+      "candidates": [
+        { "title": "Sapiens", "key": "/works/F2", "author_name": ["Yuval Noah Harari"] },
+        { "title": "Other", "key": "/works/F2B", "author_name": ["Nobody"] }
+      ],
+      "failure_cause_observed": "Strict path rejects because candidate title is shorter; subtitle stripping in the fuzzy path matches on the prefix.",
+      "expected_outcome": "match"
+    },
+    {
+      "md5": "00000000000000000000000000000003",
+      "title": "The Lord of the Rings",
+      "authors": "Tolkien, J. R. R.",
+      "candidates": [
+        { "title": "The Lord of the Rings", "key": "/works/F3", "author_name": ["J. R. R. Tolkien"] }
+      ],
+      "failure_cause_observed": "Strict path rejects because primary author tokens are dropped (each segment < 3 chars); Last,First swap rebuilds an author token that overlaps.",
+      "expected_outcome": "match"
+    },
+    {
+      "md5": "00000000000000000000000000000004",
+      "title": "Foundation Trilogy",
+      "authors": "Isaac Asimov",
+      "candidates": [
+        { "title": "Foundation Triology", "key": "/works/F4", "author_name": ["Isaac Asimov"] }
+      ],
+      "failure_cause_observed": "Strict token-overlap rejects on the typo; Dice >= 0.85 against the normalized title accepts.",
+      "expected_outcome": "match"
+    },
+    {
+      "md5": "00000000000000000000000000000005",
+      "title": "Dune",
+      "authors": "Frank Herbert",
+      "candidates": [
+        { "title": "Dune", "key": "/works/F5A", "author_name": ["Frank Herbert"] },
+        { "title": "Dune", "key": "/works/F5B", "author_name": ["Frank Herbert"] }
+      ],
+      "failure_cause_observed": "Two top-3 candidates pass the title+author rule equally; matcher must throw AmbiguousMatchError per D-05.",
+      "expected_outcome": "ambiguous"
+    },
+    {
+      "md5": "00000000000000000000000000000006",
+      "title": "An Obscure Self-Published Title",
+      "authors": "Unknown Author",
+      "candidates": [
+        { "title": "Different Book", "key": "/works/F6", "author_name": ["Other Person"] }
+      ],
+      "failure_cause_observed": "OL has no candidate with overlapping author; matcher must throw NoMatchError.",
+      "expected_outcome": "no_match"
+    },
+    {
+      "md5": "00000000000000000000000000000007",
+      "title": "Some Book With Bad Data",
+      "authors": "An Author",
+      "candidates": [
+        { "title": "Some Book With Bad Data", "key": "/works/F7", "author_name": [] }
+      ],
+      "failure_cause_observed": "Candidate doc has empty author_name array (parse-error proxy at the matcher boundary); falls through to no_match.",
+      "expected_outcome": "no_match"
+    },
+    {
+      "md5": "00000000000000000000000000000008",
+      "title": "Network Proxy Title",
+      "authors": "Network Proxy Author",
+      "candidates": [],
+      "failure_cause_observed": "Empty candidate list stands in for upstream network failure; matcher cannot accept anything and surfaces no_match. The actual network classification is upstream of the matcher, encoded in classify-failure tests.",
+      "expected_outcome": "no_match"
+    }
+  ]
+}
