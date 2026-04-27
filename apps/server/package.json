@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/app.js",
+    "backfill:reference-pages": "tsx src/enrichment/backfill-reference-pages.ts",
     "build": "tsc -b",
     "build:migrations": "tsc -p tsconfig.migrations.json",
     "dev": "NODE_ENV=development nodemon src/app.ts",
