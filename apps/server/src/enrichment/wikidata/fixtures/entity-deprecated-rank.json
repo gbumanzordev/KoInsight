@@ -1,0 +1,22 @@
+{
+  "entities": {
+    "Q9005": {
+      "id": "Q9005",
+      "claims": {
+        "P27": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P27",
+              "datavalue": {
+                "value": { "id": "Q142" },
+                "type": "wikibase-entityid"
+              }
+            },
+            "rank": "deprecated"
+          }
+        ]
+      }
+    }
+  }
+}

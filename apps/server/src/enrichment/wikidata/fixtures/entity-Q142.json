@@ -1,0 +1,98 @@
+{
+  "entities": {
+    "Q142": {
+      "id": "Q142",
+      "claims": {
+        "P297": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P297",
+              "hash": "0fe11a2cdf4a6a3b53b0082ddd07147d6dd329fb",
+              "datavalue": {
+                "value": "FR",
+                "type": "string"
+              },
+              "datatype": "external-id"
+            },
+            "type": "statement",
+            "id": "q142$7E0296A4-1574-49A9-A521-47113029D128",
+            "rank": "normal",
+            "references": [
+              {
+                "hash": "18a536055a4d51e186248e5486e638fb1ebdc9eb",
+                "snaks": {
+                  "P248": [
+                    {
+                      "snaktype": "value",
+                      "property": "P248",
+                      "hash": "062933830c4bf3f110cfe0afce0d35352151fdb5",
+                      "datavalue": {
+                        "value": {
+                          "entity-type": "item",
+                          "numeric-id": 25275,
+                          "id": "Q25275"
+                        },
+                        "type": "wikibase-entityid"
+                      },
+                      "datatype": "wikibase-item"
+                    }
+                  ],
+                  "P503": [
+                    {
+                      "snaktype": "value",
+                      "property": "P503",
+                      "hash": "ac357b528b56dbc239b3d119bc2174816052ed38",
+                      "datavalue": {
+                        "value": "ISO 3166",
+                        "type": "string"
+                      },
+                      "datatype": "external-id"
+                    }
+                  ],
+                  "P299": [
+                    {
+                      "snaktype": "value",
+                      "property": "P299",
+                      "hash": "47f6ab89a01f09ace0322b3ed8b24cc72d06db98",
+                      "datavalue": {
+                        "value": "250",
+                        "type": "string"
+                      },
+                      "datatype": "external-id"
+                    }
+                  ],
+                  "P298": [
+                    {
+                      "snaktype": "value",
+                      "property": "P298",
+                      "hash": "b9deb954dfc5c2831a442d5aa55cc9c27f7750f8",
+                      "datavalue": {
+                        "value": "FRA",
+                        "type": "string"
+                      },
+                      "datatype": "external-id"
+                    }
+                  ],
+                  "P854": [
+                    {
+                      "snaktype": "value",
+                      "property": "P854",
+                      "hash": "a8266cc3566913de348fc5032c9382c6472a1e46",
+                      "datavalue": {
+                        "value": "https://www.iso.org/obp/ui/#iso:code:3166:FR",
+                        "type": "string"
+                      },
+                      "datatype": "url"
+                    }
+                  ]
+                },
+                "snaks-order": ["P248", "P503", "P299", "P298", "P854"]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

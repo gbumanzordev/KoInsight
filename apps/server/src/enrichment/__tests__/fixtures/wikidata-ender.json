@@ -1,0 +1,26 @@
+{
+  "entities": {
+    "Q185546": {
+      "id": "Q185546",
+      "claims": {
+        "P27": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P27",
+              "datavalue": {
+                "value": {
+                  "entity-type": "item",
+                  "numeric-id": 30,
+                  "id": "Q30"
+                },
+                "type": "wikibase-entityid"
+              }
+            },
+            "rank": "normal"
+          }
+        ]
+      }
+    }
+  }
+}

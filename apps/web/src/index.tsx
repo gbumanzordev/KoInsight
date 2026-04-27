@@ -1,4 +1,4 @@
-import { NuqsAdapter } from 'nuqs/adapters/react';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router';

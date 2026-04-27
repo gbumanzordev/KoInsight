@@ -1,0 +1,8 @@
+{
+  "key": "/books/OLTESTEDITIONM",
+  "title": "Test Edition With No Subjects",
+  "works": [{ "key": "/works/OLTESTWORKW" }],
+  "subjects": [],
+  "publish_date": "2020",
+  "isbn_13": ["9781234567890"]
+}

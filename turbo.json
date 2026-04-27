@@ -9,7 +9,8 @@
     "VITE_WEB_PORT",
     "OPENAI_API_KEY",
     "OPENAI_API_URL",
-    "OPENAI_API_VERSION"
+    "OPENAI_API_VERSION",
+    "REPORT_TZ"
   ],
   "tasks": {
     "build": {
@@ -22,6 +23,10 @@
     "dev": {
       "persistent": true,
       "cache": false
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
     },
     "test:coverage": {
       "dependsOn": ["^test:coverage"]

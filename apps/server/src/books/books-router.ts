@@ -1,6 +1,9 @@
+import { metadataPatchSchema } from '@koinsight/common/dist/types/books-edit-api.js';
 import { NextFunction, Request, Response, Router } from 'express';
+import { enrichmentService } from '../enrichment/service';
+import { db } from '../knex';
 import { BooksRepository } from './books-repository';
-import { BooksService } from './books-service';
+import { applyManualEdit, BooksService } from './books-service';
 import { coversRouter } from './covers/covers-router';
 import { getBookById } from './get-book-by-id-middleware';
 
@@ -99,6 +102,64 @@ router.put('/:bookId/reference_pages', getBookById, async (req: Request, res: Re
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to update reference pages' });
+  }
+});
+
+/**
+ * Phase 5 Plan 01 (EDIT-01, EDIT-02): manual metadata edit.
+ * Zod-validates the body at the boundary; applyManualEdit is transactional
+ * and stamps *_source='manual' for every touched field.
+ */
+router.patch('/:bookId/metadata', getBookById, async (req: Request, res: Response) => {
+  const book = req.book!;
+
+  const parsed = metadataPatchSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+
+  try {
+    const updated = await applyManualEdit(book, parsed.data);
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update book metadata' });
+  }
+});
+
+/**
+ * Phase 5 Plan 02 (EDIT-03): manual re-enrichment trigger.
+ * Thin 202 wrapper that enqueues via the enrichment service. Returns the current
+ * open enrichment_job for the book, or the most recent terminal row if
+ * there is no open job (D-11). Never waits for the worker.
+ */
+router.post('/:bookId/re-enrich', getBookById, async (req: Request, res: Response) => {
+  const book = req.book!;
+
+  try {
+    await enrichmentService.enqueue(book.md5, { force: true });
+
+    // Pitfall 5: prefer the open job (pending/running); fall back to the most
+    // recent terminal row. If the book has never been enriched, return null.
+    const openJob = await db('enrichment_job')
+      .where({ book_md5: book.md5 })
+      .whereIn('status', ['pending', 'running'])
+      .orderBy('id', 'desc')
+      .first();
+
+    const job =
+      openJob ??
+      (await db('enrichment_job')
+        .where({ book_md5: book.md5 })
+        .orderBy('id', 'desc')
+        .first()) ??
+      null;
+
+    res.status(202).json({ job });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to enqueue re-enrichment' });
   }
 });
 

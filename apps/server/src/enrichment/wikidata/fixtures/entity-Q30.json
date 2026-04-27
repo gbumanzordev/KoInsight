@@ -1,0 +1,117 @@
+{
+  "entities": {
+    "Q30": {
+      "id": "Q30",
+      "claims": {
+        "P297": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P297",
+              "hash": "c2f9a118599b54d1fdf94ae4ef3c235b34abc04e",
+              "datavalue": {
+                "value": "US",
+                "type": "string"
+              },
+              "datatype": "external-id"
+            },
+            "type": "statement",
+            "id": "q30$8BE463FD-B84D-46DB-A3BC-2CFA2B395ABD",
+            "rank": "normal",
+            "references": [
+              {
+                "hash": "d1cc320d913d4030065acda8062ab5f34fd968e4",
+                "snaks": {
+                  "P248": [
+                    {
+                      "snaktype": "value",
+                      "property": "P248",
+                      "hash": "062933830c4bf3f110cfe0afce0d35352151fdb5",
+                      "datavalue": {
+                        "value": {
+                          "entity-type": "item",
+                          "numeric-id": 25275,
+                          "id": "Q25275"
+                        },
+                        "type": "wikibase-entityid"
+                      },
+                      "datatype": "wikibase-item"
+                    }
+                  ],
+                  "P503": [
+                    {
+                      "snaktype": "value",
+                      "property": "P503",
+                      "hash": "6551539d68f6cf0d2f3cbd1c98217662ef2d58ea",
+                      "datavalue": {
+                        "value": "3166",
+                        "type": "string"
+                      },
+                      "datatype": "external-id"
+                    }
+                  ],
+                  "P299": [
+                    {
+                      "snaktype": "value",
+                      "property": "P299",
+                      "hash": "5f594d8ad716ebd52c188464c4ba32b82db4be8e",
+                      "datavalue": {
+                        "value": "840",
+                        "type": "string"
+                      },
+                      "datatype": "external-id"
+                    }
+                  ],
+                  "P298": [
+                    {
+                      "snaktype": "value",
+                      "property": "P298",
+                      "hash": "317edc5394c02e9b2b9185405c94c8a1e3b0f471",
+                      "datavalue": {
+                        "value": "USA",
+                        "type": "string"
+                      },
+                      "datatype": "external-id"
+                    }
+                  ],
+                  "P854": [
+                    {
+                      "snaktype": "value",
+                      "property": "P854",
+                      "hash": "8231c396a6b308d2bf37bcb03379c2a3d57da627",
+                      "datavalue": {
+                        "value": "https://www.iso.org/obp/ui/#iso:code:3166:US",
+                        "type": "string"
+                      },
+                      "datatype": "url"
+                    }
+                  ],
+                  "P813": [
+                    {
+                      "snaktype": "value",
+                      "property": "P813",
+                      "hash": "c6ab2df3a412e3900522655b91c659277b9ac3c1",
+                      "datavalue": {
+                        "value": {
+                          "time": "+2018-09-15T00:00:00Z",
+                          "timezone": 0,
+                          "before": 0,
+                          "after": 0,
+                          "precision": 11,
+                          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                        },
+                        "type": "time"
+                      },
+                      "datatype": "time"
+                    }
+                  ]
+                },
+                "snaks-order": ["P248", "P503", "P299", "P298", "P854", "P813"]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

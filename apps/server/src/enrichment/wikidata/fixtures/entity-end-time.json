@@ -1,0 +1,36 @@
+{
+  "entities": {
+    "Q9003": {
+      "id": "Q9003",
+      "claims": {
+        "P27": [
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P27",
+              "datavalue": {
+                "value": { "id": "Q142" },
+                "type": "wikibase-entityid"
+              }
+            },
+            "rank": "normal",
+            "qualifiers": {
+              "P582": [{ "datavalue": { "value": { "time": "+1851-00-00T00:00:00Z" } } }]
+            }
+          },
+          {
+            "mainsnak": {
+              "snaktype": "value",
+              "property": "P27",
+              "datavalue": {
+                "value": { "id": "Q145" },
+                "type": "wikibase-entityid"
+              }
+            },
+            "rank": "normal"
+          }
+        ]
+      }
+    }
+  }
+}

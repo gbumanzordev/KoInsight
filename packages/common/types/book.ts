@@ -1,3 +1,6 @@
+import type { FieldSource } from './author';
+import type { EnrichmentStatus } from './enrichment';
+
 export type KoReaderBook = {
   id: number;
   md5: string;
@@ -21,6 +24,14 @@ export type DbBook = {
   authors: string;
   series: string;
   language: string;
+  enrichment_status: EnrichmentStatus;
+  openlibrary_work_key: string | null;
+  publication_year: number | null;
+  original_language: string | null;
+  authors_source: FieldSource | null;
+  genres_source: FieldSource | null;
+  publication_year_source: FieldSource | null;
+  original_language_source: FieldSource | null;
 };
 
 export type Book = DbBook & {

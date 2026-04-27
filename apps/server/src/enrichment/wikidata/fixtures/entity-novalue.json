@@ -1,0 +1,18 @@
+{
+  "entities": {
+    "Q9006": {
+      "id": "Q9006",
+      "claims": {
+        "P27": [
+          {
+            "mainsnak": {
+              "snaktype": "novalue",
+              "property": "P27"
+            },
+            "rank": "normal"
+          }
+        ]
+      }
+    }
+  }
+}

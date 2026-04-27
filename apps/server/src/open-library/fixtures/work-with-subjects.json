@@ -1,0 +1,7 @@
+{
+  "key": "/works/OLTESTWORKW",
+  "title": "Test Work With Subjects",
+  "subjects": ["Science fiction", "Space opera", "Fiction"],
+  "authors": [{ "author": { "key": "/authors/OLTESTAUTHORA" } }],
+  "first_publish_date": "2020"
+}

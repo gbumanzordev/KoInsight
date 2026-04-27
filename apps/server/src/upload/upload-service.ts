@@ -38,13 +38,24 @@ export class UploadService {
     return { newBooks, newPageStats };
   }
 
-  static uploadStatisticData(
+  static async uploadStatisticData(
     booksToImport: KoReaderBook[],
     newPageStats: PageStat[],
     annotationsByBook?: Record<string, KoReaderAnnotation[]>,
     deviceIdOverride?: string // For annotation sync path without stats
-  ) {
-    return db.transaction(async (trx) => {
+  ): Promise<{ affectedMd5s: string[] }> {
+    // Phase 4 D-06: collect affected md5s for the post-commit enqueue loop that
+    // callers (upload-router, koplugin-router) run AFTER this transaction
+    // resolves. We deliberately do NOT enqueue inside the transaction.
+    const affectedMd5s = Array.from(
+      new Set(
+        (Array.isArray(booksToImport) ? booksToImport : [])
+          .map((b) => b?.md5)
+          .filter((md5): md5 is string => typeof md5 === 'string' && md5.length > 0)
+      )
+    );
+
+    await db.transaction(async (trx) => {
       // Normalize: the plugin sends {} (empty Lua table → JSON object) on the
       // annotation-only path, not []. Guard all array operations against this,
       // and drop clearly invalid page stat rows.
@@ -160,8 +171,12 @@ export class UploadService {
         );
       }
 
-      await trx.commit();
+      // Knex's callback-style transaction commits automatically when the callback
+      // resolves (and rolls back on throw); calling trx.commit() here would
+      // double-commit.
     });
+
+    return { affectedMd5s };
   }
 
   /**

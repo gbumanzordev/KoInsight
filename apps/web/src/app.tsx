@@ -22,6 +22,9 @@ import { Navbar } from './components/navbar/navbar';
 import { BookPage } from './pages/book-page/book-page';
 import { BooksPage } from './pages/books-page/books-page';
 import { CalendarPage } from './pages/calendar-page';
+import { ReportsYearlyPage } from './pages/reports-yearly-page/reports-yearly-page';
+import { SettingsLayout } from './pages/settings-page/settings-layout';
+import { UnmatchedBooksSection } from './pages/settings-page/unmatched-books-section';
 import { StatsPage } from './pages/stats-page/stats-page';
 import { SyncsPage } from './pages/syncs-page';
 import { RoutePath } from './routes';
@@ -72,6 +75,14 @@ export function App(): JSX.Element {
               <Route path={RoutePath.CALENDAR} element={<CalendarPage />} />
               <Route path={RoutePath.STATS} element={<StatsPage />} />
               <Route path={RoutePath.SYNCS} element={<SyncsPage />} />
+              <Route path={RoutePath.SETTINGS} element={<SettingsLayout />}>
+                <Route index element={<Navigate to="unmatched" replace />} />
+                <Route path="unmatched" element={<UnmatchedBooksSection />} />
+              </Route>
+              <Route path={RoutePath.REPORTS}>
+                <Route index element={<Navigate to="yearly" replace />} />
+                <Route path="yearly" element={<ReportsYearlyPage />} />
+              </Route>
               {/* Catch-all route goes last */}
               <Route
                 path="*"
