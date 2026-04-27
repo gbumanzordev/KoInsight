@@ -10,6 +10,9 @@ export const SearchDocSchema = z.object({
   first_publish_year: z.number().int().optional(),
   isbn: z.array(z.string()).optional(),
   cover_i: z.number().optional(),
+  // REFPAGES-01: required for Phase 7 worker to read candidate.cover_edition_key.
+  // Without this field Zod strips the value silently and edition fetch is unreachable.
+  cover_edition_key: z.string().optional(),
 });
 export type OpenLibrarySearchDoc = z.infer<typeof SearchDocSchema>;
 

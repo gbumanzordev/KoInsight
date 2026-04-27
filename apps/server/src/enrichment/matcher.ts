@@ -11,6 +11,9 @@ export interface MatcherCandidate {
   title: string;
   author_name?: string[];
   key?: string;
+  // REFPAGES-01: carried through from SearchDocSchema so Phase 7 worker can fetch
+  // the matching OL Edition for number_of_pages.
+  cover_edition_key?: string;
 }
 
 export function normalizeTokens(s: string): string[] {

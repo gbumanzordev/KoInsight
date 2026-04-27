@@ -54,7 +54,7 @@ export class OpenLibraryClient {
     const params = new URLSearchParams({
       title,
       limit: String(limit),
-      fields: 'key,title,author_name,author_key,first_publish_year,isbn,cover_i',
+      fields: 'key,title,author_name,author_key,first_publish_year,isbn,cover_i,cover_edition_key',
     });
     if (author) params.set('author', author);
     return typedFetch(`${OPEN_LIBRARY_API}/search.json?${params}`, SearchResultSchema, this.deps);
