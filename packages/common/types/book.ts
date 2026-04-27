@@ -1,5 +1,5 @@
 import type { FieldSource } from './author';
-import type { EnrichmentStatus } from './enrichment';
+import type { EnrichmentStatus, FailureReason } from './enrichment';
 
 export type KoReaderBook = {
   id: number;
@@ -33,6 +33,7 @@ export type DbBook = {
   publication_year_source: FieldSource | null;
   original_language_source: FieldSource | null;
   reference_pages_source: FieldSource | null;
+  failure_reason: FailureReason | null;
 };
 
 export type Book = DbBook & {
