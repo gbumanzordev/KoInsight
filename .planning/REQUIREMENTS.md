@@ -24,7 +24,7 @@
 
 - [ ] **RETRY-01**: User can bulk-retry all books in `enrichment_status = 'failed'` from the dashboard (single action, optional filter); each book is re-enqueued through the normal enrichment pipeline.
 - [ ] **RETRY-02**: User can retry a single book from the unmatched/failed inbox UI without leaving the page; the row reflects the new status after the retry resolves.
-- [ ] **RETRY-03**: The OL matcher uses improved heuristics (title/author normalization, fuzzy title compare, author alias / "Last, First" handling) so that books which currently fail matching but are present in OL succeed on retry.
+- [x] **RETRY-03**: The OL matcher uses improved heuristics (title/author normalization, fuzzy title compare, author alias / "Last, First" handling) so that books which currently fail matching but are present in OL succeed on retry.
 - [ ] **RETRY-04**: Each enrichment failure persists a structured `failure_reason` on the book row (e.g., `no_match`, `ambiguous_match`, `network`, `parse_error`); the inbox UI shows the reason next to each failed book.
 
 ### Orphan Author GC (AUTHGC)
@@ -35,7 +35,7 @@
 
 ### Polish (POLISH)
 
-- [ ] **POLISH-01**: A bulk-enqueue helper accepts a list of book IDs and enqueues them all for enrichment in a single call (used by RETRY-01 and any future batch operation); replaces the per-book enqueue loop currently in use.
+- [x] **POLISH-01**: A bulk-enqueue helper accepts a list of book IDs and enqueues them all for enrichment in a single call (used by RETRY-01 and any future batch operation); replaces the per-book enqueue loop currently in use.
 - [ ] **POLISH-02**: `package.json` files across all workspaces follow a single, documented version-pin convention (e.g., caret for libraries, exact for tools); the convention is recorded in `CLAUDE.md` and the repo passes a check (manual or scripted) confirming consistency.
 - [ ] **POLISH-03**: The web app's largest initial JS chunks are reduced via route-level and/or vendor splitting so no single chunk exceeds an agreed threshold (target captured in plan); measured with `vite build` output.
 
@@ -62,11 +62,11 @@ Coverage: 14/14 v1.1 requirements mapped.
 | REFPAGES-02 | Phase 7: Reference Pages Enrichment | Complete |
 | REFPAGES-03 | Phase 7: Reference Pages Enrichment | Complete |
 | REFPAGES-04 | Phase 7: Reference Pages Enrichment | Pending |
-| POLISH-01 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| POLISH-01 | Phase 8: Failure Triage & Smarter Matcher | Complete |
 | RETRY-01 | Phase 8: Failure Triage & Smarter Matcher | Pending |
 | RETRY-02 | Phase 8: Failure Triage & Smarter Matcher | Pending |
-| RETRY-03 | Phase 8: Failure Triage & Smarter Matcher | Pending |
-| RETRY-04 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| RETRY-03 | Phase 8: Failure Triage & Smarter Matcher | Complete |
+| RETRY-04 | Phase 8: Failure Triage & Smarter Matcher | Partial (column + classification ready in Plan 02; persist write lands in Plan 03) |
 | AUTHGC-01 | Phase 9: Orphan Author GC | Pending |
 | AUTHGC-02 | Phase 9: Orphan Author GC | Pending |
 | AUTHGC-03 | Phase 9: Orphan Author GC | Pending |

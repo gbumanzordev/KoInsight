@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
 status: executing
-stopped_at: "Phase 8 Plan 1 complete (Wave 0 RED tests + FailureReason types). Next: Plan 2 (server core)."
-last_updated: "2026-04-27T22:50:00.000Z"
-last_activity: 2026-04-27 -- Phase 08 Plan 01 complete
+stopped_at: "Phase 8 Plan 02 complete (server core: migration + classifyFailure + matcher fuzzy/ambiguous + enqueueMany). Next: Plan 03 (server wiring)."
+last_updated: "2026-04-27T22:55:00.000Z"
+last_activity: 2026-04-27 -- Phase 08 Plan 02 complete
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 10
-  completed_plans: 7
-  percent: 70
+  completed_plans: 8
+  percent: 80
 ---
 
 # Project State
@@ -27,9 +27,9 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 
 Milestone: v1.1 Enrichment Polish & Cleanup
 Phase: 08 (failure-triage-smarter-matcher) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Executing Phase 08
-Last activity: 2026-04-27 -- Phase 08 Plan 01 (Wave 0) complete; FailureReason types + RED tests landed
+Last activity: 2026-04-27 -- Phase 08 Plan 02 (server core) complete; migration + classifyFailure refactor + matcher fuzzy/ambiguous + enqueueMany shipped, all 5 server-pure RED tests + Phase 4 regression GREEN
 
 ## Accumulated Context
 
@@ -65,5 +65,5 @@ None recorded for v1.1 yet.
 ## Session Continuity
 
 Last session: 2026-04-27
-Stopped at: Phase 8 Plan 01 (Wave 0) complete. Next: Plan 02 server core (migration + classifyFailure refactor + matcher heuristics + enqueueMany).
-Resume file: .planning/phases/08-failure-triage-smarter-matcher/08-02-server-core-PLAN.md
+Stopped at: Phase 8 Plan 02 (server core) complete. Next: Plan 03 server wiring (markTerminalFailure failure_reason write + worker call sites + POST /retry-all + repo SELECT).
+Resume file: .planning/phases/08-failure-triage-smarter-matcher/08-03-server-wiring-PLAN.md
