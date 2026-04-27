@@ -16,8 +16,8 @@
 ### Reference Pages (REFPAGES)
 
 - [ ] **REFPAGES-01**: Enrichment service populates `book.reference_pages` from the resolved OL Edition `number_of_pages` (when present) on the same enrichment run that fills genres / authors / publication info.
-- [ ] **REFPAGES-02**: A one-time backfill task populates `reference_pages` for books that were already enriched before REFPAGES-01 shipped, without re-running the full enrichment pipeline against those books.
-- [ ] **REFPAGES-03**: Schema gains a `reference_pages_source` column on `book` (values: `openlibrary` | `manual`); enrichment respects manual stickiness exactly like other enriched fields (never overwrites a `*_source = 'manual'` value).
+- [x] **REFPAGES-02**: A one-time backfill task populates `reference_pages` for books that were already enriched before REFPAGES-01 shipped, without re-running the full enrichment pipeline against those books.
+- [x] **REFPAGES-03**: Schema gains a `reference_pages_source` column on `book` (values: `openlibrary` | `manual`); enrichment respects manual stickiness exactly like other enriched fields (never overwrites a `*_source = 'manual'` value).
 - [ ] **REFPAGES-04**: The yearly report (and any other consumer) stops using `COALESCE(book.reference_pages, MAX(book_device.pages))`; reads `book.reference_pages` directly. The fallback strategy for books that remain `NULL` after enrichment is documented and consistent across consumers.
 
 ### Retry & Matcher (RETRY)
@@ -59,8 +59,8 @@ Coverage: 14/14 v1.1 requirements mapped.
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
 | REFPAGES-01 | Phase 7: Reference Pages Enrichment | Pending |
-| REFPAGES-02 | Phase 7: Reference Pages Enrichment | Pending |
-| REFPAGES-03 | Phase 7: Reference Pages Enrichment | Pending |
+| REFPAGES-02 | Phase 7: Reference Pages Enrichment | Complete |
+| REFPAGES-03 | Phase 7: Reference Pages Enrichment | Complete |
 | REFPAGES-04 | Phase 7: Reference Pages Enrichment | Pending |
 | POLISH-01 | Phase 8: Failure Triage & Smarter Matcher | Pending |
 | RETRY-01 | Phase 8: Failure Triage & Smarter Matcher | Pending |

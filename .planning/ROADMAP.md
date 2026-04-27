@@ -34,7 +34,7 @@
 - [x] 07-01-PLAN.md — Schema migration for reference_pages_source + DbBook type extension + Wave 0 fixtures
 - [x] 07-02-PLAN.md — SearchDocSchema cover_edition_key fix + getWorkEditions OL client method
 - [x] 07-03-PLAN.md — Worker Edition fetch + applier D-06 provenance block
-- [ ] 07-04-PLAN.md — PUT /reference_pages provenance rewrite + one-shot backfill script
+- [x] 07-04-PLAN.md — PUT /reference_pages provenance rewrite + one-shot backfill script
 - [ ] 07-05-PLAN.md — Drop COALESCE in reports + drop device fallback in books-service
 - [ ] 07-06-PLAN.md — Web UI Page-count-missing affordance + CLAUDE.md doc note
 
