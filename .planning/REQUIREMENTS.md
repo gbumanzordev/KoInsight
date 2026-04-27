@@ -54,10 +54,24 @@
 
 ## Traceability
 
-(Filled by the roadmap step. Empty until roadmap is generated.)
+Coverage: 14/14 v1.1 requirements mapped.
 
 | REQ-ID | Phase | Status |
 |--------|-------|--------|
+| REFPAGES-01 | Phase 7: Reference Pages Enrichment | Pending |
+| REFPAGES-02 | Phase 7: Reference Pages Enrichment | Pending |
+| REFPAGES-03 | Phase 7: Reference Pages Enrichment | Pending |
+| REFPAGES-04 | Phase 7: Reference Pages Enrichment | Pending |
+| POLISH-01 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| RETRY-01 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| RETRY-02 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| RETRY-03 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| RETRY-04 | Phase 8: Failure Triage & Smarter Matcher | Pending |
+| AUTHGC-01 | Phase 9: Orphan Author GC | Pending |
+| AUTHGC-02 | Phase 9: Orphan Author GC | Pending |
+| AUTHGC-03 | Phase 9: Orphan Author GC | Pending |
+| POLISH-02 | Phase 10: Repo Polish | Pending |
+| POLISH-03 | Phase 10: Repo Polish | Pending |
 
 ---
-*Last updated: 2026-04-26 — milestone v1.1 opened*
+*Last updated: 2026-04-26 — milestone v1.1 roadmap drafted (Phases 7-10)*

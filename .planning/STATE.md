@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
-status: defining-requirements
-stopped_at: "Milestone v1.1 (Enrichment Polish & Cleanup) opened. Defining requirements next."
+status: roadmap-complete
+stopped_at: "v1.1 roadmap created (Phases 7-10). Ready to plan Phase 7."
 last_updated: "2026-04-26T00:00:00.000Z"
-last_activity: 2026-04-26 -- Milestone v1.1 started
+last_activity: 2026-04-26 -- v1.1 roadmap drafted (4 phases, 14 requirements mapped)
 last_milestone: v1.0
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -22,15 +22,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-26)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** v1.1 — Enrichment Polish & Cleanup. Defining requirements.
+**Current focus:** v1.1 — Enrichment Polish & Cleanup. Roadmap complete; next step is `/gsd-plan-phase 7`.
 
 ## Current Position
 
 Milestone: v1.1 Enrichment Polish & Cleanup
-Phase: Not started (defining requirements)
+Phase: 7 — Reference Pages Enrichment (next, not started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-04-26 — Milestone v1.1 started
+Status: Roadmap complete; awaiting Phase 7 planning
+Last activity: 2026-04-26 — v1.1 roadmap drafted
 
 ## Accumulated Context
 
@@ -42,8 +42,12 @@ Recent decisions affecting current work:
 - Wikidata P27 (via OL `remote_ids.wikidata`) is the only acceptable nationality source; LLM and bio-parsing rejected.
 - Co-author nationality counts the primary author only (`position = 0`); no fractional credit, no toggle this milestone.
 - "Book read in year Y" requires ≥95% pages reached by end of Y; page-time totals always include all reading.
-- Per-field `*_source` provenance must land before any enrichment runs (Phase 1 blocks Phase 4).
+- Per-field `*_source` provenance pattern (from v1.0) extends to `reference_pages_source` in Phase 7.
 - Manual edits are sticky: enrichment never overwrites a field whose `*_source = 'manual'`.
+- v1.1 phase numbering continues from v1.0; first phase is Phase 7.
+- RETRY-03 (matcher heuristics) groups with RETRY in Phase 8 because the user-visible payoff is failed books succeeding on retry.
+- POLISH-01 (bulk-enqueue helper) groups with Phase 8 because RETRY-01 consumes it directly.
+- AUTHGC and POLISH-02/POLISH-03 are isolated and run as parallel-eligible final phases.
 
 ### Pending Todos
 
@@ -62,5 +66,5 @@ None recorded for v1.1 yet.
 ## Session Continuity
 
 Last session: 2026-04-26
-Stopped at: Milestone v1.1 opened (Enrichment Polish & Cleanup). Next: define requirements, then roadmap.
+Stopped at: v1.1 roadmap complete (4 phases / 14 requirements). Next: `/gsd-plan-phase 7`.
 Resume file: None
