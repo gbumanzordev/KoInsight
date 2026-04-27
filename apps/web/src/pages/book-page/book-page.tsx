@@ -199,10 +199,7 @@ export function BookPage(): JSX.Element {
 }
 
 function StatsCard({ book }: { book: BookWithData }): JSX.Element {
-  const bookPages =
-    book?.reference_pages ||
-    book?.device_data.reduce((acc, device) => Math.max(acc, device.pages), 0) ||
-    0;
+  const bookPages = book?.reference_pages ?? null;
 
   const readingDays = book ? Object.keys(book.read_per_day).length : 0;
   const avgPerDay = readingDays > 0 ? (book?.total_read_time ?? 0) / readingDays : 0;
@@ -229,21 +226,33 @@ function StatsCard({ book }: { book: BookWithData }): JSX.Element {
               thickness={9}
               roundCaps
               label={
-                <Stack gap={0} align="center">
-                  <Text size="xl" fw={700} ta="center">
-                    {Math.round((book.unique_read_pages / bookPages) * 100)}%
+                bookPages === null ? (
+                  <Text size="xs" c="dimmed" ta="center">
+                    Page count
+                    <br />
+                    missing
                   </Text>
-                  <Text size="xs" c="dimmed" ta="center" fw="bold">
-                    {book.unique_read_pages} / {bookPages} <br /> pages read
-                  </Text>
-                </Stack>
+                ) : (
+                  <Stack gap={0} align="center">
+                    <Text size="xl" fw={700} ta="center">
+                      {Math.round((book.unique_read_pages / bookPages) * 100)}%
+                    </Text>
+                    <Text size="xs" c="dimmed" ta="center" fw="bold">
+                      {book.unique_read_pages} / {bookPages} <br /> pages read
+                    </Text>
+                  </Stack>
+                )
               }
-              sections={[
-                {
-                  value: (book.unique_read_pages / bookPages) * 100,
-                  color: 'koinsight',
-                },
-              ]}
+              sections={
+                bookPages === null
+                  ? []
+                  : [
+                      {
+                        value: (book.unique_read_pages / bookPages) * 100,
+                        color: 'koinsight',
+                      },
+                    ]
+              }
             />
           </Stack>
 

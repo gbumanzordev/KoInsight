@@ -87,3 +87,4 @@ Environment variables (see `apps/server/src/config.ts` and `turbo.json` globalEn
 - Zod is the server-side validation library; prefer it over hand-rolled checks at route boundaries.
 - Ramda is used in both apps; idiomatic functional style is common in existing code.
 - When adding a route that the KOReader plugin calls, update `plugins/koinsight.koplugin/call_api.lua` and `const.lua` in the same change — there is no schema shared between Lua and TypeScript.
+- Reading metrics are derived from `book.reference_pages`; books with NULL are excluded from completion-based predicates and surfaced as Unknown in coverage. Trigger enrichment or use the per-book manual edit to populate.
