@@ -153,6 +153,17 @@ async function processJob(knex: Knex, job: EnrichmentJobRow): Promise<void> {
     throw new Error('no work key derivable from OL candidate');
   }
 
+  // D-04: fetch one Edition (single call through sharedHttpLimiter) to populate referencePages.
+  // null when cover_edition_key absent on the candidate, or when the Edition has no positive number_of_pages.
+  // 404 here propagates to claimAndProcess and classifyFailure flips the book to 'failed' (D-05 known consequence).
+  const edition = candidate.cover_edition_key
+    ? await openLibraryClient.getEdition(candidate.cover_edition_key)
+    : null;
+  const referencePages =
+    edition && typeof edition.number_of_pages === 'number' && edition.number_of_pages > 0
+      ? edition.number_of_pages
+      : null;
+
   // Walk to work (OL-05 invariant: subjects live on work, not edition).
   const work = await openLibraryClient.getWork(workKey);
 
@@ -179,7 +190,7 @@ async function processJob(knex: Knex, job: EnrichmentJobRow): Promise<void> {
     originalLanguage: null, // OL WorkSchema does not expose original_languages; leave null until Phase 6 widens the schema.
     authors: enrichedAuthors,
     subjects: work.subjects ?? [],
-    referencePages: null, // populated in Plan 03 Task 2 from cover_edition_key Edition fetch.
+    referencePages,
   };
 
   await applyEnrichment(knex, job.book_md5, job.id, bundle);
