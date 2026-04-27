@@ -7,6 +7,18 @@ import { createPageStat } from '../db/factories/page-stat-factory';
 import { db } from '../knex';
 import { BooksService } from './books-service';
 
+describe(BooksService.getTotalPages, () => {
+  it('returns book.reference_pages when present', () => {
+    const book = { reference_pages: 320 } as Book;
+    expect(BooksService.getTotalPages(book)).toBe(320);
+  });
+
+  it('returns 0 when reference_pages is null (D-15: device fallback removed)', () => {
+    const book = { reference_pages: null } as unknown as Book;
+    expect(BooksService.getTotalPages(book)).toBe(0);
+  });
+});
+
 describe(BooksService.withData, () => {
   let device: Device;
 
@@ -22,8 +34,8 @@ describe(BooksService.withData, () => {
       expect(result.total_pages).toEqual(121);
     });
 
-    it('returns the max pages from device data if reference pages are not available', async () => {
-      const book = await createBook(db, { title: 'Test Book 1', reference_pages: undefined });
+    it('returns 0 when reference_pages is null even if device pages exist (D-15)', async () => {
+      const book = await createBook(db, { title: 'Test Book 1', reference_pages: null });
 
       await createBookDevice(db, book, device, { pages: 100 });
 
@@ -32,7 +44,7 @@ describe(BooksService.withData, () => {
 
       const result = await BooksService.withData(book);
 
-      expect(result.total_pages).toEqual(200);
+      expect(result.total_pages).toEqual(0);
     });
   });
 
