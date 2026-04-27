@@ -31,9 +31,9 @@
   3. A one-time backfill task populates `reference_pages` for already-enriched books from cached OL data without re-running the full enrichment pipeline; running the backfill twice is a no-op.
   4. The yearly report query reads `book.reference_pages` directly (no `COALESCE(book.reference_pages, MAX(book_device.pages))`), and the documented fallback strategy for books still NULL after enrichment is applied consistently across consumers.
 **Plans:** 6 plans
-- [ ] 07-01-PLAN.md — Schema migration for reference_pages_source + DbBook type extension + Wave 0 fixtures
-- [ ] 07-02-PLAN.md — SearchDocSchema cover_edition_key fix + getWorkEditions OL client method
-- [ ] 07-03-PLAN.md — Worker Edition fetch + applier D-06 provenance block
+- [x] 07-01-PLAN.md — Schema migration for reference_pages_source + DbBook type extension + Wave 0 fixtures
+- [x] 07-02-PLAN.md — SearchDocSchema cover_edition_key fix + getWorkEditions OL client method
+- [x] 07-03-PLAN.md — Worker Edition fetch + applier D-06 provenance block
 - [ ] 07-04-PLAN.md — PUT /reference_pages provenance rewrite + one-shot backfill script
 - [ ] 07-05-PLAN.md — Drop COALESCE in reports + drop device fallback in books-service
 - [ ] 07-06-PLAN.md — Web UI Page-count-missing affordance + CLAUDE.md doc note
