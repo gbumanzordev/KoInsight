@@ -7,9 +7,13 @@
 
 See `.planning/milestones/v1.0-ROADMAP.md` and `.planning/v1.0-MILESTONE-AUDIT.md` for the full record.
 
-**Next milestone:** TBD. Run `/gsd-new-milestone` when ready. Known carry-over candidates from v1.0:
-- Have enrichment write `book.reference_pages` from OL Edition data (and drop the yearly-report COALESCE workaround).
-- Bulk-retry helper or smarter matcher for books currently in `enrichment_status='failed'`.
+## Current Milestone: v1.1 Enrichment Polish & Cleanup
+
+**Goal:** Pay down v1.0 carry-over debt and polish the enrichment pipeline so the dashboard runs on clean, complete data without workarounds.
+
+**Target features:**
+- Enrichment writes `book.reference_pages` from OL Edition data (drop the yearly-report COALESCE workaround).
+- Bulk-retry helper / smarter matcher for books currently in `enrichment_status='failed'`.
 - Orphan author garbage collection.
 - Polish: bulk enqueue helper, dependency pin convention cleanup, larger-bundle code-splitting.
 
@@ -116,4 +120,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-23 after research synthesis (Wikidata-for-nationality, primary-author rule, 95% read threshold locked in)*
+*Last updated: 2026-04-26 — milestone v1.1 (Enrichment Polish & Cleanup) opened*
