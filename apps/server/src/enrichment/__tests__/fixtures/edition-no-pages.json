@@ -1,0 +1,10 @@
+{
+  "key": "/books/OL7641985M",
+  "title": "Ender's Game",
+  "works": [{ "key": "/works/OL27448W" }],
+  "subjects": [],
+  "publish_date": "July 15, 1994",
+  "languages": [{ "key": "/languages/eng" }],
+  "isbn_13": ["9780812550702"],
+  "isbn_10": ["0812550706"]
+}
