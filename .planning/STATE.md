@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
-status: roadmap-complete
-stopped_at: "v1.1 roadmap created (Phases 7-10). Ready to plan Phase 7."
-last_updated: "2026-04-26T00:00:00.000Z"
-last_activity: 2026-04-26 -- v1.1 roadmap drafted (4 phases, 14 requirements mapped)
+status: phase-7-context-captured
+stopped_at: "Phase 7 context captured. Ready to plan Phase 7."
+last_updated: "2026-04-27T00:00:00.000Z"
+last_activity: 2026-04-27 -- Phase 7 CONTEXT.md drafted (edition selection, backfill, fallback, manual provenance)
 last_milestone: v1.0
 progress:
   total_phases: 4
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 Milestone: v1.1 Enrichment Polish & Cleanup
 Phase: 7 — Reference Pages Enrichment (next, not started)
 Plan: —
-Status: Roadmap complete; awaiting Phase 7 planning
-Last activity: 2026-04-26 — v1.1 roadmap drafted
+Status: Phase 7 context captured; awaiting Phase 7 planning
+Last activity: 2026-04-27 — Phase 7 CONTEXT.md drafted
 
 ## Accumulated Context
 
@@ -65,6 +65,6 @@ None recorded for v1.1 yet.
 
 ## Session Continuity
 
-Last session: 2026-04-26
-Stopped at: v1.1 roadmap complete (4 phases / 14 requirements). Next: `/gsd-plan-phase 7`.
-Resume file: None
+Last session: 2026-04-27
+Stopped at: Phase 7 context captured. Next: `/gsd-plan-phase 7`.
+Resume file: .planning/phases/07-reference-pages-enrichment/07-CONTEXT.md
