@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
-status: executing
-stopped_at: "Phase 8 complete (4/4 plans). Next: Phase 9 (orphan author GC) or Phase 10 (repo polish) — eligible to run in parallel."
-last_updated: "2026-04-27T23:30:00.000Z"
-last_activity: 2026-04-27 -- Phase 08 Plan 04 complete (web UI shipped)
+status: completed
+stopped_at: "Phase 8 complete (all 4 plans). Next: Phase 9 (orphan author GC) or Phase 10 (repo polish) — both parallel-eligible after Phase 8."
+last_updated: "2026-04-27T23:29:07.300Z"
+last_activity: "2026-04-27 -- Phase 8 shipped (PR #2)"
 progress:
   total_phases: 4
   completed_phases: 2
@@ -29,7 +29,7 @@ Milestone: v1.1 Enrichment Polish & Cleanup
 Phase: 08 (failure-triage-smarter-matcher) — COMPLETE
 Plan: 4 of 4 — COMPLETE
 Status: Phase 08 complete; Phase 09 (orphan author GC) or Phase 10 (repo polish) up next (parallel-eligible).
-Last activity: 2026-04-27 -- Phase 08 Plan 04 (web UI) complete; FailureReasonBadge + RetryAllButton shipped; ReEnrichButton invalidates unmatched list cache; all 9 Wave 0 RED tests GREEN (6 server + 3 web suites / 15 web assertions).
+Last activity: 2026-04-27 -- Phase 8 shipped (PR #2)
 
 ## Accumulated Context
 
