@@ -1,5 +1,18 @@
 # KoInsight
 
+## Current State
+
+**Shipped:** v1.0 — Book Metadata Enrichment + Yearly Reports (2026-04-26).
+6 phases, 35 plans, 13.6k LOC. The dashboard now answers "what kind of books" questions: genre breakdown, author nationality, publication decade, and original language for any year that has reading data. Manual edits are sticky against re-enrichment.
+
+See `.planning/milestones/v1.0-ROADMAP.md` and `.planning/v1.0-MILESTONE-AUDIT.md` for the full record.
+
+**Next milestone:** TBD. Run `/gsd-new-milestone` when ready. Known carry-over candidates from v1.0:
+- Have enrichment write `book.reference_pages` from OL Edition data (and drop the yearly-report COALESCE workaround).
+- Bulk-retry helper or smarter matcher for books currently in `enrichment_status='failed'`.
+- Orphan author garbage collection.
+- Polish: bulk enqueue helper, dependency pin convention cleanup, larger-bundle code-splitting.
+
 ## What This Is
 
 KoInsight is a self-hostable dashboard for KOReader reading statistics. A KOReader Lua plugin pushes per-session stats and annotations to an Express/SQLite server, and a React/Mantine web app visualizes a reader's library and reading behavior.
