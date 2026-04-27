@@ -36,7 +36,7 @@
 - [x] 07-03-PLAN.md — Worker Edition fetch + applier D-06 provenance block
 - [x] 07-04-PLAN.md — PUT /reference_pages provenance rewrite + one-shot backfill script
 - [x] 07-05-PLAN.md — Drop COALESCE in reports + drop device fallback in books-service
-- [ ] 07-06-PLAN.md — Web UI Page-count-missing affordance + CLAUDE.md doc note
+- [x] 07-06-PLAN.md — Web UI Page-count-missing affordance + CLAUDE.md doc note
 
 #### Phase 8: Failure Triage & Smarter Matcher
 **Goal**: Users can triage and recover the 8+ books currently stuck in `enrichment_status='failed'` from the dashboard, the OL matcher succeeds on retry for books that are actually present in OL, and every failure carries a structured reason so users know whether to retry, edit, or wait.
@@ -84,7 +84,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Reference Pages Enrichment | 5/6 | In progress | - |
+| 7. Reference Pages Enrichment | 6/6 | Complete | 2026-04-27 |
 | 8. Failure Triage & Smarter Matcher | 0/TBD | Not started | - |
 | 9. Orphan Author GC | 0/TBD | Not started | - |
 | 10. Repo Polish | 0/TBD | Not started | - |
