@@ -1,5 +1,6 @@
 import type { Knex } from 'knex';
 import { mapOpenLibrarySubjects } from '@koinsight/common/dist/genres/map.js';
+import type { FailureReason } from '@koinsight/common/types/enrichment';
 import { upsertAuthor, type EnrichedAuthor } from './author-upsert';
 import { truncateError } from './retry';
 
@@ -21,6 +22,8 @@ export interface EnrichedBundle {
   originalLanguage: string | null; // ISO 639-1 or null
   authors: EnrichedAuthor[];
   subjects: string[];
+  // D-04: null when cover_edition_key absent or Edition has no positive number_of_pages.
+  referencePages: number | null;
 }
 
 type FieldSource = 'openlibrary' | 'manual' | null;
@@ -30,6 +33,7 @@ interface BookSourceRow {
   genres_source: FieldSource;
   publication_year_source: FieldSource;
   original_language_source: FieldSource;
+  reference_pages_source: FieldSource;
 }
 
 export async function applyEnrichment(
@@ -45,7 +49,8 @@ export async function applyEnrichment(
         'authors_source',
         'genres_source',
         'publication_year_source',
-        'original_language_source'
+        'original_language_source',
+        'reference_pages_source'
       )
       .first()) as BookSourceRow | undefined;
     if (!book) {
@@ -104,6 +109,15 @@ export async function applyEnrichment(
       updates.original_language = bundle.originalLanguage;
       updates.original_language_source = 'openlibrary';
     }
+    // D-06: reference_pages provenance guard.
+    // Manual edits are sticky; OL writes only when the run produced a positive page count.
+    // null bundle.referencePages is a no-op (do NOT clear an existing OL-sourced value).
+    if (book.reference_pages_source !== 'manual') {
+      if (bundle.referencePages !== null) {
+        updates.reference_pages = bundle.referencePages;
+        updates.reference_pages_source = 'openlibrary';
+      }
+    }
     if (book.authors_source !== 'manual') {
       updates.authors_source = 'openlibrary';
     }
@@ -119,11 +133,17 @@ export async function applyEnrichment(
   });
 }
 
+// Phase 8 D-01 / D-02: markTerminalFailure now persists `book.failure_reason`
+// transactionally alongside the existing `enrichment_status='failed'` flip and
+// the `enrichment_job` status update. Callers (worker.ts) thread the
+// FailureReason from `classifyFailure(err).reason` so the inbox UI can render
+// a structured badge per RETRY-04.
 export async function markTerminalFailure(
   knex: Knex,
   jobId: number,
   bookMd5: string,
-  error: unknown
+  error: unknown,
+  reason: FailureReason
 ): Promise<void> {
   const rawMessage =
     error instanceof Error ? error.message : typeof error === 'string' ? error : String(error);
@@ -135,6 +155,9 @@ export async function markTerminalFailure(
       last_error: lastError,
       updated_at: trx.fn.now(),
     });
-    await trx('book').where({ md5: bookMd5 }).update({ enrichment_status: 'failed' });
+    await trx('book').where({ md5: bookMd5 }).update({
+      enrichment_status: 'failed',
+      failure_reason: reason,
+    });
   });
 }

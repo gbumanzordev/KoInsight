@@ -13,9 +13,12 @@ import {
 import { JSX, useState } from 'react';
 import { Link, NavLink } from 'react-router';
 import { useUnmatchedBooks } from '../../api/enrichment';
+import { FailureReasonBadge } from '../../components/failure-reason-badge/failure-reason-badge';
 import { ReEnrichButton } from '../../components/re-enrich-button/re-enrich-button';
 import { getBookPath, RoutePath } from '../../routes';
+import { formatRelativeDate } from '../../utils/dates';
 import { EnrichmentStatusCards } from './enrichment-status-cards';
+import { RetryAllButton } from './retry-all-button';
 
 // Phase 5 Plan 05 (UI-04, D-14, D-16, D-20): paginated list of failed books with
 // per-row Edit metadata + Re-enrich actions. Uses a single list-level SWR poll
@@ -32,7 +35,10 @@ export function UnmatchedBooksSection(): JSX.Element {
 
   return (
     <Stack gap="lg">
-      <Title order={2}>Unmatched books</Title>
+      <Group justify="space-between" align="center">
+        <Title order={2}>Unmatched books</Title>
+        <RetryAllButton />
+      </Group>
       <EnrichmentStatusCards />
 
       {error && (
@@ -80,11 +86,14 @@ export function UnmatchedBooksSection(): JSX.Element {
                       <Text size="sm" c="dimmed" truncate>
                         {row.authors ?? 'Unknown author'}
                       </Text>
-                      {row.last_error && (
-                        <Text size="xs" c="red" lineClamp={2}>
-                          {row.last_error}
-                        </Text>
-                      )}
+                      <Group gap="xs" wrap="nowrap">
+                        <FailureReasonBadge reason={row.failure_reason} />
+                        {row.job_updated_at && (
+                          <Text size="xs" c="dimmed">
+                            {formatRelativeDate(row.job_updated_at)}
+                          </Text>
+                        )}
+                      </Group>
                     </Stack>
                     <Group gap="sm" wrap="nowrap">
                       <Button

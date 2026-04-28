@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import { matchWork, normalizeTokens, type MatcherCandidate } from '../matcher';
+import { matchWork, NoMatchError, normalizeTokens, type MatcherCandidate } from '../matcher';
 
 const enderSearch = JSON.parse(
   readFileSync(join(__dirname, 'fixtures', 'search-ender.json'), 'utf8')
@@ -54,28 +54,28 @@ describe('matchWork (D-16/D-17)', () => {
     expect(result?.key).toBe('/works/OL27448W');
   });
 
-  it('returns null when candidates list is empty', () => {
-    expect(matchWork({ title: 'whatever', authors: 'someone' }, [])).toBeNull();
+  it('throws NoMatchError when candidates list is empty', () => {
+    expect(() => matchWork({ title: 'whatever', authors: 'someone' }, [])).toThrow(NoMatchError);
   });
 
-  it('returns null when book.authors is null (D-16 step 2 bail)', () => {
-    expect(matchWork({ title: "Ender's Game", authors: null }, enderSearch.docs)).toBeNull();
+  it('throws NoMatchError when book.authors is null (D-16 step 2 bail)', () => {
+    expect(() => matchWork({ title: "Ender's Game", authors: null }, enderSearch.docs)).toThrow(NoMatchError);
   });
 
-  it('returns null when book.authors is empty string', () => {
-    expect(matchWork({ title: "Ender's Game", authors: '' }, enderSearch.docs)).toBeNull();
+  it('throws NoMatchError when book.authors is empty string', () => {
+    expect(() => matchWork({ title: "Ender's Game", authors: '' }, enderSearch.docs)).toThrow(NoMatchError);
   });
 
-  it('returns null when candidate has no author_name array', () => {
+  it('throws NoMatchError when candidate has no author_name array', () => {
     const candidates: MatcherCandidate[] = [{ title: "Ender's Game", key: '/works/OLX' }];
-    expect(matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toBeNull();
+    expect(() => matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toThrow(NoMatchError);
   });
 
-  it('returns null when candidate has empty author_name array', () => {
+  it('throws NoMatchError when candidate has empty author_name array', () => {
     const candidates: MatcherCandidate[] = [
       { title: "Ender's Game", key: '/works/OLX', author_name: [] },
     ];
-    expect(matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toBeNull();
+    expect(() => matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toThrow(NoMatchError);
   });
 
   it('falls through top-1 fail to top-2 pass', () => {
@@ -97,17 +97,16 @@ describe('matchWork (D-16/D-17)', () => {
       author_name: ['Orson Scott Card'],
     };
     const candidates: MatcherCandidate[] = [bad, bad, bad, good];
-    const result = matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates);
-    expect(result).toBeNull();
+    expect(() => matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toThrow(NoMatchError);
   });
 
-  it('returns null when all top-3 fail', () => {
+  it('throws NoMatchError when all top-3 fail', () => {
     const candidates: MatcherCandidate[] = [
       { title: 'Unrelated', key: '/works/1', author_name: ['Unknown'] },
       { title: 'Still Unrelated', key: '/works/2', author_name: ['Nobody'] },
       { title: 'Also Wrong', key: '/works/3', author_name: ['None'] },
     ];
-    expect(matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toBeNull();
+    expect(() => matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toThrow(NoMatchError);
   });
 
   it('uses only the first comma-split segment of book.authors (D-16 step 2)', () => {
@@ -127,7 +126,7 @@ describe('matchWork (D-16/D-17)', () => {
       // Candidate title lacks "game"
       { title: 'Ender', key: '/works/Y', author_name: ['Orson Scott Card'] },
     ];
-    expect(matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toBeNull();
+    expect(() => matchWork({ title: "Ender's Game", authors: 'Orson Scott Card' }, candidates)).toThrow(NoMatchError);
   });
 
   it('accepts candidate with extra title tokens (subset rule is one-way)', () => {

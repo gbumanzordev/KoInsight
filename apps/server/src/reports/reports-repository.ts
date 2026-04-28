@@ -6,10 +6,12 @@
 //
 // book.soft_deleted = 0 is required on every query that joins book (Pitfall 4).
 // book.pages was dropped from the schema in 20250413124229; only book.reference_pages
-// remains on the book table (per-device pages live on book_device.pages). The 95%
-// predicate divides by COALESCE(b.reference_pages, MAX(book_device.pages)) so
-// unenriched books still qualify when KOReader has reported a page count for them
-// (Pitfall 3).
+// remains on the book table (per-device pages live on book_device.pages).
+//
+// Reading metrics are derived from book.reference_pages (D-15/D-17).
+// Books with NULL reference_pages are excluded from completion-based predicates
+// and surface as Unknown in coverage. To populate reference_pages, trigger
+// enrichment or use PUT /books/:id/reference_pages with a manual value.
 
 import { db } from '../knex';
 
@@ -31,9 +33,9 @@ export async function getYearsWithReading(): Promise<number[]> {
 /**
  * MD5 set of books that meet the >=95% pages-by-end-of-Y predicate AND have
  * at least one page_stat row inside [yearStart, yearEnd). The denominator is
- * COALESCE(book.reference_pages, MAX(book_device.pages)) so unenriched books
- * still qualify when KOReader has reported a page count. Books with no known
- * page total at all (NULL reference_pages AND no book_device row) are excluded.
+ * b.reference_pages (D-15/D-17): books with NULL reference_pages are
+ * excluded from completion-based predicates. Operator remediation is
+ * enrichment or PUT /books/:id/reference_pages with a manual value.
  * Soft-deleted books are excluded.
  *
  * The MAX(page) sub-aggregate spans all rows with start_time < yearEnd, so a
@@ -50,21 +52,14 @@ export async function getBooksReadInYear(
        FROM page_stat
        WHERE start_time < ?
        GROUP BY book_md5
-     ),
-     device_pages AS (
-       SELECT book_md5, MAX(pages) AS dev_p
-       FROM book_device
-       WHERE pages IS NOT NULL AND pages > 0
-       GROUP BY book_md5
      )
      SELECT b.md5 AS md5
      FROM book b
      INNER JOIN max_page_by_end m ON m.book_md5 = b.md5
-     LEFT JOIN device_pages d ON d.book_md5 = b.md5
      WHERE b.soft_deleted = 0
-       AND COALESCE(b.reference_pages, d.dev_p) IS NOT NULL
-       AND COALESCE(b.reference_pages, d.dev_p) > 0
-       AND m.max_p >= CAST(0.95 * COALESCE(b.reference_pages, d.dev_p) AS INTEGER)
+       AND b.reference_pages IS NOT NULL
+       AND b.reference_pages > 0
+       AND m.max_p >= CAST(0.95 * b.reference_pages AS INTEGER)
        AND EXISTS (
          SELECT 1 FROM page_stat ps2
          WHERE ps2.book_md5 = b.md5

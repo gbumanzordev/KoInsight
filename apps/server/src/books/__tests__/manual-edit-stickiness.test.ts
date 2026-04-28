@@ -73,6 +73,7 @@ describe('manual-edit stickiness (SC-2)', () => {
         { name: 'Other Author', openlibrary_key: '/authors/OL1A', nationality: 'FR' },
       ],
       subjects: ['Fantasy'],
+      referencePages: null,
     };
     await applyEnrichment(db, MD5, jobId, bundle);
 

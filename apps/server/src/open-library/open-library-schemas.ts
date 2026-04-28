@@ -10,6 +10,9 @@ export const SearchDocSchema = z.object({
   first_publish_year: z.number().int().optional(),
   isbn: z.array(z.string()).optional(),
   cover_i: z.number().optional(),
+  // REFPAGES-01: required for Phase 7 worker to read candidate.cover_edition_key.
+  // Without this field Zod strips the value silently and edition fetch is unreachable.
+  cover_edition_key: z.string().optional(),
 });
 export type OpenLibrarySearchDoc = z.infer<typeof SearchDocSchema>;
 
@@ -36,6 +39,15 @@ export const WorkSchema = z.object({
   first_publish_date: z.string().optional(),
 });
 export type OpenLibraryWork = z.infer<typeof WorkSchema>;
+
+// === Work Editions ===
+// Used by the Phase 7 backfill (D-09 option b) to resolve cover_edition_key
+// for already-enriched books from their work key.
+// Permissive: extra fields on entries are stripped, entries optional with default [].
+export const WorkEditionsSchema = z.object({
+  entries: z.array(z.object({ key: z.string() })).optional().default([]),
+});
+export type OpenLibraryWorkEditions = z.infer<typeof WorkEditionsSchema>;
 
 // === Edition ===
 // Per 03-RESEARCH: subjects on editions are typically empty/sparse; resolver must walk to Work.

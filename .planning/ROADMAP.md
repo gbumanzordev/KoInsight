@@ -1,152 +1,94 @@
-# Roadmap: KoInsight, Book Metadata Enrichment + Yearly Reports
+# Roadmap: KoInsight
 
-## Overview
+## Shipped Milestones
 
-This milestone extends KoInsight from a raw-stats dashboard into a library that knows *what kind of books* the user reads. Six phases take the codebase from today's denormalized author strings and unused `genre` scaffolding to a fully-enriched library with a yearly report section. The journey is strictly bottom-up: schema and provenance land first (so manual edits can never be silently overwritten); then a canonical genre vocabulary and an extended OpenLibrary/Wikidata client land in parallel; then the enrichment service ties them together with a queue, worker, and bootstrap backfill; then the manual-edit UI and unmatched-books inbox give users an escape hatch for bad matches; finally the yearly report ships as a stats-dashboard section that consumes the enriched data.
+- [x] **v1.0 — Book Metadata Enrichment + Yearly Reports** (2026-04-23 → 2026-04-26, 6 phases / 35 plans). See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md).
 
-## Phases
+## Active Milestone: v1.1 Enrichment Polish & Cleanup
 
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+**Started:** 2026-04-26
+**Goal:** Pay down v1.0 carry-over debt and polish the enrichment pipeline so the dashboard runs on clean, complete data without workarounds.
+**Requirements:** `.planning/REQUIREMENTS.md` (14 requirements across REFPAGES / RETRY / AUTHGC / POLISH)
 
-- [x] **Phase 1: Schema Foundations + Provenance** - Author entity, junction, enrichment job table, per-field `*_source` columns, and shared types, every downstream phase consumes these
-- [x] **Phase 2: Canonical Genre Vocabulary** - Curated whitelist constant, idempotent seed/migration, and a pure subject-to-genre mapping function with unit-test coverage
-- [x] **Phase 3: OpenLibrary + Wikidata Client** - Extend the OL HTTP client with work/edition/author/search methods, a shared Bottleneck rate limiter, User-Agent, circuit breaker, and Wikidata P27 nationality lookup
-- [x] **Phase 4: Enrichment Service + Backfill** - In-process queue, worker, post-sync enqueue hook, boot-time backfill of pre-existing books, idempotency, and provenance-respecting writes
-- [ ] **Phase 5: Manual Edit + Unmatched Inbox** - PATCH metadata API, re-enrich endpoint, status counters, Mantine edit form with provenance badges, and the unmatched-books inbox view
-- [x] **Phase 6: Yearly Report** - Server-side aggregations under `/api/reports/*` plus the year-selector dashboard with genre/nationality/decade/language charts and coverage banners
+### Phases
 
-## Phase Details
+**Phase Numbering:** Continuing from v1.0 (which ended at Phase 6). v1.1 starts at Phase 7.
 
-### Phase 1: Schema Foundations + Provenance
-**Goal**: Every table, column, and shared type the rest of the milestone depends on exists, with `*_source` provenance columns in place BEFORE any enrichment can run.
-**Depends on**: Nothing (first phase)
-**Requirements**: SCHEMA-01, SCHEMA-02, SCHEMA-03, SCHEMA-04, SCHEMA-05, SCHEMA-07, SCHEMA-08
+- [ ] **Phase 7: Reference Pages Enrichment** - Enrichment writes `book.reference_pages` from OL Edition data, manual stickiness via `reference_pages_source`, backfill, and drop the yearly-report COALESCE workaround.
+- [x] **Phase 8: Failure Triage & Smarter Matcher** (complete 2026-04-27) - Bulk-enqueue helper, smarter OL matcher, structured `failure_reason` on each failure, and per-book + bulk retry from the unmatched inbox UI.
+- [ ] **Phase 9: Orphan Author GC** - Admin HTTP endpoint + CLI script that delete authors with zero `book_author` references, idempotent and protected against accidental triggering.
+- [ ] **Phase 10: Repo Polish** - Documented version-pin convention across all workspaces and web bundle splitting so no initial chunk exceeds the agreed threshold.
+
+### Phase Details
+
+#### Phase 7: Reference Pages Enrichment
+**Goal**: The enrichment pipeline populates `book.reference_pages` directly from OpenLibrary, with manual stickiness, so the yearly report (and any other consumer) reads `book.reference_pages` instead of falling back to `MAX(book_device.pages)`.
+**Depends on**: Nothing in v1.1 (builds on v1.0 enrichment service + provenance pattern)
+**Requirements**: REFPAGES-01, REFPAGES-02, REFPAGES-03, REFPAGES-04
 **Success Criteria** (what must be TRUE):
-  1. Running `npm --workspace=server run knex migrate:latest` against an existing dev DB adds the `author`, `book_author`, and `enrichment_job` tables, plus all new `book` columns, with no row-count loss in `book`, `page_stat`, or `annotation`.
-  2. After migration, every existing row in `book` with a non-empty `authors` string has at least one corresponding `book_author` row whose `position` reflects the original order, and the original `book.authors` string is preserved verbatim.
-  3. `enrichment_job` enforces "at most one open job per book" via a partial unique index (verifiable by attempting two `INSERT ... status='pending'` for the same `book_md5` and observing the second fail).
-  4. `packages/common/types` exports `Author`, `BookAuthor`, `EnrichmentJob`, `EnrichmentStatus`, `FieldSource`, and the extended `Book` shape; both `apps/server` and `apps/web` build against the new types without errors.
-  5. All migrations are structure-only: grepping the migration files for `fetch(`, `axios`, `https://`, or row-iteration loops over `book` (other than the deterministic author string-split backfill in SCHEMA-08) returns nothing.
-**Plans**: 7 plans
-  - [x] 01-01-PLAN.md, Author parser helper + unit tests (pure function, TDD)
-  - [x] 01-02-PLAN.md, Shared types in @koinsight/common (author.ts, enrichment.ts, extend book.ts, barrel)
-  - [x] 01-03-PLAN.md, Migration 1: create author + book_author tables (with partial unique on openlibrary_key)
-  - [x] 01-04-PLAN.md, Migration 2: create enrichment_job table (with partial unique on open jobs per book)
-  - [x] 01-05-PLAN.md, Migration 3: extend book with 8 enrichment columns + provenance
-  - [x] 01-06-PLAN.md, Migration 4: backfill book_author from existing book.authors strings (uses parser)
-  - [x] 01-07-PLAN.md, End-to-end Phase 1 schema verification (SCHEMA-07 grep test + dynamic invariants)
+  1. After a fresh enrichment run, a book whose resolved OL Edition exposes `number_of_pages` has `book.reference_pages` populated and `book.reference_pages_source = 'openlibrary'`; books without OL page data leave the field NULL.
+  2. A book with `reference_pages_source = 'manual'` retains its manual page count after re-enrichment, even when OL returns a different `number_of_pages` (provenance respected, parity with v1.0 stickiness rules).
+  3. A one-time backfill task populates `reference_pages` for already-enriched books from cached OL data without re-running the full enrichment pipeline; running the backfill twice is a no-op.
+  4. The yearly report query reads `book.reference_pages` directly (no `COALESCE(book.reference_pages, MAX(book_device.pages))`), and the documented fallback strategy for books still NULL after enrichment is applied consistently across consumers.
+**Plans:** 6 plans
+- [x] 07-01-PLAN.md — Schema migration for reference_pages_source + DbBook type extension + Wave 0 fixtures
+- [x] 07-02-PLAN.md — SearchDocSchema cover_edition_key fix + getWorkEditions OL client method
+- [x] 07-03-PLAN.md — Worker Edition fetch + applier D-06 provenance block
+- [x] 07-04-PLAN.md — PUT /reference_pages provenance rewrite + one-shot backfill script
+- [x] 07-05-PLAN.md — Drop COALESCE in reports + drop device fallback in books-service
+- [x] 07-06-PLAN.md — Web UI Page-count-missing affordance + CLAUDE.md doc note
 
-### Phase 2: Canonical Genre Vocabulary
-**Goal**: A canonical genre whitelist exists in the database and a pure function maps OpenLibrary subjects to canonical genres with documented denylist behavior, ready for the enrichment service to consume.
-**Depends on**: Phase 1
-**Requirements**: SCHEMA-06, GENRE-01, GENRE-02, GENRE-03, GENRE-04
+#### Phase 8: Failure Triage & Smarter Matcher
+**Goal**: Users can triage and recover the 8+ books currently stuck in `enrichment_status='failed'` from the dashboard, the OL matcher succeeds on retry for books that are actually present in OL, and every failure carries a structured reason so users know whether to retry, edit, or wait.
+**Depends on**: Phase 7 (so reference_pages writes participate in retried enrichments)
+**Requirements**: POLISH-01, RETRY-01, RETRY-02, RETRY-03, RETRY-04
 **Success Criteria** (what must be TRUE):
-  1. After running migrations + `npm run seed`, the `genre` table contains the full canonical list (~50-100 rows) and re-running the seed/migration is a no-op (idempotent insert-or-ignore verified).
-  2. `mapOpenLibrarySubjects(['Protected DAISY', 'Accessible book', 'Science fiction', 'In library'])` returns exactly the canonical Science Fiction entry; format/marketing tags from the documented denylist are dropped before mapping.
-  3. The mapping function has at least 20 unit tests against real OpenLibrary subject lists covering all-noise inputs, no-canonical-match inputs, and multi-genre inputs; all tests pass under `npm --workspace=server test`.
-  4. A book whose subject list yields zero canonical matches can be persisted with `genres_source = 'openlibrary'` and an empty `book_genre` set without throwing or being marked as enrichment failure.
-**Plans**: 5 plans
-  - [x] 02-01-PLAN.md - packages/common/genres scaffold: CANONICAL_GENRES + CanonicalGenre type + barrel + vitest config (GENRE-01)
-  - [x] 02-02-PLAN.md - aliases, denylist, mapOpenLibrarySubjects + 25-case TDD map.test.ts with 10 real OL fixtures (GENRE-02, GENRE-03, GENRE-04)
-  - [x] 02-03-PLAN.md - idempotent seed migration via .onConflict(name).ignore() (SCHEMA-06)
-  - [x] 02-04-PLAN.md - refactor dev seed 06_genres.ts to consume CANONICAL_GENRES + tighten BOOK_GENRE_MAPPING typing
-  - [x] 02-05-PLAN.md - phase-02-schema.test.ts: idempotency integration test + SCHEMA-07 extension grep guards
-
-### Phase 3: OpenLibrary + Wikidata Client
-**Goal**: The HTTP layer can fetch every OpenLibrary endpoint the enrichment service needs and resolve author nationality via Wikidata P27, all behind a single shared rate limiter and circuit breaker, with no DB writes.
-**Depends on**: Phase 1
-**Requirements**: OL-01, OL-02, OL-03, OL-04, OL-05, WD-01, WD-02, WD-03, WD-04, WD-05
-**Success Criteria** (what must be TRUE):
-  1. `OpenLibraryService.searchWork`, `getWork`, `getEdition`, and `getAuthor` each return Zod-parsed payloads against live or fixture responses; subjects are read from the resolved Work, never from the Edition (verifiable by fixture test where Edition has empty subjects and Work has populated ones).
-  2. Every outbound request to `openlibrary.org` and `wikidata.org` includes `User-Agent: KoInsight/<version> (...)` (verifiable by inspecting fetch call args in unit tests with a mocked fetch).
-  3. With Bottleneck configured at 1 req/s baseline, firing 10 lookups in a tight loop completes in roughly 10 seconds (within tolerance), demonstrating the limiter is shared and active.
-  4. After N consecutive simulated 5xx/timeouts the circuit breaker opens and subsequent calls return the open-circuit error without hitting the network; after the cooldown a single probe is allowed through.
-  5. Given an OpenLibrary author response with `remote_ids.wikidata`, the client fetches the Wikidata entity, picks the P27 claim with no `end time` and highest rank, and normalizes the result to an ISO 3166-1 alpha-2 country code; authors lacking a Wikidata link resolve to `nationality = NULL` with `nationality_source = 'openlibrary'`.
-**Plans**: 5 plans
-  - [x] 03-01-PLAN.md, Shared HTTP infrastructure (Bottleneck limiter, opossum breaker, User-Agent, http-errors, typedFetch) (OL-02, OL-03, OL-04, WD-05)
-  - [x] 03-02-PLAN.md, Country-codes module: hand-curated QID -> ISO 3166-1 alpha-2 map + runtime cache (TDD) (WD-02)
-  - [x] 03-03-PLAN.md, OpenLibraryClient: Zod schemas + instance class + 7 fixtures + fixture-based tests (OL-01, OL-02, OL-05)
-  - [x] 03-04-PLAN.md, WikidataClient: schemas + P27 resolver (TDD) + client + 10 fixtures (WD-01, WD-02, WD-03, WD-04, WD-05)
-  - [x] 03-05-PLAN.md, Shared-limiter invariant + no-DB-writes grep guard + end-to-end integration test (OL-03, WD-05, roll-up)
-
-### Phase 4: Enrichment Service + Backfill
-**Goal**: Books synced from KOReader are enriched asynchronously without blocking the sync path, the entire pre-existing library is backfilled on first deploy, and re-enrichment never overwrites manual edits.
-**Depends on**: Phase 2, Phase 3
-**Requirements**: ENRICH-01, ENRICH-02, ENRICH-03, ENRICH-04, ENRICH-05, ENRICH-06, ENRICH-07
-**Success Criteria** (what must be TRUE):
-  1. After a KOReader plugin sync that introduces new books, the request returns within the existing latency envelope (no inline OL calls), and within seconds the enrichment worker picks up `enrichment_job` rows for those books and transitions them to `enriched` (or `failed` for unmatched titles).
-  2. Booting the server against a database with N pre-existing unenriched books enqueues all N (visible via `enrichment_job` rows) without blocking `app.listen`; the worker drains them at the configured rate.
-  3. Running enrichment twice on the same book produces identical `book` / `book_author` / `book_genre` state (idempotency verifiable by snapshot diff after two runs).
-  4. A book whose `genres_source = 'manual'` retains its manual `book_genre` rows after a forced re-enrichment, even when OpenLibrary returns different subjects (manual-wins rule enforced).
-  5. After a simulated crash mid-job, restarting the server resets `running` jobs to `pending` so they retry; jobs that exceed the max-attempts ceiling are left in `failed` with `last_error` populated, and books with no OL match land at `enrichment_status = 'failed'` ready for the unmatched inbox.
-**Plans**: 6 plans
-  - [x] 04-01-PLAN.md, Wave 0: next_attempt_at migration + constants + truncate-list fix + fixtures + grep guard + TDD anchors
-  - [x] 04-02-PLAN.md, matcher.ts (D-17 token overlap) + retry.ts (D-14 classify, D-12 backoff), pure, TDD
-  - [x] 04-03-PLAN.md, service.ts (enqueue with D-07/D-08/D-09) + backfill.ts (D-10 INSERT...SELECT)
-  - [x] 04-04-PLAN.md, applier.ts (D-18 transactional apply, D-19 author dedup, D-20 provenance guards) + markTerminalFailure (D-15)
-  - [x] 04-05-PLAN.md, worker.ts (polling loop, crash recovery, retry scheduling) + app.ts + upload/koplugin post-commit wiring
-  - [x] 04-06-PLAN.md, End-to-end integration test covering Success Criteria 1, 3, 4, 5
-
-### Phase 5: Manual Edit + Unmatched Inbox
-**Goal**: Users can correct any wrong or missing metadata from the web UI, find books OpenLibrary failed on, and re-trigger enrichment per book, and every manual change is sticky against future re-enrichment.
-**Depends on**: Phase 4
-**Requirements**: EDIT-01, EDIT-02, EDIT-03, EDIT-04, EDIT-05, UI-01, UI-02, UI-03, UI-04, UI-05
-**Success Criteria** (what must be TRUE):
-  1. `PATCH /api/books/:md5/metadata` with a Zod-valid body persists the changed fields, sets each touched field's `*_source` to `'manual'`, and returns the updated book; sending an invalid body returns a 400 with the Zod error.
-  2. After a manual edit, calling `POST /api/books/:md5/re-enrich` runs the enrichment pipeline for that book and the manually-set fields are unchanged afterward (verifiable by before/after compare on `*_source = 'manual'` columns).
-  3. From a book detail page in the web UI, the user can open the edit form, see a provenance chip ("manual" or "OpenLibrary") next to each field, change authors via `TagsInput`, change genres via `MultiSelect` constrained to the canonical list, save, and see the change reflected after SWR revalidation.
-  4. The "Unmatched books" view (linked from nav, with a count badge) lists every book at `enrichment_status = 'failed'`, supports per-book "Edit metadata" navigation and per-book "Re-enrich", and the count drops as the user resolves entries.
-  5. `GET /api/enrichment/status` returns aggregate counts (`pending` / `running` / `enriched` / `failed`) that match a direct SQL count of `book.enrichment_status`, suitable for displaying backfill progress.
+  1. A bulk-enqueue helper accepts a list of book IDs and enqueues them through the normal enrichment pipeline in a single call; the per-book enqueue loop currently in use is replaced and RETRY-01 consumes this helper.
+  2. From the unmatched/failed inbox, the user can trigger "Retry all failed" (single action, optional filter) and "Retry this book" (per row); both actions re-enqueue through the normal pipeline and the row reflects the new status after the retry resolves without a page reload.
+  3. A book that previously failed with a title/author normalization or "Last, First" alias mismatch (covered by a fixture suite) succeeds matching on retry once the improved heuristics ship; matcher unit tests document the new normalization, fuzzy-compare, and alias-handling rules.
+  4. Every enrichment failure persists a structured `failure_reason` (`no_match`, `ambiguous_match`, `network`, `parse_error`, etc.) on the book row, and the inbox UI displays the reason next to each failed book so users can distinguish "needs manual edit" from "transient network error worth retrying".
 **UI hint**: yes
-**Plans**: 5 plans
-  - [x] 05-01-PLAN.md; Shared Zod metadataPatchSchema + PATCH /api/books/:bookId/metadata + manual-source stamping + stickiness test + enrichment_status index migration (EDIT-01, EDIT-02)
-  - [x] 05-02-PLAN.md; POST /api/books/:bookId/re-enrich (202 wrapper over enrichmentService.enqueue) + idempotency integration test (EDIT-03)
-  - [x] 05-03-PLAN.md; New /api/enrichment router: GET /unmatched (paginated) + GET /status (counters) + mount in app.ts (EDIT-04, EDIT-05)
-  - [x] 05-04-PLAN.md; Web edit UI: Modal + @mantine/form form + AuthorRowEditor + ProvenanceBadge + ReEnrichButton + conditional SWR polling (UI-01, UI-02, UI-03, UI-05)
-  - [x] 05-05-PLAN.md; /settings shell + Unmatched inbox + 4 stat cards + Navbar Settings tab with Indicator badge (UI-04)
+**Plans:** 4 plans
+- [x] 08-01-wave0-tests-types-PLAN.md — Wave 0 RED tests + FailureReason type in @koinsight/common + stuck-books fixtures
+- [x] 08-02-server-core-PLAN.md — Migration + classifyFailure refactor + matcher fuzzy/ambiguous + enqueueMany
+- [x] 08-03-server-wiring-PLAN.md — markTerminalFailure failure_reason write + worker call sites + POST /retry-all + repo SELECT
+- [x] 08-04-web-ui-PLAN.md — FailureReasonBadge + RetryAllButton + inbox row integration + ReEnrichButton list-key mutate
 
-### Phase 6: Yearly Report
-**Goal**: A user can pick any year with reading data and see a coherent dashboard of genre, nationality, publication-decade, and original-language breakdowns, with explicit coverage banners and an "Unknown" bucket on every chart.
-**Depends on**: Phase 4 (data must exist); ships after Phase 5 so the unmatched inbox is the recovery path users see first
-**Requirements**: REPORT-01, REPORT-02, REPORT-03, REPORT-04, REPORT-05, REPORT-UI-01, REPORT-UI-02, REPORT-UI-03, REPORT-UI-04, REPORT-UI-05
+#### Phase 9: Orphan Author GC
+**Goal**: Authors that no longer back any book can be removed on demand via either an HTTP endpoint or a CLI script, the operation is idempotent, and it is protected against accidental triggering.
+**Depends on**: Nothing in v1.1 (orthogonal to enrichment changes)
+**Requirements**: AUTHGC-01, AUTHGC-02, AUTHGC-03
 **Success Criteria** (what must be TRUE):
-  1. `GET /api/reports/years` returns the full set of years that have any `page_stat` rows, sorted descending, and `GET /api/reports/yearly?year=YYYY` returns the documented JSON shape (totals, genre breakdown, nationality breakdown, publication-decade histogram, original-language breakdown, `coverage` block) for any year that endpoint exposes.
-  2. A book counts in `total_books` for year Y only when ≥95% of its pages were reached by the end of Y in the configured timezone; aggregate `total_pages` and `total_read_time` always reflect ALL reading in Y regardless of completion (verifiable by a fixture with a 50%-read book that counts in time totals but not book totals).
-  3. Every breakdown returned by the API includes an explicit `Unknown` bucket for books missing that field; the bucket is never silently dropped or renormalized away, and `coverage` reports `known_books / total_books` for each chart.
-  4. Visiting `/reports/yearly` in the web app shows a year `Select` populated from the years endpoint, charts re-render when the year changes, and the selected year persists in the URL query string across reloads.
-  5. Each chart on the page renders a coverage banner ("Genres known for N of M books read this year"), and a year with zero reading or zero enriched books renders an empty-state placeholder linking to the unmatched inbox rather than a broken chart.
+  1. An admin HTTP endpoint deletes every `author` row that has zero `book_author` references and returns the deleted count; the endpoint is protected so it cannot be triggered by an unauthenticated request or a stray browser navigation.
+  2. An npm workspace script wraps the same GC logic and runs successfully against the SQLite database without requiring the HTTP server to be running, deleting the same set of rows the HTTP endpoint would.
+  3. Running GC twice in a row deletes some N orphans on the first run and exactly zero on the second run (idempotency + side-effect-free behavior verifiable in an integration test).
+**Plans**: TBD
+
+#### Phase 10: Repo Polish
+**Goal**: Workspace `package.json` files follow one documented version-pin convention, and the web app's initial JS payload is split so no single chunk exceeds the agreed threshold.
+**Depends on**: Nothing in v1.1 (pure repo + build chores)
+**Requirements**: POLISH-02, POLISH-03
+**Success Criteria** (what must be TRUE):
+  1. Every workspace `package.json` follows a single, documented version-pin convention (e.g., caret for libraries, exact for tools); the convention is recorded in `CLAUDE.md` and a manual or scripted check confirms consistency across all workspaces.
+  2. `vite build` output shows the largest initial chunk is below the agreed threshold (target captured in plan), achieved via route-level and/or vendor splitting; no production route regresses to a larger initial payload than today.
 **UI hint**: yes
-**Plans**: 7 plans
-  - [x] 06-01-PLAN.md, Index migration + shared @koinsight/common report types (page_stat(start_time) index, REPORT-04)
-  - [x] 06-02-PLAN.md, TZ helper (yearBoundsInZone) + REPORT_TZ env wiring + DST unit tests (REPORT-02)
-  - [x] 06-03-PLAN.md, reports-repository: 95% predicate CTE, page-time totals, per-breakdown queries, fixture helper (REPORT-02, REPORT-03, REPORT-04, REPORT-05)
-  - [x] 06-04-PLAN.md, reports-service: top-10+Other, decade fill, Unknown bucket, coverage shaping (REPORT-01, REPORT-02, REPORT-05)
-  - [x] 06-05-PLAN.md, reports-router (Zod, supertest), mount on /api/reports (REPORT-01, REPORT-03)
-  - [x] 06-06-PLAN.md, Web hooks + page shell + year navigator (nuqs) + nav entry + empty state (REPORT-UI-01, REPORT-UI-02, REPORT-UI-05)
-  - [x] 06-07-PLAN.md, Charts (genre stacked bar, nationality bar, decade histogram, language pie) + headline cards + coverage banners (REPORT-UI-03, REPORT-UI-04)
+**Plans**: TBD
 
-## Parallelization
+### Parallelization
 
-`config.parallelization = true`. Phase dependencies allow the following execution waves:
+`config.parallelization = true`. Phase 7 should land first because Phase 8 retries should benefit from the new `reference_pages` writer. Phases 9 and 10 are orthogonal to Phases 7 and 8 and to each other; they can be developed in parallel with (or after) Phase 8.
 
-- **Wave 1 (sequential):** Phase 1, blocks everything; nothing else can start until schema and provenance land.
-- **Wave 2 (parallel):** Phase 2 and Phase 3, both depend only on Phase 1 and touch disjoint code paths (`apps/server/src/genres/` + `apps/server/src/enrichment/genre-mapping.ts` for Phase 2; `apps/server/src/open-library/` for Phase 3). They can be planned and executed concurrently.
-- **Wave 3 (sequential):** Phase 4, joins the outputs of Phase 2 and Phase 3; cannot start until both are merged.
-- **Wave 4 (sequential):** Phase 5, depends on Phase 4 so the manual-edit "respect locks" behavior has real meaning to test.
-- **Wave 5 (sequential, but can begin backend work in parallel with Phase 5):** Phase 6, backend (`reports-router`, `reports-service`, `reports-repository`, year-index migration) is independent of Phase 5 and can be developed alongside it; the Phase 6 UI ships LAST so users encounter the unmatched inbox (Phase 5) before reports go live and dilute the experience with missing-data noise.
+- **Wave 1 (sequential):** Phase 7 — reference pages writer + backfill + drop COALESCE.
+- **Wave 2 (sequential after Wave 1):** Phase 8 — bulk-enqueue helper, matcher, retry UI, failure_reason. Retried books exercise the Phase 7 writer.
+- **Wave 3 (parallel, can begin alongside Wave 2):** Phase 9 (author GC) and Phase 10 (repo polish), both isolated from the enrichment slice.
 
-## Progress
+### Progress
 
-**Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 (with 2+3 and 5+6-backend eligible for parallel work waves as noted above).
+**Execution Order:** 7 → 8, with 9 and 10 eligible to run in parallel after Phase 7.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Schema Foundations + Provenance | 7/7 | Complete | 2026-04-23 |
-| 2. Canonical Genre Vocabulary | 5/5 | Complete | 2026-04-23 |
-| 3. OpenLibrary + Wikidata Client | 5/5 | Complete | 2026-04-24 |
-| 4. Enrichment Service + Backfill | 0/6 | Not started | - |
-| 5. Manual Edit + Unmatched Inbox | 0/TBD | Not started | - |
-| 6. Yearly Report | 0/7 | Not started | - |
+| 7. Reference Pages Enrichment | 6/6 | Complete | 2026-04-27 |
+| 8. Failure Triage & Smarter Matcher | 4/4 | Complete | 2026-04-27 |
+| 9. Orphan Author GC | 0/TBD | Not started | - |
+| 10. Repo Polish | 0/TBD | Not started | - |

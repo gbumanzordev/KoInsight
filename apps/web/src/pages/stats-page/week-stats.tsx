@@ -61,6 +61,8 @@ export function WeekStats({
     () =>
       Math.round(
         weekData?.reduce((acc, stat) => {
+          // D-15: books with NULL reference_pages fall through to `acc + 1` (raw page-turn count).
+          // This under-counts unenriched books in the weekly estimate; accepted data-quality stance.
           if (stat.total_pages && booksByMd5[stat.book_md5]?.reference_pages) {
             return acc + (1 / stat.total_pages) * booksByMd5[stat.book_md5].reference_pages!;
           } else {

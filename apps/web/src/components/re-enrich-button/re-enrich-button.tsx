@@ -5,6 +5,7 @@ import { IconRefresh } from '@tabler/icons-react';
 import { JSX, useState } from 'react';
 import { mutate } from 'swr';
 import { reEnrichBook } from '../../api/books';
+import { invalidateUnmatchedList } from '../../api/enrichment';
 
 // Phase 5 Plan 04 (UI-05, D-13): primary CTA in the book detail header AND the
 // per-row action in the unmatched inbox. Disabled with a tooltip while the
@@ -37,6 +38,9 @@ export function ReEnrichButton({
       });
       // Trigger SWR to refetch immediately so the conditional polling kicks in.
       await mutate(`books/${bookId}`);
+      // Phase 8 Plan 04 (D-14, RETRY-02): invalidate the unmatched-list cache
+      // so the inbox row updates without a page reload.
+      await invalidateUnmatchedList();
     } catch (error) {
       notifications.show({
         title: 'Enrichment failed',
