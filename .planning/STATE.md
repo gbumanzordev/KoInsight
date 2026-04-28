@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
 status: executing
-stopped_at: "Phase 8 complete (all 4 plans). Next: Phase 9 (orphan author GC) or Phase 10 (repo polish) — both parallel-eligible after Phase 8."
-last_updated: "2026-04-28T14:49:49.017Z"
-last_activity: 2026-04-28 -- Phase 9 execution started
+stopped_at: "Phase 9 plan 1 of 3 complete. Next: 09-02 (HTTP route) and 09-03 (CLI), both depend on 09-01."
+last_updated: "2026-04-28T14:56:44Z"
+last_activity: 2026-04-28 -- Phase 9 plan 09-01 complete (orphan-author-gc core + factory + tests)
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 13
-  completed_plans: 10
-  percent: 77
+  completed_plans: 11
+  percent: 85
 ---
 
 # Project State
@@ -27,9 +27,9 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 
 Milestone: v1.1 Enrichment Polish & Cleanup
 Phase: 9 (orphan-author-gc) — EXECUTING
-Plan: 1 of 3
-Status: Executing Phase 9
-Last activity: 2026-04-28 -- Phase 9 execution started
+Plan: 2 of 3
+Status: Executing Phase 9 (09-01 complete; 09-02 and 09-03 next, both depend on 09-01 core)
+Last activity: 2026-04-28 -- Phase 9 plan 09-01 complete (orphan-author-gc core + factory + tests)
 
 ## Accumulated Context
 
@@ -64,6 +64,6 @@ None recorded for v1.1 yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27
-Stopped at: Phase 8 complete (all 4 plans). Next: Phase 9 (orphan author GC) or Phase 10 (repo polish) — both parallel-eligible after Phase 8.
-Resume file: .planning/ROADMAP.md (no in-flight phase)
+Last session: 2026-04-28
+Stopped at: Phase 9 plan 1 of 3 complete. Next: 09-02 (HTTP route) and 09-03 (CLI), both depend on 09-01.
+Resume file: .planning/phases/09-orphan-author-gc/09-02-PLAN.md

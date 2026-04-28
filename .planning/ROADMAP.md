@@ -63,7 +63,7 @@
   2. An npm workspace script wraps the same GC logic and runs successfully against the SQLite database without requiring the HTTP server to be running, deleting the same set of rows the HTTP endpoint would.
   3. Running GC twice in a row deletes some N orphans on the first run and exactly zero on the second run (idempotency + side-effect-free behavior verifiable in an integration test).
 **Plans:** 3 plans
-- [ ] 09-01-PLAN.md — Shared core deleteOrphanAuthors function + author-factory + core tests (transaction, dry-run, idempotency, sample cap)
+- [x] 09-01-PLAN.md — Shared core deleteOrphanAuthors function + author-factory + core tests (transaction, dry-run, idempotency, sample cap)
 - [ ] 09-02-PLAN.md — POST /api/admin/authors/gc router with Zod confirm-string validation + app.ts mount + books-service.ts orphan-comment update
 - [ ] 09-03-PLAN.md — tsx CLI entry orphan-author-gc-cli.ts + gc:orphan-authors npm script + CLI semantics tests
 
