@@ -65,5 +65,5 @@ None recorded for v1.1 yet.
 ## Session Continuity
 
 Last session: 2026-04-28
-Stopped at: Phase 9 plan 1 of 3 complete. Next: 09-02 (HTTP route) and 09-03 (CLI), both depend on 09-01.
-Resume file: .planning/phases/09-orphan-author-gc/09-02-PLAN.md
+Stopped at: Phase 9 complete and shipped (all 3 plans complete; verifier PASS; PR #3 open against master).
+Resume file: None — no pending Phase 9 work.

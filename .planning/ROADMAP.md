@@ -64,8 +64,8 @@
   3. Running GC twice in a row deletes some N orphans on the first run and exactly zero on the second run (idempotency + side-effect-free behavior verifiable in an integration test).
 **Plans:** 3 plans
 - [x] 09-01-PLAN.md — Shared core deleteOrphanAuthors function + author-factory + core tests (transaction, dry-run, idempotency, sample cap)
-- [ ] 09-02-PLAN.md — POST /api/admin/authors/gc router with Zod confirm-string validation + app.ts mount + books-service.ts orphan-comment update
-- [ ] 09-03-PLAN.md — tsx CLI entry orphan-author-gc-cli.ts + gc:orphan-authors npm script + CLI semantics tests
+- [x] 09-02-PLAN.md — POST /api/admin/authors/gc router with Zod confirm-string validation + app.ts mount + books-service.ts orphan-comment update
+- [x] 09-03-PLAN.md — tsx CLI entry orphan-author-gc-cli.ts + gc:orphan-authors npm script + CLI semantics tests
 
 #### Phase 10: Repo Polish
 **Goal**: Workspace `package.json` files follow one documented version-pin convention, and the web app's initial JS payload is split so no single chunk exceeds the agreed threshold.
