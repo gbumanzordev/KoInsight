@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
-status: executing
-stopped_at: "Phase 9 plans 09-01 and 09-03 complete. 09-02 (HTTP route) running in parallel; awaiting merge."
-last_updated: "2026-04-28T15:02:00Z"
-last_activity: 2026-04-28 -- Phase 9 plan 09-03 complete (orphan-author-gc CLI + npm script + tests)
+status: phase-complete
+stopped_at: "Phase 9 (orphan-author-gc) complete; verifier PASS. Ready to ship or advance to Phase 10."
+last_updated: "2026-04-28T15:10:00Z"
+last_activity: 2026-04-28 -- Phase 9 complete (all 3 plans, verifier PASS)
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 13
-  completed_plans: 12
-  percent: 92
+  completed_plans: 13
+  percent: 100
 ---
 
 # Project State
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-04-26)
 ## Current Position
 
 Milestone: v1.1 Enrichment Polish & Cleanup
-Phase: 9 (orphan-author-gc) — EXECUTING
-Plan: 3 of 3
-Status: Executing Phase 9 (09-01 and 09-03 complete; 09-02 HTTP route running in parallel)
-Last activity: 2026-04-28 -- Phase 9 plan 09-03 complete (orphan-author-gc CLI + npm script + tests)
+Phase: 9 (orphan-author-gc) — COMPLETE (verifier PASS)
+Plan: 3 of 3 complete
+Status: Phase 9 complete; ready for /gsd-ship or advance to Phase 10
+Last activity: 2026-04-28 -- Phase 9 complete (all 3 plans, verifier PASS)
 
 ## Accumulated Context
 
