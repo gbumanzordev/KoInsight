@@ -12,3 +12,8 @@ Plan 09-01 added 8 new passing tests under `apps/server/src/admin/orphan-author-
 ## Pre-existing TypeScript errors (full server tsc --noEmit)
 
 Pre-existing typecheck errors surface in `apps/server/src/enrichment/backfill-reference-pages.ts`, several `phase-08-*.test.ts` files (unused @ts-expect-error directives), `apps/server/src/db/factories/book-factory.ts`, and `apps/server/src/reports/__tests__/reports-router.test.ts`. None are in files modified by Phase 9 plans.
+# Deferred Items (Phase 09)
+
+## From Plan 09-03 execution (2026-04-28)
+
+- **phase-06-schema.test.ts** "migrate up -> down -> up is idempotent for the Phase 6 index migration" fails on master / this branch. Pre-existing, unrelated to Plan 09-03 changes (touches `apps/server/src/admin/*` and `apps/server/package.json` only). The Phase 6 page_stat(start_time) index migration appears to leak `idx_page_stat_start_time` after `migrate.down()`. Suggest a follow-up phase 06 fix; out of scope here.
