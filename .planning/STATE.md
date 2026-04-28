@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
-status: phase-complete
-stopped_at: "Phase 9 (orphan-author-gc) complete; verifier PASS. Ready to ship or advance to Phase 10."
-last_updated: "2026-04-28T15:10:00Z"
-last_activity: 2026-04-28 -- Phase 9 complete (all 3 plans, verifier PASS)
+status: shipped
+stopped_at: "Phase 9 shipped — PR #3 open against master."
+last_updated: "2026-04-28T15:15:00Z"
+last_activity: 2026-04-28 -- Phase 9 shipped (PR #3)
 progress:
   total_phases: 4
   completed_phases: 3
