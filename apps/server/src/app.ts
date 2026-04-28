@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import { Server } from 'http';
 import morgan from 'morgan';
 import path from 'path';
+import { adminRouter } from './admin/admin-router';
 import { openAiRouter } from './ai/open-ai-router';
 import { booksRouter } from './books/books-router';
 import { appConfig } from './config';
@@ -40,6 +41,7 @@ async function setupServer() {
   app.use('/api/ai', openAiRouter);
   app.use('/api/enrichment', enrichmentRouter);
   app.use('/api/reports', reportsRouter);
+  app.use('/api/admin', adminRouter);
 
   // Serve react app
   app.use(express.static(appConfig.webBuildPath));
