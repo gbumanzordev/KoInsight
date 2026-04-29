@@ -10,9 +10,10 @@ import {
   Text,
   Title,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { JSX, useState } from 'react';
 import { Link, NavLink } from 'react-router';
-import { useUnmatchedBooks } from '../../api/enrichment';
+import { postDismissUnmatchedBook, useUnmatchedBooks } from '../../api/enrichment';
 import { FailureReasonBadge } from '../../components/failure-reason-badge/failure-reason-badge';
 import { ReEnrichButton } from '../../components/re-enrich-button/re-enrich-button';
 import { getBookPath, RoutePath } from '../../routes';
@@ -28,8 +29,29 @@ const PAGE_SIZE = 20;
 
 export function UnmatchedBooksSection(): JSX.Element {
   const [page, setPage] = useState(1);
+  const [dismissingId, setDismissingId] = useState<number | null>(null);
   const offset = (page - 1) * PAGE_SIZE;
   const { data, error, isLoading } = useUnmatchedBooks({ offset, limit: PAGE_SIZE });
+
+  const handleDismiss = async (id: number, title: string) => {
+    setDismissingId(id);
+    try {
+      await postDismissUnmatchedBook(id);
+      notifications.show({
+        color: 'green',
+        title: 'Book dismissed',
+        message: `"${title}" was removed from the unmatched list.`,
+      });
+    } catch {
+      notifications.show({
+        color: 'red',
+        title: 'Could not dismiss book',
+        message: 'Refresh the page or try again.',
+      });
+    } finally {
+      setDismissingId(null);
+    }
+  };
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / PAGE_SIZE)) : 1;
 
@@ -109,6 +131,15 @@ export function UnmatchedBooksSection(): JSX.Element {
                         enrichmentStatus="failed"
                         variant="row"
                       />
+                      <Button
+                        variant="subtle"
+                        color="gray"
+                        size="sm"
+                        loading={dismissingId === row.id}
+                        onClick={() => handleDismiss(row.id, row.title)}
+                      >
+                        Dismiss
+                      </Button>
                     </Group>
                   </Group>
                 </Paper>
