@@ -25,7 +25,9 @@ import { CalendarPage } from './pages/calendar-page';
 import { ReportsYearlyPage } from './pages/reports-yearly-page/reports-yearly-page';
 import { SettingsLayout } from './pages/settings-page/settings-layout';
 import { UnmatchedBooksSection } from './pages/settings-page/unmatched-books-section';
-import { StatsPage } from './pages/stats-page/stats-page';
+import { GeneralStatsPage } from './pages/stats-page/general-stats-page';
+import { StatsLayout } from './pages/stats-page/stats-layout';
+import { WeeklyStatsPage } from './pages/stats-page/weekly-stats-page';
 import { SyncsPage } from './pages/syncs-page';
 import { RoutePath } from './routes';
 
@@ -74,15 +76,21 @@ export function App(): JSX.Element {
               <Route path={RoutePath.BOOKS} element={<BooksPage />} />
               <Route path={RoutePath.BOOK} element={<BookPage />} />
               <Route path={RoutePath.CALENDAR} element={<CalendarPage />} />
-              <Route path={RoutePath.STATS} element={<StatsPage />} />
-              <Route path={RoutePath.SYNCS} element={<SyncsPage />} />
+              <Route path={RoutePath.STATS} element={<StatsLayout />}>
+                <Route index element={<Navigate to="general" replace />} />
+                <Route path="general" element={<GeneralStatsPage />} />
+                <Route path="weekly" element={<WeeklyStatsPage />} />
+                <Route path="yearly" element={<ReportsYearlyPage />} />
+              </Route>
+              <Route path={RoutePath.SYNCS} element={<Navigate to={RoutePath.SETTINGS_SYNCS} replace />} />
               <Route path={RoutePath.SETTINGS} element={<SettingsLayout />}>
                 <Route index element={<Navigate to="unmatched" replace />} />
                 <Route path="unmatched" element={<UnmatchedBooksSection />} />
+                <Route path="syncs" element={<SyncsPage />} />
               </Route>
               <Route path={RoutePath.REPORTS}>
-                <Route index element={<Navigate to="yearly" replace />} />
-                <Route path="yearly" element={<ReportsYearlyPage />} />
+                <Route index element={<Navigate to={RoutePath.STATS_YEARLY} replace />} />
+                <Route path="yearly" element={<Navigate to={RoutePath.STATS_YEARLY} replace />} />
               </Route>
               {/* Catch-all route goes last */}
               <Route

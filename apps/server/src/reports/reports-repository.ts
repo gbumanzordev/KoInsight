@@ -73,25 +73,38 @@ export async function getBooksReadInYear(
 }
 
 /**
- * Sum of page_stat.duration and count of page_stat rows whose start_time falls
- * inside [yearStart, yearEnd). REPORT-02: include all reading regardless of
- * book completion. Page turns chosen for total_pages (matches
- * StatsService.totalPagesRead semantics).
+ * Sum of page_stat.duration and a normalized pages-read total for rows whose
+ * start_time falls inside [yearStart, yearEnd). REPORT-02: include all reading
+ * regardless of book completion.
+ *
+ * pagesRead matches StatsService.getTotalReadPages semantics so the yearly
+ * card is comparable to the lifetime stats-page metric: each page_stat row
+ * contributes (book.reference_pages / page_stat.total_pages) when both are
+ * known, otherwise 1. This rescales device-paginated page events to the
+ * canonical reference-page count and prevents inflation when the same book
+ * is read on devices with different paginations.
  */
 export async function getReadingTotalsInYear(
   yearStartSec: number,
   yearEndSec: number
-): Promise<{ totalReadTimeSec: number; totalPageTurns: number }> {
-  const [row] = await db('page_stat')
-    .where('start_time', '>=', yearStartSec)
-    .andWhere('start_time', '<', yearEndSec)
+): Promise<{ totalReadTimeSec: number; pagesRead: number }> {
+  const [row] = await db('page_stat as ps')
+    .leftJoin('book as b', 'b.md5', 'ps.book_md5')
+    .where('ps.start_time', '>=', yearStartSec)
+    .andWhere('ps.start_time', '<', yearEndSec)
     .select(
-      db.raw('COALESCE(SUM(duration), 0) AS total_read_time_sec'),
-      db.raw('COUNT(*) AS total_page_turns')
+      db.raw('COALESCE(SUM(ps.duration), 0) AS total_read_time_sec'),
+      db.raw(
+        `COALESCE(ROUND(SUM(CASE
+           WHEN b.reference_pages IS NOT NULL AND ps.total_pages > 0
+             THEN b.reference_pages * 1.0 / ps.total_pages
+           ELSE 1
+         END)), 0) AS pages_read`
+      )
     );
   return {
     totalReadTimeSec: Number(row?.total_read_time_sec ?? 0),
-    totalPageTurns: Number(row?.total_page_turns ?? 0),
+    pagesRead: Number(row?.pages_read ?? 0),
   };
 }
 

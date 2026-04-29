@@ -99,7 +99,7 @@ describe('reports-repository', () => {
     it('includes the 50% book duration in totalReadTimeSec', async () => {
       const totals = await getReadingTotalsInYear(Y_START, Y_END);
       expect(totals.totalReadTimeSec).toBe(300);
-      expect(totals.totalPageTurns).toBe(2);
+      expect(totals.pagesRead).toBe(2);
     });
   });
 
