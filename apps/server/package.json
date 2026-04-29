@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/app.js",
     "backfill:reference-pages": "tsx src/enrichment/backfill-reference-pages.ts",
+    "gc:orphan-authors": "tsx src/admin/orphan-author-gc-cli.ts",
     "build": "tsc -b",
     "build:migrations": "tsc -p tsconfig.migrations.json",
     "dev": "NODE_ENV=development nodemon src/app.ts",

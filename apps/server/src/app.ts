@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import { Server } from 'http';
 import morgan from 'morgan';
 import path from 'path';
+import { adminRouter } from './admin/admin-router';
 import { openAiRouter } from './ai/open-ai-router';
 import { booksRouter } from './books/books-router';
 import { appConfig } from './config';
@@ -40,6 +41,17 @@ async function setupServer() {
   app.use('/api/ai', openAiRouter);
   app.use('/api/enrichment', enrichmentRouter);
   app.use('/api/reports', reportsRouter);
+
+  // Admin endpoints are off by default. CORS is currently `*` so the static
+  // confirm string on /api/admin/authors/gc is not enough on its own; require
+  // ADMIN_ENABLED=true in the environment until real auth middleware lands.
+  if (appConfig.adminEnabled) {
+    app.use('/api/admin', adminRouter);
+  } else {
+    app.use('/api/admin', (_req: Request, res: Response) => {
+      res.status(503).json({ error: 'Admin endpoints are disabled. Set ADMIN_ENABLED=true to enable.' });
+    });
+  }
 
   // Serve react app
   app.use(express.static(appConfig.webBuildPath));

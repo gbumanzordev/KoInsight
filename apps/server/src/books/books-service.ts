@@ -145,8 +145,9 @@ export class BooksService {
 //   book-card.tsx, which reads book.authors text).
 // - Non-canonical genre names are silently dropped via .whereIn on genre.name
 //   (matches applier.ts; keeps the canonical whitelist honest).
-// - Orphan author rows are NOT garbage-collected (research Pitfall 2: matches
-//   applier behavior; GC deferred to a future cleanup pass).
+// - Orphan author rows are NOT touched by the manual edit path itself; they
+//   are cleaned up out-of-band by the Phase 9 GC: POST /api/admin/authors/gc
+//   or `npm --workspace=server run gc:orphan-authors` (see apps/server/src/admin/).
 export async function applyManualEdit(book: Book, patch: MetadataPatch): Promise<BookWithData> {
   await db.transaction(async (trx) => {
     const updates: Record<string, unknown> = {};

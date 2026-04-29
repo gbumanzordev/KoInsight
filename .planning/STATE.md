@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Enrichment Polish & Cleanup
-status: completed
-stopped_at: "Phase 8 complete (all 4 plans). Next: Phase 9 (orphan author GC) or Phase 10 (repo polish) — both parallel-eligible after Phase 8."
-last_updated: "2026-04-27T23:29:07.300Z"
-last_activity: "2026-04-27 -- Phase 8 shipped (PR #2)"
+status: shipped
+stopped_at: "Phase 9 shipped — PR #3 open against master."
+last_updated: "2026-04-28T15:15:00Z"
+last_activity: 2026-04-28 -- Phase 9 shipped (PR #3)
 progress:
   total_phases: 4
-  completed_phases: 2
-  total_plans: 10
-  completed_plans: 10
+  completed_phases: 3
+  total_plans: 13
+  completed_plans: 13
   percent: 100
 ---
 
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-26)
 
 **Core value:** Every book in the user's library has trustworthy, query-friendly metadata so the dashboard can produce meaningful yearly breakdowns by genre and author nationality without hand-curation.
-**Current focus:** Phase 08 — failure-triage-smarter-matcher
+**Current focus:** Phase 9 — orphan-author-gc
 
 ## Current Position
 
 Milestone: v1.1 Enrichment Polish & Cleanup
-Phase: 08 (failure-triage-smarter-matcher) — COMPLETE
-Plan: 4 of 4 — COMPLETE
-Status: Phase 08 complete; Phase 09 (orphan author GC) or Phase 10 (repo polish) up next (parallel-eligible).
-Last activity: 2026-04-27 -- Phase 8 shipped (PR #2)
+Phase: 9 (orphan-author-gc) — COMPLETE (verifier PASS)
+Plan: 3 of 3 complete
+Status: Phase 9 complete; ready for /gsd-ship or advance to Phase 10
+Last activity: 2026-04-28 -- Phase 9 complete (all 3 plans, verifier PASS)
 
 ## Accumulated Context
 
@@ -64,6 +64,6 @@ None recorded for v1.1 yet.
 
 ## Session Continuity
 
-Last session: 2026-04-27
-Stopped at: Phase 8 complete (all 4 plans). Next: Phase 9 (orphan author GC) or Phase 10 (repo polish) — both parallel-eligible after Phase 8.
-Resume file: .planning/ROADMAP.md (no in-flight phase)
+Last session: 2026-04-28
+Stopped at: Phase 9 complete and shipped (all 3 plans complete; verifier PASS; PR #3 open against master).
+Resume file: None — no pending Phase 9 work.

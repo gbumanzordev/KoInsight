@@ -23,6 +23,10 @@ export const appConfig = {
   port: Number(process.env.PORT ?? 3000),
   env: process.env.NODE_ENV,
 
+  // Admin endpoints (`/api/admin/*`) are gated behind this flag until proper
+  // auth middleware lands. Off by default because CORS is currently `*`.
+  adminEnabled: process.env.ADMIN_ENABLED === 'true',
+
   coversPath: path.resolve(DATA_PATH, 'covers'),
 
   dataPath: DATA_PATH,

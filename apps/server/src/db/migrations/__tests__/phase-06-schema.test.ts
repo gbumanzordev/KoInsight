@@ -97,20 +97,30 @@ describe('Phase 6 schema dynamic verification (migrate up/down/up idempotency)',
   });
 
   it('migrate up -> down -> up is idempotent for the Phase 6 index migration', async () => {
-    // Roll back exactly one migration (the most recent: Phase 6's index) and re-apply.
-    // We use migrate.down() rather than migrate.rollback() because migrate.latest()
-    // applies all pending migrations as a single batch on a fresh DB, so rollback()
-    // would unwind every migration (and earlier non-reversible migrations would fail).
-    await knex.migrate.down();
-    const afterDown = (await knex.raw("PRAGMA index_list('page_stat')")) as Array<{
-      name: string;
-    }>;
-    expect(afterDown.map((r) => r.name)).not.toContain('idx_page_stat_start_time');
+    // Roll back migrations one at a time until the Phase 6 index is gone, then
+    // re-apply the same number of migrations. We use migrate.down() (not
+    // migrate.rollback()) because migrate.latest() applies all pending
+    // migrations as a single batch on a fresh DB, so rollback() would unwind
+    // every migration and earlier non-reversible migrations could fail. We
+    // can't just call migrate.down() once because newer migrations may have
+    // landed on top of the Phase 6 index migration since this test was
+    // originally written.
+    const indexExists = async () => {
+      const rows = (await knex.raw("PRAGMA index_list('page_stat')")) as Array<{ name: string }>;
+      return rows.some((r) => r.name === 'idx_page_stat_start_time');
+    };
 
-    await knex.migrate.up();
-    const afterReapply = (await knex.raw("PRAGMA index_list('page_stat')")) as Array<{
-      name: string;
-    }>;
-    expect(afterReapply.map((r) => r.name)).toContain('idx_page_stat_start_time');
+    let stepsDown = 0;
+    while (await indexExists()) {
+      await knex.migrate.down();
+      stepsDown++;
+      if (stepsDown > 50) throw new Error('runaway rollback');
+    }
+    expect(await indexExists()).toBe(false);
+
+    for (let i = 0; i < stepsDown; i++) {
+      await knex.migrate.up();
+    }
+    expect(await indexExists()).toBe(true);
   });
 });
