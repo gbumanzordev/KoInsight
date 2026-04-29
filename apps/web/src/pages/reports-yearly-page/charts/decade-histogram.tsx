@@ -1,7 +1,7 @@
 import type { YearlyReportBucket } from '@koinsight/common/types/reports-api';
 import { BarChart } from '@mantine/charts';
 import { useComputedColorScheme } from '@mantine/core';
-import { JSX } from 'react';
+import { JSX, useMemo } from 'react';
 
 // Phase 6 Plan 07 (REPORT-UI-03): publication-decade histogram. Server-side
 // already zero-fills gaps between min and max decades and appends 'Unknown'
@@ -10,10 +10,12 @@ import { JSX } from 'react';
 export function DecadeHistogram({ data }: { data: YearlyReportBucket[] }): JSX.Element {
   const colorScheme = useComputedColorScheme();
 
+  const populated = useMemo(() => data.filter((d) => d.count > 0), [data]);
+
   return (
     <BarChart
       h={300}
-      data={data}
+      data={populated}
       dataKey="key"
       gridAxis="y"
       series={[

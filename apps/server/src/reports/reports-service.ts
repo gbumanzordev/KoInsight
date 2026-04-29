@@ -203,14 +203,16 @@ export class ReportsService {
 
     const md5s = await repo.getBooksReadInYear(startSec, endSec);
 
-    const [totals, genreRows, natRows, yearRows, langRows, coverage] = await Promise.all([
-      repo.getReadingTotalsInYear(startSec, endSec),
-      repo.getGenresForBooks(md5s),
-      repo.getPrimaryAuthorNationalities(md5s),
-      repo.getPublicationYears(md5s),
-      repo.getOriginalLanguages(md5s),
-      repo.getCoverageCounts(md5s),
-    ]);
+    const [totals, genreRows, natRows, yearRows, langRows, coverage, booksRows] =
+      await Promise.all([
+        repo.getReadingTotalsInYear(startSec, endSec),
+        repo.getGenresForBooks(md5s),
+        repo.getPrimaryAuthorNationalities(md5s),
+        repo.getPublicationYears(md5s),
+        repo.getOriginalLanguages(md5s),
+        repo.getCoverageCounts(md5s),
+        repo.getBooksMetadata(md5s),
+      ]);
 
     // Genre: per-row counting (multi-genre books contribute multiple times),
     // then inject Unknown for books with no genre rows at all.
@@ -264,6 +266,7 @@ export class ReportsService {
       nationality,
       decade,
       language,
+      books: booksRows,
       coverage,
     };
   }

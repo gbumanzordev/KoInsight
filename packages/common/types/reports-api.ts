@@ -5,6 +5,14 @@
 
 export type YearlyReportBucket = { key: string; count: number };
 
+export type YearlyReportBook = {
+  md5: string;
+  id: number;
+  title: string;
+  authors: string | null;
+  original_language: string | null;
+};
+
 export type YearlyReport = {
   year: number;
   totals: { books: number; pages: number; readTimeSeconds: number };
@@ -12,6 +20,7 @@ export type YearlyReport = {
   nationality: YearlyReportBucket[]; // includes 'Other' + 'Unknown' per CONTEXT D-03 / D-07
   decade: YearlyReportBucket[]; // zero-filled gaps; trailing 'Unknown' per CONTEXT D-05
   language: YearlyReportBucket[];
+  books: YearlyReportBook[];
   coverage: {
     total_books: number;
     genre_known: number;

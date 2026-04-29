@@ -1,69 +1,50 @@
 import type { YearlyReportBucket } from '@koinsight/common/types/reports-api';
 import { BarChart } from '@mantine/charts';
-import { useComputedColorScheme, useMantineTheme } from '@mantine/core';
+import { useMantineTheme } from '@mantine/core';
 import { JSX, useMemo } from 'react';
 
-// Phase 6 Plan 07 (REPORT-UI-03): genre breakdown rendered as a single-row
-// stacked BarChart. Each genre key becomes its own stacked series, so the
-// chart shows one wide bar split into colored segments. dataKey is a static
-// label since we have one row representing the whole year.
+// Genre breakdown rendered as a horizontal bar chart (one bar per genre)
+// so differences in count are easy to read at a glance.
+
+const CHART_HEIGHT = 300;
 
 export function GenreBar({ data }: { data: YearlyReportBucket[] }): JSX.Element {
-  const colorScheme = useComputedColorScheme();
   const { colors } = useMantineTheme();
 
-  const palette = useMemo(() => {
-    // cycle through koinsight + violet shades to avoid running out of colors
-    const base = [
-      colors.koinsight[6],
+  const palette = useMemo(
+    () => [
+      colors.koinsight[7],
       colors.violet[6],
-      colors.koinsight[4],
+      colors.koinsight[5],
       colors.violet[4],
       colors.koinsight[8],
       colors.violet[8],
-      colors.koinsight[2],
+      colors.koinsight[3],
       colors.violet[2],
-    ];
-    return base;
-  }, [colors]);
+    ],
+    [colors]
+  );
 
-  const { row, series } = useMemo(() => {
-    const r: Record<string, string | number> = { label: 'Genres' };
-    const s = data.map((bucket, i) => {
-      r[bucket.key] = bucket.count;
-      return {
-        name: bucket.key,
+  const rows = useMemo(
+    () =>
+      data.map((bucket, i) => ({
+        genre: bucket.key,
+        count: bucket.count,
         color: palette[i % palette.length],
-      };
-    });
-    return { row: r, series: s };
-  }, [data, palette]);
-
-  if (data.length === 0) {
-    return (
-      <BarChart
-        h={300}
-        data={[]}
-        dataKey="label"
-        series={[
-          {
-            name: 'count',
-            color: colorScheme === 'dark' ? 'koinsight.7' : 'koinsight.1',
-          },
-        ]}
-      />
-    );
-  }
+      })),
+    [data, palette]
+  );
 
   return (
     <BarChart
-      h={300}
-      data={[row]}
-      dataKey="label"
-      type="stacked"
-      series={series}
-      withLegend
-      gridAxis="y"
+      h={CHART_HEIGHT}
+      data={rows}
+      dataKey="genre"
+      orientation="vertical"
+      yAxisProps={{ width: 140 }}
+      gridAxis="x"
+      getBarColor={(_, item) => (item as { color: string }).color}
+      series={[{ name: 'count', label: 'Books', color: 'koinsight.7' }]}
     />
   );
 }

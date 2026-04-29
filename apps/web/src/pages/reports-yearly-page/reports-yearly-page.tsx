@@ -1,4 +1,4 @@
-import { Alert, Flex, Loader, Stack, Title } from '@mantine/core';
+import { Alert, Flex, Loader, SimpleGrid, Stack, Title } from '@mantine/core';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { JSX } from 'react';
 import { useReportYearly, useReportYears } from '../../api/reports';
@@ -6,7 +6,7 @@ import { CoverageBanner } from './charts/coverage-banner';
 import { DecadeHistogram } from './charts/decade-histogram';
 import { GenreBar } from './charts/genre-bar';
 import { HeadlineCards } from './charts/headline-cards';
-import { LanguagePie } from './charts/language-pie';
+import { LanguagePie, YearlyReportBooksTable } from './charts/language-pie';
 import { NationalityBar } from './charts/nationality-bar';
 import { EmptyYearState } from './empty-state';
 import style from './reports-yearly-page.module.css';
@@ -94,44 +94,53 @@ export function ReportsYearlyPage(): JSX.Element {
 
             {report.coverage.total_books > 0 && (
               <>
-                <Stack gap="xs">
-                  <Title order={3}>Genres</Title>
-                  <GenreBar data={report.genre} />
-                  <CoverageBanner
-                    known={report.coverage.genre_known}
-                    total={report.coverage.total_books}
-                    label="Genres"
-                  />
-                </Stack>
+                <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
+                  <Stack gap="xs">
+                    <Title order={3}>Genres</Title>
+                    <GenreBar data={report.genre} />
+                    <CoverageBanner
+                      known={report.coverage.genre_known}
+                      total={report.coverage.total_books}
+                      label="Genres"
+                    />
+                  </Stack>
+
+                  <Stack gap="xs">
+                    <Title order={3}>Nationality</Title>
+                    <NationalityBar data={report.nationality} />
+                    <CoverageBanner
+                      known={report.coverage.nationality_known}
+                      total={report.coverage.total_books}
+                      label="Nationality"
+                    />
+                  </Stack>
+                </SimpleGrid>
+
+                <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
+                  <Stack gap="xs">
+                    <Title order={3}>Publication decade</Title>
+                    <DecadeHistogram data={report.decade} />
+                    <CoverageBanner
+                      known={report.coverage.publication_year_known}
+                      total={report.coverage.total_books}
+                      label="Publication year"
+                    />
+                  </Stack>
+
+                  <Stack gap="xs">
+                    <Title order={3}>Original language</Title>
+                    <LanguagePie data={report.language} />
+                    <CoverageBanner
+                      known={report.coverage.original_language_known}
+                      total={report.coverage.total_books}
+                      label="Original language"
+                    />
+                  </Stack>
+                </SimpleGrid>
 
                 <Stack gap="xs">
-                  <Title order={3}>Nationality</Title>
-                  <NationalityBar data={report.nationality} />
-                  <CoverageBanner
-                    known={report.coverage.nationality_known}
-                    total={report.coverage.total_books}
-                    label="Nationality"
-                  />
-                </Stack>
-
-                <Stack gap="xs">
-                  <Title order={3}>Publication decade</Title>
-                  <DecadeHistogram data={report.decade} />
-                  <CoverageBanner
-                    known={report.coverage.publication_year_known}
-                    total={report.coverage.total_books}
-                    label="Publication year"
-                  />
-                </Stack>
-
-                <Stack gap="xs">
-                  <Title order={3}>Original language</Title>
-                  <LanguagePie data={report.language} />
-                  <CoverageBanner
-                    known={report.coverage.original_language_known}
-                    total={report.coverage.total_books}
-                    label="Original language"
-                  />
+                  <Title order={3}>Books in this report ({report.books.length})</Title>
+                  <YearlyReportBooksTable books={report.books} />
                 </Stack>
               </>
             )}
