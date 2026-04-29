@@ -80,4 +80,31 @@ router.post('/retry-all', async (req: Request, res: Response) => {
   }
 });
 
+// Mark a single failed book as 'skipped' so it disappears from the unmatched
+// inbox. Reversible by re-enrichment (which flips back to pending/enriched).
+const dismissParamsSchema = z.object({
+  id: z.coerce.number().int().positive(),
+});
+
+router.post('/books/:id/dismiss', async (req: Request, res: Response) => {
+  const parsed = dismissParamsSchema.safeParse(req.params);
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const updated = await db('book')
+      .where({ id: parsed.data.id, enrichment_status: 'failed' })
+      .update({ enrichment_status: 'skipped' });
+    if (updated === 0) {
+      res.status(404).json({ error: 'Book not found or not in failed state' });
+      return;
+    }
+    res.status(200).json({ id: parsed.data.id, enrichment_status: 'skipped' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to dismiss book' });
+  }
+});
+
 export { router as enrichmentRouter };

@@ -66,6 +66,15 @@ export async function postRetryAll(): Promise<{ enqueued: number; skipped: numbe
   );
 }
 
+export async function postDismissUnmatchedBook(bookId: number): Promise<void> {
+  await fetchFromAPI<{ id: number; enrichment_status: string }>(
+    `enrichment/books/${bookId}/dismiss`,
+    'POST',
+    {}
+  );
+  await invalidateUnmatchedList();
+}
+
 // Phase 8 Plan 04 (RETRY-02 / D-14): invalidate every paginated cache slice
 // of the unmatched-books list, plus the enrichment status counter (used by
 // the Navbar Settings Indicator). RESEARCH Pitfall 4: the list cache key is

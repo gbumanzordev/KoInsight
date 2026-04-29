@@ -166,6 +166,37 @@ export async function getOriginalLanguages(
 }
 
 /**
+ * Per-book metadata for books in the input set, used to render the books
+ * table on the yearly report page. Sorted by title ASC so the UI can render
+ * directly without re-sorting.
+ */
+export async function getBooksMetadata(
+  md5s: string[]
+): Promise<
+  Array<{
+    md5: string;
+    id: number;
+    title: string;
+    authors: string | null;
+    original_language: string | null;
+  }>
+> {
+  if (md5s.length === 0) return [];
+  const rows = await db('book')
+    .whereIn('md5', md5s)
+    .andWhere('soft_deleted', false)
+    .select('md5', 'id', 'title', 'authors', 'original_language')
+    .orderBy('title', 'asc');
+  return rows as Array<{
+    md5: string;
+    id: number;
+    title: string;
+    authors: string | null;
+    original_language: string | null;
+  }>;
+}
+
+/**
  * Coverage denominators for the books-read-in-year set: how many of the input
  * md5s have each enrichment field populated. Used by the service to render
  * "Genres known for N of M books" banners under each chart (REPORT-UI-04).

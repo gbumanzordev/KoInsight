@@ -89,6 +89,10 @@ export function WeekStats({
         }, 0) ?? 0
     );
 
+    if (pagesPerDay.length === 0) {
+      return '—';
+    }
+
     return Math.round(sum(pagesPerDay) / pagesPerDay.length);
   }, [weekData]);
 

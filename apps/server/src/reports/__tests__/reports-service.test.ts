@@ -17,6 +17,7 @@ vi.mock('../reports-repository', () => ({
   getPublicationYears: vi.fn(),
   getOriginalLanguages: vi.fn(),
   getCoverageCounts: vi.fn(),
+  getBooksMetadata: vi.fn(),
 }));
 
 import * as repo from '../reports-repository';
@@ -215,6 +216,7 @@ describe('ReportsService.getYears', () => {
 describe('ReportsService.getYearly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(repo.getBooksMetadata).mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -248,6 +250,7 @@ describe('ReportsService.getYearly', () => {
       nationality: [],
       decade: [],
       language: [],
+      books: [],
       coverage: {
         total_books: 0,
         genre_known: 0,
