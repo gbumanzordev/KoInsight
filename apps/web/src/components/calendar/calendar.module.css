@@ -21,17 +21,26 @@
 .CalendarDate {
   padding: var(--mantine-spacing-xs);
   border: 1px solid var(--border-color);
-  min-height: 150px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .CalendarDay {
   text-align: left;
   font-size: 1.1rem;
   margin-bottom: 2px;
+  flex-shrink: 0;
 }
 
 .CalendarEvent {
-  text-align: center;
+  text-align: left;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  font-size: 0.85rem;
 }
 
 .CalendarDateToday {

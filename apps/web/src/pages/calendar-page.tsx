@@ -1,6 +1,6 @@
 import { PageStat } from '@koinsight/common/types';
 import { Book } from '@koinsight/common/types/book';
-import { Anchor, Flex, Loader, Switch, Title } from '@mantine/core';
+import { Anchor, Flex, Loader, Switch, Title, Tooltip } from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
 import { startOfDay } from 'date-fns/startOfDay';
 import { sum, uniq } from 'ramda';
@@ -80,25 +80,40 @@ export function CalendarPage(): JSX.Element {
       const uniqueBookMd5s = uniq(data.events.map(({ book_md5 }) => book_md5));
       const eventBooks = uniqueBookMd5s.map((id) => getBookByMd5(id)).filter(Boolean) as Book[];
 
-      return eventBooks.map((book) => (
-        <>
-          <Anchor key={book.id} component={Link} to={getBookPath(book.id)}>
-            {book.title}
-          </Anchor>
-          <br />
-          <IconClock size={14} />{' '}
-          {shortDuration(
-            getDuration(
-              sum(
-                data.events
-                  .filter((event) => event.book_md5 === book.md5)
-                  .map((event) => event.duration)
-              )
+      return eventBooks.map((book) => {
+        const duration = shortDuration(
+          getDuration(
+            sum(
+              data.events
+                .filter((event) => event.book_md5 === book.md5)
+                .map((event) => event.duration)
             )
-          )}
-          <br />
-        </>
-      ));
+          )
+        );
+        return (
+          <Flex key={book.id} gap={4} align="center" wrap="nowrap" mih={20}>
+            <Tooltip label={book.title} withArrow openDelay={250}>
+              <Anchor
+                component={Link}
+                to={getBookPath(book.id)}
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
+                {book.title}
+              </Anchor>
+            </Tooltip>
+            <Flex gap={2} align="center" style={{ flexShrink: 0, opacity: 0.7 }}>
+              <IconClock size={12} />
+              {duration}
+            </Flex>
+          </Flex>
+        );
+      });
     },
     [getBookByMd5]
   );

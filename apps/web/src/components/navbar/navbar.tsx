@@ -45,8 +45,8 @@ export function Navbar({ onNavigate }: { onNavigate?: () => void }): JSX.Element
   const tabs = [
     { link: RoutePath.BOOKS, label: 'Books', icon: IconBooks },
     { link: RoutePath.CALENDAR, label: 'Calendar', icon: IconCalendar },
-    { link: RoutePath.STATS, label: 'Reading stats', icon: IconChartBar },
-    { link: RoutePath.REPORTS_YEARLY, label: 'Reports', icon: IconReport },
+    { link: RoutePath.STATS, label: 'Weekly stats', icon: IconChartBar },
+    { link: RoutePath.REPORTS_YEARLY, label: 'Yearly stats', icon: IconReport },
     { link: RoutePath.SYNCS, label: 'Progress syncs', icon: IconReload },
     { link: RoutePath.SETTINGS, label: 'Settings', icon: IconSettings },
     { onClick: openDownload, label: 'KOReader Plugin', icon: IconDownload },

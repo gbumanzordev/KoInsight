@@ -56,6 +56,7 @@ export function App(): JSX.Element {
     <MantineProvider theme={theme} defaultColorScheme="light">
       <ModalsProvider>
         <Notifications />
+        <div className={style.Shell}>
         <div className={style.App}>
           <Group hiddenFrom="md" align="center" gap="sm" mb="lg" ml="md">
             <Burger size="sm" onClick={() => openDrawer()} />
@@ -95,13 +96,14 @@ export function App(): JSX.Element {
             </Routes>
           </main>
         </div>
-        <Text size="xs" ta="center" c="dimmed">
+        <Text size="xs" ta="center" c="dimmed" py={4}>
           Made with <IconHeart size={10} /> by{' '}
           <Anchor href="https://gar.dev" target="_blank">
             gar.dev
           </Anchor>
           . {version}
         </Text>
+        </div>
       </ModalsProvider>
     </MantineProvider>
   );
