@@ -227,7 +227,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce([]);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([]);
     vi.mocked(repo.getPrimaryAuthorNationalities).mockResolvedValueOnce([]);
@@ -265,7 +265,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(['a', 'b', 'c']);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 12345,
-      totalPageTurns: 678,
+      pagesRead: 678,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([]);
     vi.mocked(repo.getPrimaryAuthorNationalities).mockResolvedValueOnce([]);
@@ -289,7 +289,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(['a', 'b', 'c']);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([
       { md5: 'a', genre: 'fiction' },
@@ -319,7 +319,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(['a', 'b']);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([
       { md5: 'a', genre: 'fiction' },
@@ -350,7 +350,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(md5s);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([]);
     // Build 13 nationality groups: counts = [13,12,11,10,9,8,7,6,5,4,3,2,1] = 91 books with known nationality.
@@ -409,7 +409,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(['a', 'b', 'c', 'd']);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([]);
     vi.mocked(repo.getPrimaryAuthorNationalities).mockResolvedValueOnce([
@@ -440,7 +440,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(['a', 'b', 'c']);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([]);
     vi.mocked(repo.getPrimaryAuthorNationalities).mockResolvedValueOnce([]);
@@ -473,7 +473,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(['a', 'b', 'c']);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([]);
     vi.mocked(repo.getPrimaryAuthorNationalities).mockResolvedValueOnce([]);
@@ -501,7 +501,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(['a', 'b', 'c', 'd']);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([]);
     vi.mocked(repo.getPrimaryAuthorNationalities).mockResolvedValueOnce([]);
@@ -531,7 +531,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce(['a', 'b']);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     // Multi-genre book: bar heights would sum to 3, but coverage.genre_known is 1.
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([
@@ -571,7 +571,7 @@ describe('ReportsService.getYearly', () => {
     vi.mocked(repo.getBooksReadInYear).mockResolvedValueOnce([]);
     vi.mocked(repo.getReadingTotalsInYear).mockResolvedValueOnce({
       totalReadTimeSec: 0,
-      totalPageTurns: 0,
+      pagesRead: 0,
     });
     vi.mocked(repo.getGenresForBooks).mockResolvedValueOnce([]);
     vi.mocked(repo.getPrimaryAuthorNationalities).mockResolvedValueOnce([]);

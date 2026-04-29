@@ -2,6 +2,7 @@ import { Alert, Flex, Loader, SimpleGrid, Stack, Title } from '@mantine/core';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { JSX } from 'react';
 import { useReportYearly, useReportYears } from '../../api/reports';
+import { YearReadingCalendar } from '../../components/statistics/year-reading-calendar';
 import { CoverageBanner } from './charts/coverage-banner';
 import { DecadeHistogram } from './charts/decade-histogram';
 import { GenreBar } from './charts/genre-bar';
@@ -91,6 +92,11 @@ export function ReportsYearlyPage(): JSX.Element {
             <Title order={3}>{report.year}</Title>
 
             <HeadlineCards totals={report.totals} />
+
+            <Stack gap="xs">
+              <Title order={3}>Reading history</Title>
+              <YearReadingCalendar year={report.year} />
+            </Stack>
 
             {report.coverage.total_books > 0 && (
               <>

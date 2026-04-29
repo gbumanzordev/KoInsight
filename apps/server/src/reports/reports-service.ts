@@ -259,7 +259,7 @@ export class ReportsService {
       year,
       totals: {
         books: md5s.length,
-        pages: totals.totalPageTurns,
+        pages: totals.pagesRead,
         readTimeSeconds: totals.totalReadTimeSec,
       },
       genre,

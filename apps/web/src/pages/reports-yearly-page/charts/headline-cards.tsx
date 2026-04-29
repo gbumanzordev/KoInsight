@@ -5,14 +5,14 @@ import { formatSecondsToHumanReadable } from '../../../utils/dates';
 
 // Phase 6 Plan 07 (REPORT-UI-03): three Paper cards mirroring
 // settings-page/enrichment-status-cards.tsx for the headline totals
-// (books read, page turns, reading time).
+// (books read, pages read, reading time).
 
 const numberFormatter = new Intl.NumberFormat();
 
 export function HeadlineCards({ totals }: { totals: YearlyReport['totals'] }): JSX.Element {
   const cards = [
     { label: 'Books read', value: numberFormatter.format(totals.books) },
-    { label: 'Page turns', value: numberFormatter.format(totals.pages) },
+    { label: 'Pages read', value: numberFormatter.format(totals.pages) },
     {
       label: 'Reading time',
       value:

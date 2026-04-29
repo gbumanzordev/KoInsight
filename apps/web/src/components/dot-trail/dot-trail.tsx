@@ -12,20 +12,26 @@ export type DayData = {
 
 type DotTrailProps = {
   percentPerDay: Record<number, DayData>;
+  startDate?: Date;
+  endDate?: Date;
 };
 
-export function DotTrail({ percentPerDay }: DotTrailProps): JSX.Element {
+export function DotTrail({ percentPerDay, startDate, endDate }: DotTrailProps): JSX.Element {
   const [ref, rect] = useResizeObserver();
   const colorScheme = useComputedColorScheme();
 
-  const today = startOfDay(new Date());
+  const today = startOfDay(endDate ?? new Date());
 
   const dotsToFit = Math.floor((rect.width - 18) / 18);
   const daysToFit = dotsToFit * 7;
 
-  const start = startOfDay(
-    startOfWeek(subDays(today, daysToFit), { locale: { options: { weekStartsOn: 1 } } })
-  );
+  const start = startDate
+    ? startOfDay(
+        startOfWeek(startDate, { locale: { options: { weekStartsOn: 1 } } })
+      )
+    : startOfDay(
+        startOfWeek(subDays(today, daysToFit), { locale: { options: { weekStartsOn: 1 } } })
+      );
 
   const getOutlineColor = (percent?: number): string => {
     const backgound = colorScheme === 'light' ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)';

@@ -1,55 +1,24 @@
-import { Book } from '@koinsight/common/types/book';
 import { BarChart } from '@mantine/charts';
-import {
-  Box,
-  Flex,
-  Loader,
-  Text,
-  Title,
-  useComputedColorScheme,
-  useMantineTheme,
-} from '@mantine/core';
+import { Box, Flex, Loader, Title, useComputedColorScheme, useMantineTheme } from '@mantine/core';
 import { IconClock, IconMaximize, IconPageBreak } from '@tabler/icons-react';
-import { JSX, useMemo } from 'react';
+import { JSX } from 'react';
 import { BarProps } from 'recharts';
-import { useBooks } from '../../api/books';
 import { usePageStats } from '../../api/use-page-stats';
 import { CustomBar } from '../../components/charts/custom-bar';
 import { ReadingCalendar } from '../../components/statistics/reading-calendar';
 import { Statistics } from '../../components/statistics/statistics';
 import { formatSecondsToHumanReadable } from '../../utils/dates';
-import { WeekStats } from './week-stats';
 
-export function StatsPage(): JSX.Element {
+export function GeneralStatsPage(): JSX.Element {
   const colorScheme = useComputedColorScheme();
   const { colors } = useMantineTheme();
-  const { data: books, isLoading: booksLoading } = useBooks();
 
   const {
-    data: {
-      stats,
-      perMonth,
-      perDayOfTheWeek,
-      mostPagesInADay,
-      totalReadingTime,
-      longestDay,
-      last7DaysReadTime,
-      totalPagesRead,
-    },
-    isLoading: statsLoading,
+    data: { perMonth, perDayOfTheWeek, mostPagesInADay, totalReadingTime, longestDay, totalPagesRead },
+    isLoading,
   } = usePageStats();
 
-  const booksByMd5 = useMemo(() => {
-    return books?.reduce(
-      (acc, book) => {
-        acc[book.md5] = book;
-        return acc;
-      },
-      {} as Record<string, Book>
-    );
-  }, [books]);
-
-  if (booksLoading || statsLoading) {
+  if (isLoading) {
     return (
       <Flex justify="center" align="center" h="100%">
         <Loader />
@@ -60,24 +29,6 @@ export function StatsPage(): JSX.Element {
   return (
     <>
       <Title mb="sm">Reading statistics</Title>
-      <Text
-        mt={4}
-        mb="md"
-        style={{ display: 'inline' }}
-        variant="gradient"
-        gradient={{
-          from: colorScheme === 'dark' ? 'violet.4' : 'violet.8',
-          to: colorScheme === 'dark' ? 'koinsight.5' : 'koinsight.8',
-          deg: 120,
-        }}
-        fw={900}
-      >
-        {last7DaysReadTime > 0 ? (
-          <>You read for {formatSecondsToHumanReadable(last7DaysReadTime)} this week. Keep it up!</>
-        ) : (
-          <>You haven't read this week yet. No better time to start!</>
-        )}
-      </Text>
       <Box my="xl">
         <Statistics
           data={[
@@ -110,10 +61,6 @@ export function StatsPage(): JSX.Element {
       <Box mb="xl">
         <ReadingCalendar />
       </Box>
-      <Title mt="xl" mb={4} order={3}>
-        Weekly stats
-      </Title>
-      <WeekStats stats={stats} booksByMd5={booksByMd5} />
       <Title mt="xl" order={3}>
         Per day of the week
       </Title>
